@@ -1,0 +1,61 @@
+%==============================================================================
+% Sjabloon onderzoeksvoorstel bachproef
+%==============================================================================
+% Gebaseerd op document class `hogent-article'
+% zie <https://github.com/HoGentTIN/latex-hogent-article>
+
+% Voor een voorstel in het Engels: voeg de documentclass-optie [english] toe.
+% Let op: kan enkel na toestemming van de bachelorproefcoördinator!
+\documentclass{hogent-article}
+
+% Invoegen bibliografiebestand
+\addbibresource{voorstel.bib}
+
+% Informatie over de opleiding, het vak en soort opdracht
+\studyprogramme{Professionele bachelor toegepaste informatica}
+\course{Bachelorproef}
+\assignmenttype{Onderzoeksvoorstel}
+% Voor een voorstel in het Engels, haal de volgende 3 regels uit commentaar
+% \studyprogramme{Bachelor of applied information technology}
+% \course{Bachelor thesis}
+% \assignmenttype{Research proposal}
+
+\academicyear{2025-2026}
+
+\title{Dynamisch Docker-omgevingbeheer voor CTF-events op on-prem infrastructuur}
+
+\author{Manu Devloo}
+\email{manu.devloo@student.hogent.be}
+
+\supervisor[Promotor]{Thomas Clauwaert (Hogent, \href{mailto:thomas.clauwaert@hogent.be}{thomas.clauwaert@hogent.be})}
+\supervisor[Co-promotor]{Laurens Singier (HoWest, \href{mailto:laurens.singier@howest.be}{laurens.singier@howest.be})}
+
+% Binnen welke specialisatierichting uit 3TI situeert dit onderzoek zich?
+% Kies uit deze lijst:
+%
+% - Mobile \& Enterprise development
+% - AI \& Data Engineering
+% - Functional \& Business Analysis
+% - System \& Network Administrator
+% - Mainframe Expert
+% - Als het onderzoek niet past binnen een van deze domeinen specifieer je deze
+%   zelf
+%
+\specialisation{Development (full stack) }
+\keywords{Docker, CTFd, Infrastructure, Security, Automation}
+
+\begin{document}
+
+\begin{abstract}
+	Dit onderzoeksvoorstel behandelt het dynamisch beheer van Docker-containers voor Capture The Flag (CTF) events op on-premise infrastructuur. Hierdoor focust de probleemstelling op het aanmaken en beëindigen van containers op basis van gebruikersacties. De hoofdonderzoeksvraag onderzoekt hoe dit proces geautomatiseerd kan worden met behulp van CTFd en Docker. Hierbij wordt specifiek gewerkt binnen de constraints van een self-hosted omgeving, zonder terugkerende licentiekosten en met een focus op open-source dependencies. Door middel van een literatuurstudie en een proof-of-concept wordt gekeken naar de beveiligingsaspecten, resource-limieten en communicatie tussen CTFd en Docker. Het doel is een schaalbare oplossing te bieden die misbruik voorkomt en performance garandeert.
+\end{abstract}
+
+\tableofcontents
+
+% De hoofdtekst van het voorstel zit in een apart bestand, zodat het makkelijk
+% kan opgenomen worden in de bijlagen van de bachelorproef zelf.
+\input{voorstel-inhoud}
+
+\printbibliography[heading=bibintoc]
+
+\end{document}

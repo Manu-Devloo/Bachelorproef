@@ -1,0 +1,132 @@
+OnDERZOEKSVOORSTEL
+Vul hier de voorgestelde titel van je onderzoek in.
+Bachelorproef, 2022-2023
+
+Ernst Aarden
+E-mail: ernst.aarden@student.hogent.be
+Co-promotor: S. Beekman (Synalco, sigrid.beekman@synalco.be)
+
+
+Samenvatting
+Hier schrijf je de samenvatting van je voorstel, als een doorlopende tekst van één paragraaf. Let op: dit is geen
+inleiding, maar een samenvattende tekst van heel je voorstel met inleiding (voorstelling, kaderen thema), pro-
+bleemstelling en centrale onderzoeksvraag, onderzoeksdoelstelling (wat zie je als het concrete resultaat van je
+bachelorproef?), voorgestelde methodologie, verwachte resultaten en meerwaarde van dit onderzoek (wat heeft
+de doelgroep aan het resultaat?).
+
+Keuzerichting: Mobile & Enterprise development
+Sleutelwoorden: Scheme, World Wide Web, 𝜆-calculus
+
+
+
+Inhoudsopgave                                               Formuleer duidelijk de onderzoeksvraag! De
+                                                         begeleiders lezen nog steeds te veel voorstellen
+1   Introductie . . . . . . . . . . . . . . . . . . 1    waarin we geen onderzoeksvraag terugvinden.
+2   State-of-the-art . . . . . . . . . . . . . . . 1        Schrijf ook iets over de doelstelling. Wat zie je
+3   Methodologie . . . . . . . . . . . . . . . . 2       als het concrete eindresultaat van je onderzoek,
+4   Verwacht resultaat, conclusie . . . . . . . 2        naast de uitgeschreven scriptie? Is het een proof-
+    Referenties . . . . . . . . . . . . . . . . . . 2    of-concept, een rapport met aanbevelingen, …Met
+                                                         welk eindresultaat kan je je bachelorproef als een
+1. Introductie                                           succes beschouwen?
+   Waarover zal je bachelorproef gaan? Introdu-
+ceer het thema en zorg dat volgende zaken zeker          2. State-of-the-art
+duidelijk aanwezig zijn:                                   Hier beschrijf je de state-of-the-art rondom
+                                                       je gekozen onderzoeksdomein, d.w.z. een inlei-
+    • kaderen thema
+                                                       dende, doorlopende tekst over het onderzoeks-
+    • de doelgroep                                     domein van je bachelorproef. Je steunt daarbij
+                                                       heel sterk op de professionele vakliteratuur, en
+    • de probleemstelling en (centrale) onderzoeks- niet zozeer op populariserende teksten voor een
+      vraag                                            breed publiek. Wat is de huidige stand van zaken
+                                                       in dit domein, en wat zijn nog eventuele open vra-
+    • de onderzoeksdoelstelling
+                                                       gen (die misschien de aanleiding waren tot je on-
+    Denk er aan: een typische bachelorproef is toe- derzoeksvraag!)?
+gepast onderzoek, wat betekent dat je start van-           Je mag de titel van deze sectie ook aanpassen
+uit een concrete probleemsituatie in bedrijfscon-      (literatuurstudie,    stand van zaken, enz.). Zijn er al
+text, een casus. Het is belangrijk om je onderwerp     gelijkaardige    onderzoeken    gevoerd? Wat conclu-
+goed af te bakenen: je gaat voor die ene speci-        deren    ze?   Wat   is het verschil met jouw onder-
+fieke probleemsituatie op zoek naar een goede          zoek?
+oplossing, op basis van de huidige kennis in het           Verwijs bij elke introductie van een term of
+vakgebied.                                             bewering     over het domein naar de vakliteratuur,
+    De doelgroep moet ook concreet en duidelijk        bijvoorbeeld     (Hykes, 2013)! Denk zeker goed na
+zijn, dus geen algemene of vaag gedefinieerde          welke   werken    je refereert en waarom.
+groepen zoals bedrijven, developers, Vlamingen,            Draag    zorg   voor correcte literatuurverwijzin-
+enz. Je richt je in elk geval op it-professionals, een gen!   Een   bronvermelding     hoort thuis binnen de
+bachelorproef is geen populariserende tekst. Eén       zin  waar  je je op  die bron baseert, dus niet er bui-
+specifiek bedrijf (die te maken hebben met een         ten!   Maak    meteen    een verwijzing als je gebruik
+concrete probleemsituatie) is dus beter dan be-        maakt     van  een   bron.  Doe  dit dus niet aan het
+drijven in het algemeen.                               einde   van   een  lange  paragraaf.  Baseer  nooit te-
+                                                       veel aansluitende tekst op eenzelfde bron.
+                                                           Als je informatie over bronnen verzamelt in Ja-
+
+
+Professionele bachelor toegepaste informatica
+Bachelorproef: Onderzoeksvoorstel                                                                   2/2
+
+
+bRef, zorg er dan voor dat alle nodige info aanwe-    chelorproef voor een meerwaarde?
+zig is om de bron terug te vinden (zoals uitvoerig       Hier beschrijf je wat je verwacht uit je onder-
+besproken in de lessen Research Methods).             zoek, met de motivatie waarom. Het is niet erg
+    Je mag deze sectie nog verder onderverdelen       indien uit je onderzoek andere resultaten en con-
+in subsecties als dit de structuur van de tekst kan   clusies vloeien dan dat je hier beschrijft: het is
+verduidelijken.                                       dan juist interessant om te onderzoeken waarom
+                                                      jouw hypothesen niet overeenkomen met de re-
+                                                      sultaten.
+3. Methodologie
+    Hier beschrijf je hoe je van plan bent het on-
+derzoek te voeren. Welke onderzoekstechniek ga Referenties
+je toepassen om elk van je onderzoeksvragen te Hykes, S. (2013, maart 21). The future of Linux Con-
+beantwoorden? Gebruik je hiervoor literatuurstu-      tainers (PyCon 2013). Verkregen 1 septem-
+die, interviews met belanghebbenden (bv. voor         ber 2016, van https://www.youtube.com/
+requirements-analyse), experimenten, simulaties,      watch?v=wW9CAH9nSLs
+vergelijkende studie, risico-analyse, PoC, …?
+    Valt je onderwerp onder één van de typische
+soorten bachelorproeven die besproken zijn in de
+lessen Research Methods (bv. vergelijkende stu-
+die of risico-analyse)? Zorg er dan ook voor dat
+we duidelijk de verschillende stappen terug vin-
+den die we verwachten in dit soort onderzoek!
+    Vermijd onderzoekstechnieken die geen ob-
+jectieve, meetbare resultaten kunnen opleveren.
+Enquêtes, bijvoorbeeld, zijn voor een bachelor-
+proef informatica meestal niet geschikt. De ant-
+woorden zijn eerder meningen dan feiten en in de
+praktijk blijkt het ook bijzonder moeilijk om vol-
+doende respondenten te vinden. Studenten die
+een enquête willen voeren, hebben meestal ook
+geen goede definitie van de populatie, waardoor
+ook niet kan aangetoond worden dat eventuele
+resultaten representatief zijn.
+    Uit dit onderdeel moet duidelijk naar voor ko-
+men dat je bachelorproef ook technisch voldoen-
+de diepgang zal bevatten. Het zou niet kloppen
+als een bachelorproef informatica ook door bv.
+een student marketing zou kunnen uitgevoerd
+worden.
+    Je beschrijft ook al welke tools (hardware, soft-
+ware, diensten, …) je denkt hiervoor te gebruiken
+of te ontwikkelen.
+    Probeer ook een tijdschatting te maken. Hoe
+lang zal je met elke fase van je onderzoek bezig
+zijn en wat zijn de concrete deliverables in elke
+fase?
+
+
+4. Verwacht resultaat, conclu-
+   sie
+   Hier beschrijf je welke resultaten je verwacht.
+Als je metingen en simulaties uitvoert, kan je hier
+al mock-ups maken van de grafieken samen met
+de verwachte conclusies. Benoem zeker al je as-
+sen en de onderdelen van de grafiek die je gaat
+gebruiken. Dit zorgt ervoor dat je concreet weet
+welk soort data je moet verzamelen en hoe je die
+moet meten.
+   Wat heeft de doelgroep van je onderzoek aan
+het resultaat? Op welke manier zorgt jouw ba-
+
+
+
+Professionele bachelor toegepaste informatica
+

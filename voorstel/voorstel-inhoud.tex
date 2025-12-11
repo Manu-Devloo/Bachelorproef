@@ -1,0 +1,76 @@
+%---------- Inleiding ---------------------------------------------------------
+
+\section{Introductie}%
+\label{sec:introductie}
+
+Dit onderzoeksvoorstel richt zich op het dynamisch beheer van Docker-omgevingen tijdens Capture The Flag (CTF) events~\autocite{Innovirtuoso2025} op on-premise infrastructuur. Het idee voor dit onderzoek komt voort uit de noodzaak om efficiënt en veilig challenges te beheren~\autocite{Singier2025}.
+
+\subsection{Probleemstelling}
+De centrale probleemstelling luidt: Bestaat er een manier om dynamisch Docker-omgevingbeheer te doen op on-prem infrastructuur tijdens Capture The Flag events? Het beheren van containers voor challenges vereist een robuust systeem dat kan omgaan met gebruikersacties en variabele belastingen, zonder in te boeten op veiligheid of performance.
+
+Daarnaast is het een vereiste dat de oplossing volledig self-hosted kan worden ingezet. Hiervoor zijn drie belangrijke redenen: flexibiliteit (mogelijkheid tot uitbreidingen en features), kostprijs (het betalen van on-premise infrastructuur versus cloud-diensten is voor veel organisaties een andere financiële flow) en de voorkeur voor open-source oplossingen.
+
+\subsection{Onderzoeksvraag}
+De hoofdonderzoeksvraag van dit bachelorproefvoorstel is:
+\begin{quote}
+	Hoe kunnen we dynamisch onze docker containers gelinkt aan CTFd-challenges beheren, aanmaken en beëindigen op basis van gebruikersacties en ingestelde variabelen?
+\end{quote}
+
+Om deze hoofdvraag te beantwoorden, worden de volgende deelvragen geformuleerd, opgesplitst in probleem- en oplossingsdomein:
+
+\textbf{Probleemdomein:}
+\begin{itemize}
+	\item Welke fundamentele en direct toepasbare beveiligingsmaatregelen ('low-hanging fruit') zijn noodzakelijk om de veiligheid van de Docker-host en -containers te waarborgen?
+	\item Welke specifieke beveiligingsrisico's brengt het dynamisch aanmaken van containers door gebruikers met zich mee op on-premise infrastructuur?
+	\item Wat is de impact van frequente container-creatie en -vernietiging op de performance van de host-server?
+	\item Welke communicatieprotocollen zijn geschikt voor de interactie tussen het CTF-platform en de container-runtime?
+\end{itemize}
+
+\textbf{Oplossingsdomein (gericht op de Proof-of-Concept):}
+\begin{itemize}
+	\item Hoe kan een CTFd-plugin ontwikkeld worden die rechtstreeks communiceert met de Docker Engine API zonder zware externe dependencies?
+	\item Op welke manier kunnen resource-limieten (CPU, RAM) en netwerkisolatie technisch worden afgedwongen in de PoC?
+	\item Hoe kan de architectuur zo worden opgezet dat deze volledig self-hosted en modulair uitbreidbaar is?
+	\item Hoe valideren we de stabiliteit van de oplossing onder gesimuleerde zware belasting (load testing)?
+\end{itemize}
+
+\subsection{Onderzoeksdoelstelling}
+Het doel is om een werkende oplossing of proof-of-concept te realiseren die aantoont hoe CTFd-challenges dynamisch en veilig beheerd kunnen worden op eigen infrastructuur.
+
+%---------- Stand van zaken ---------------------------------------------------
+
+\section{State-of-the-art}%
+\label{sec:state-of-the-art}
+
+Er is al documentatie beschikbaar over het deployen van challenges binnen CTFd~\autocite{CTFd}. Echter, het veilig en dynamisch beheren van deze containers op eigen infrastructuur brengt specifieke uitdagingen met zich mee.
+
+Beveiliging is een cruciaal aspect; containers moeten geïsoleerd zijn om te voorkomen dat deelnemers dingen kunnen doen op de host of andere containers. Bronnen zoals de Docker Security Cheat Sheet van OWASP~\autocite{OWASP2024} en artikelen over container security~\autocite{Aikido2025} bieden richtlijnen hiervoor.
+
+Daarnaast biedt een overzicht van het Docker-ecosysteem inzicht in de beschikbare tools en technologieën die ingezet kunnen worden~\autocite{Arxiv2024}. Het onderzoek zal zich baseren op deze bronnen om een veilige en schaalbare architectuur te ontwerpen.
+
+%---------- Methodologie ------------------------------------------------------
+\section{Methodologie}%
+\label{sec:methodologie}
+
+Het onderzoek zal bestaan uit een combinatie van literatuurstudie en praktijkgericht onderzoek.
+
+In de eerste fase wordt via literatuurstudie onderzocht welke 'low-hanging fruit' beveiligingsmaatregelen essentieel zijn. De focus ligt hierbij op praktische en effectieve best practices voor container security (zoals resource limits, netwerkisolatie en privilege management) in plaats van diepgaande theoretische beveiligingsmodellen. Daarnaast wordt gekeken naar de Docker Engine API en SDKs voor de integratie.
+
+Vervolgens zal een proof-of-concept (PoC) worden ontwikkeld waarin een CTFd-omgeving wordt opgezet die communiceert met een Docker-daemon. Hierbij wordt gefocust op de implementatie van een API-interface, het instellen van resource limieten en het toepassen van de geïdentificeerde basisbeveiliging.
+
+Tot slot zal de oplossing gevalideerd worden aan de hand van een uitgebreid testplan als onderdeel van de PoC-verificatie. Dit testplan beschrijft de strategie om zowel de stabiliteit als de veiligheid van het systeem te waarborgen. Concreet worden er load tests uitgevoerd om de schaalbaarheid en performance onder zware belasting te meten. Daarnaast worden specifieke beveiligingstests (zoals container escape pogingen en resource exhaustion simulaties) uitgevoerd om te verifiëren of de geïmplementeerde isolatie en restricties effectief zijn tegen misbruik.
+
+%---------- Verwachte resultaten ----------------------------------------------
+\section{Verwacht resultaat, conclusie}%
+\label{sec:verwachte_resultaten}
+
+Het verwachte resultaat is een gedocumenteerde en werkende implementatie voor dynamisch containerbeheer binnen CTFd. Dit omvat:
+\begin{itemize}
+	\item Een adviesrapport over de te gebruiken architectuur en beveiligingsmaatregelen.
+	\item Een proof-of-concept implementatie.
+	\item Testresultaten die de schaalbaarheid en stabiliteit aantonen.
+	\item Installatie- en beheerinstructies om de reproduceerbaarheid van de PoC te waarborgen.
+	\item Technische documentatie van de ontwikkelde architectuur, zodat derden hierop kunnen verder bouwen.
+\end{itemize}
+
+De meerwaarde van dit onderzoek ligt in het vereenvoudigen van het beheer van CTF-events op eigen hardware, met behoud van veiligheid en performance.
