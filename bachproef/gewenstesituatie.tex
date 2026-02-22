@@ -13,57 +13,77 @@ Op basis van de tekortkomingen die in het vorige hoofdstuk werden geïdentificee
 
 \subsection{Functionele vereisten}
 
-% TODO: Lijst de functionele vereisten op:
-% - Automatisch aanmaken van een containerinstantie per gebruiker/team bij
-%   het starten van een challenge
-% - Automatisch stoppen en verwijderen na afloop of timeout
-% - Configureerbare resource-limieten per challenge (CPU, RAM)
-% - Netwerkisolatie tussen instanties van verschillende gebruikers
-% - Ondersteuning voor meerdere challenge-types
-% - Gebruiksvriendelijke interface voor organisatoren om challenges toe te voegen
+De gewenste oplossing automatiseert het beheer van service-gebaseerde challenges. Concreet moet het systeem:
+
+\begin{itemize}
+  \item bij het starten van een challenge automatisch een containerinstantie voorzien per gebruiker of per team;
+  \item de volledige containerlevenscyclus beheren (aanmaken, starten, stopzetten, verwijderen en opruimen na timeout);
+  \item per challenge configureerbare resource-limieten afdwingen (CPU en RAM);
+  \item netwerkisolatie afdwingen tussen instanties van verschillende gebruikers/teams en ongewenste laterale beweging verhinderen;
+  \item een mechanisme voorzien om het aantal actieve instanties te limiteren (per challenge en/of globaal) om resource-uitputting te vermijden;
+  \item organisatoren een beheerbare manier bieden om challenge-parameters te configureren (Docker-image, poorten, timeouts, limieten);
+  \item een overzicht bieden van actieve instanties, inclusief eigenaar (gebruiker/team), status en vervaltijd, met voldoende logging voor foutopsporing.
+\end{itemize}
 
 \subsection{Niet-functionele vereisten}
 
-% TODO: Lijst de niet-functionele vereisten op:
-% - Volledig self-hosted en open-source
-% - Geen Kubernetes als primaire vereiste
-% - Schaalbaar over meerdere VM's
-% - Veilig: minimale aanvalsoppervlakte, container escapes voorkomen
-% - Beheerbaar: monitoring en logging van actieve instanties
-% - Reproduceerbaar: gedocumenteerde installatie-instructies
+Naast de functionele vereisten gelden de volgende niet-functionele vereisten:
+
+\begin{itemize}
+  \item \textbf{Self-hosted en open-source}: de oplossing moet inzetbaar zijn op eigen infrastructuur, zonder afhankelijkheid van betaalde diensten.
+  \item \textbf{Beveiliging}: veilige standaardinstellingen en een minimale aanvalsoppervlakte, met focus op isolatie en het vermijden van container-escapes~\autocite{OWASP2024,CISDocker}.
+  \item \textbf{Geen Kubernetes als vereiste}: de basiswerking mag niet afhankelijk zijn van Kubernetes, om de operationele complexiteit te beperken.
+  \item \textbf{Schaalbaarheid}: de opzet moet piekbelasting kunnen opvangen en uitbreidbaar zijn naar meerdere hosts of VM's.
+  \item \textbf{Beheerbaarheid en reproduceerbaarheid}: installatie- en beheerinstructies, consistente configuratie en voldoende logging/monitoring.
+  \item \textbf{Modulariteit}: uitbreidbaar naar extra challenge-types of extra beleidsregels zonder ingrijpende aanpassingen aan de kernlogica.
+\end{itemize}
 
 %%----------------------------------------------------------------------
 \section{Architectuurvisie}%
 \label{sec:tobe-architectuur}
 
-% TODO: Beschrijf de architectuur van het gewenste systeem:
-% - CTFd communiceert via plugin met Docker Engine API
-%   (\autocite{DockerEngineAPI}, \autocite{DockerSDKPython})
-% - Containers worden automatisch aangemaakt/vernietigd op basis van
-%   gebruikersacties in CTFd
-% - Resource-limieten worden afgedwongen bij aanmaak
-% - Netwerkisolatie via custom Docker bridge networks
-% - Reverse proxy (Traefik \autocite{Traefik} of Nginx) als entry point
-% - Systeem is modulair: nieuwe challenge-types toevoegen zonder kerncode
-%   te wijzigen
+De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem~\autocite{CTFdGitHub}. De plugin fungeert als orkestratielaag die gebruikersacties (start/stop van een challenge-instantie) vertaalt naar containeracties op een Docker-host.
 
-% TODO: Voeg hier een componentendiagram in.
+\subsection{Componenten en verantwoordelijkheden}
+
+\begin{itemize}
+  \item \textbf{CTFd}: voorziet authenticatie, challenge-definities en de gebruikersinteractie.
+  \item \textbf{CTFd-plugin}: beheert de containerlevenscyclus, houdt de toewijzing bij (gebruiker/team $\rightarrow$ container) en past beleidsregels toe (timeouts, quota, resource-limieten, isolatie).
+  \item \textbf{Docker-host(s)}: draaien de challenge-containers en worden aangestuurd via de Docker Engine API~\autocite{DockerEngineAPI}. De communicatie kan gebeuren via de Docker SDK voor Python~\autocite{DockerSDKPython} of via directe API-aanroepen.
+  \item \textbf{Reverse proxy}: fungeert als toegangspunt en routeert verkeer naar dynamisch aangemaakte containers (bijv.\ via Traefik~\autocite{Traefik} of alternatieven zoals Nginx/HAProxy~\autocite{HAProxy}).
+\end{itemize}
+
+\subsection{Datastromen op hoofdlijnen}
+
+\begin{itemize}
+  \item \textbf{Start}: een deelnemer start een challenge $\rightarrow$ de plugin valideert beleidsregels (quota/timeout) $\rightarrow$ maakt een container aan met limieten en isolatie $\rightarrow$ publiceert een toegangspunt $\rightarrow$ de deelnemer krijgt een URL of verbindingsinformatie.
+  \item \textbf{Stop en opruimen}: bij expliciet stopzetten of bij het verlopen van de timeout worden container en gerelateerde resources (netwerk, metadata) verwijderd om resourcelekken te vermijden.
+\end{itemize}
+
+% TODO: Voeg een componentendiagram toe dat de componenten en hun interacties visualiseert.
 
 %%----------------------------------------------------------------------
 \section{Granulariteitsbeslissing: container per gebruiker of per team}%
 \label{sec:tobe-granulariteit}
 
-% TODO: Bespreek de voor- en nadelen van beide opties:
-% - Per gebruiker: maximale isolatie, meer resource-gebruik
-% - Per team: minder instanties, risico op interne interferentie
-% Verantwoord de keuze die in de PoC wordt geïmplementeerd.
+De keuze tussen een instantie per gebruiker of per team beïnvloedt zowel isolatie als resourceverbruik:
+
+\begin{itemize}
+  \item \textbf{Per gebruiker}: maximale isolatie en minder risico op interferentie, maar het aantal containers stijgt snel bij grotere events.
+  \item \textbf{Per team}: minder instanties en lagere infrastructuurkost, maar teamleden delen één omgeving en kunnen elkaars voortgang beïnvloeden.
+\end{itemize}
+
+Binnen de PoC wordt uitgegaan van een flexibele aanpak: wanneer het event in teammodus verloopt, wordt een instantie per team voorzien; bij individuele deelname wordt een instantie per gebruiker voorzien. Hierdoor blijft de isolatie passend bij het wedstrijdmodel, terwijl onnodige containerexplosie wordt vermeden.
 
 %%----------------------------------------------------------------------
 \section{Schaalbaarheidsvereisten}%
 \label{sec:tobe-schaalbaarheid}
 
-% TODO: Beschrijf wat het systeem moet aankunnen:
-% - Hoeveel gelijktijdige deelnemers?
-% - Hoeveel actieve containers tegelijk?
-% - Hoe worden containers verdeeld over meerdere hosts?
-% - Docker Swarm \autocite{DockerSwarm} of andere orchestratielaag?
+De infrastructuur moet bestand zijn tegen piekbelasting, bijvoorbeeld wanneer veel deelnemers gelijktijdig een service-challenge starten. Dit vertaalt zich naar de volgende vereisten:
+
+\begin{itemize}
+  \item \textbf{Piekbestendig opstartpad}: het systeem moet een piek aan containercreatie kunnen verwerken zonder dat het platform onbeschikbaar wordt.
+  \item \textbf{Begrenzing en evenwichtige verdeling}: limieten op actieve instanties en afdwingbare quota vermijden dat één challenge of deelnemer disproportioneel resources consumeert.
+  \item \textbf{Horizontale uitbreiding}: de architectuur moet uitbreidbaar zijn naar meerdere Docker-hosts. Voor taakverdeling over meerdere hosts kan Docker Swarm een mogelijke optie zijn~\autocite{DockerSwarm}, maar de PoC focust in eerste instantie op een beheerbare opzet die zonder Kubernetes functioneert.
+  \item \textbf{Dynamische routing}: de reverse proxy moet dynamisch kunnen routeren naar nieuw aangemaakte instanties, zodat deelnemers steeds een correct toegangspunt ontvangen~\autocite{Traefik}.
+\end{itemize}

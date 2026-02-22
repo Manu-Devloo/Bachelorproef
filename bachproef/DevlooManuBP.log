@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.22)  22 FEB 2026 09:55
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.22)  22 FEB 2026 10:23
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1418,12 +1418,7 @@ LaTeX Font Info:    Overwriting symbol font `__um_fam1' in version `bold'
 File: ../graphics/logopart.eps Graphic file (type eps)
 <../graphics/logopart.eps>
 Package hyperref Info: Option `colorlinks' set `true' on input line 664.
-) (/usr/local/texlive/2025/texmf-dist/tex/latex/lipsum/lipsum.sty
-Package: lipsum 2021-09-20 v2.7 150 paragraphs of Lorem Ipsum dummy text
-\g__lipsum_par_int=\count509
-\l__lipsum_a_int=\count510
-\l__lipsum_b_int=\count511
- (/usr/local/texlive/2025/texmf-dist/tex/latex/lipsum/lipsum.ltd.tex)) (/usr/local/texlive/2025/texmf-dist/tex/latex/minted/minted.sty
+) (/usr/local/texlive/2025/texmf-dist/tex/latex/minted/minted.sty
 Package: minted 2025/03/06 v3.6.0 Yet another Pygments shim for LaTeX
  (/usr/local/texlive/2025/texmf-dist/tex/generic/catchfile/catchfile.sty
 Package: catchfile 2019/12/09 v1.8 Catch the contents of a file (HO)
@@ -1433,31 +1428,31 @@ Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 Package: fvextra 2025/03/04 v1.12.0 fvextra - extensions and patches for fancyvrb
  (/usr/local/texlive/2025/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
-\FV@CodeLineNo=\count512
+\FV@CodeLineNo=\count509
 \FV@InFile=\read6
 \FV@TabBox=\box92
-\c@FancyVerbLine=\count513
-\FV@StepNumber=\count514
+\c@FancyVerbLine=\count510
+\FV@StepNumber=\count511
 \FV@OutFile=\write5
 ) (/usr/local/texlive/2025/texmf-dist/tex/latex/upquote/upquote.sty
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verbatim
 ) (/usr/local/texlive/2025/texmf-dist/tex/latex/lineno/lineno.sty
 Package: lineno 2025/01/29 line numbers on paragraphs v5.4
-\linenopenalty=\count515
+\linenopenalty=\count512
 \output=\toks55
-\linenoprevgraf=\count516
+\linenoprevgraf=\count513
 \linenumbersep=\dimen339
 \linenumberwidth=\dimen340
-\c@linenumber=\count517
-\c@pagewiselinenumber=\count518
-\c@LN@truepage=\count519
-\c@internallinenumber=\count520
-\c@internallinenumbers=\count521
+\c@linenumber=\count514
+\c@pagewiselinenumber=\count515
+\c@LN@truepage=\count516
+\c@internallinenumber=\count517
+\c@internallinenumbers=\count518
 \quotelinenumbersep=\dimen341
 \bframerule=\dimen342
 \bframesep=\dimen343
 \bframebox=\box93
-\@LN@amsmath@ams@eqpen=\count522
+\@LN@amsmath@ams@eqpen=\count519
 
 
 LaTeX Warning: Command \@parboxrestore  has changed.
@@ -1468,31 +1463,31 @@ LaTeX Info: Redefining \\ on input line 3187.
 
 Package fvextra Warning: csquotes should be loaded after fvextra, to avoid a warning from the lineno package on input line 37.
 
-\c@FancyVerbWriteLine=\count523
-\c@FancyVerbBufferLine=\count524
-\c@FV@TrueTabGroupLevel=\count525
-\c@FV@TrueTabCounter=\count526
+\c@FancyVerbWriteLine=\count520
+\c@FancyVerbBufferLine=\count521
+\c@FV@TrueTabGroupLevel=\count522
+\c@FV@TrueTabCounter=\count523
 \FV@TabBox@Group=\box94
 \FV@bgcolorstructbox=\box95
 \FV@TmpLength=\skip102
-\c@FV@HighlightLinesStart=\count527
-\c@FV@HighlightLinesStop=\count528
-\FV@LoopCount=\count529
+\c@FV@HighlightLinesStart=\count524
+\c@FV@HighlightLinesStop=\count525
+\FV@LoopCount=\count526
 \FV@NCharsBox=\box96
 \FV@BreakIndent=\dimen344
-\FV@BreakIndentNChars=\count530
+\FV@BreakIndentNChars=\count527
 \FV@BreakSymbolSepLeft=\dimen345
-\FV@BreakSymbolSepLeftNChars=\count531
+\FV@BreakSymbolSepLeftNChars=\count528
 \FV@BreakSymbolSepRight=\dimen346
-\FV@BreakSymbolSepRightNChars=\count532
+\FV@BreakSymbolSepRightNChars=\count529
 \FV@BreakSymbolIndentLeft=\dimen347
-\FV@BreakSymbolIndentLeftNChars=\count533
+\FV@BreakSymbolIndentLeftNChars=\count530
 \FV@BreakSymbolIndentRight=\dimen348
-\FV@BreakSymbolIndentRightNChars=\count534
-\c@FancyVerbLineBreakLast=\count535
+\FV@BreakSymbolIndentRightNChars=\count531
+\c@FancyVerbLineBreakLast=\count532
 \FV@LineBox=\box97
 \FV@LineIndentBox=\box98
-\c@FV@BreakBufferDepth=\count536
+\c@FV@BreakBufferDepth=\count533
 \FV@LineWidth=\dimen349
 ) (/usr/local/texlive/2025/texmf-dist/tex/latex/latex2pydata/latex2pydata.sty
 Package: latex2pydata 2025/03/03 v0.5.0 latex2pydata - write data to file in Python literal format
@@ -1502,15 +1497,15 @@ Package: pgfopts 2014/07/10 v2.1a LaTeX package options with pgfkeys
 \pgfopts@list@add@b@toks=\toks57
 ) (/usr/local/texlive/2025/texmf-dist/tex/latex/float/float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count537
+\c@float@type=\count534
 \float@exts=\toks58
 \float@box=\box99
 \@float@everytoks=\toks59
 \@floatcapt=\box100
 )
-\c@minted@FancyVerbLineTemp=\count538
+\c@minted@FancyVerbLineTemp=\count535
 \@float@every@listing=\toks60
-\c@listing=\count539
+\c@listing=\count536
 )
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
@@ -1519,26 +1514,26 @@ Package csquotes Info: Redefining alias 'default' -> 'dutch'.
  (./DevlooManuBP.aux)
 \openout1 = `DevlooManuBP.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 74.
+LaTeX Font Info:    ... okay on input line 74.
 Package biblatex Info: Trying to load language 'dutch' -> 'dutch-apa'...
 Package biblatex Info: ... file 'dutch-apa.lbx' found.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/biblatex-apa/dutch-apa.lbx
@@ -1560,17 +1555,17 @@ Package biblatex Info: Automatic encoding selection.
 \openout3 = `DevlooManuBP.bcf'.
 
 Package biblatex Info: Trying to load bibliographic data...
-Package biblatex Info: ... file 'DevlooManuBP.bbl' not found.
-
-No file DevlooManuBP.bbl.
-Package biblatex Info: Reference section=0 on input line 76.
-Package biblatex Info: Reference segment=0 on input line 76.
+Package biblatex Info: ... file 'DevlooManuBP.bbl' found.
+ (./DevlooManuBP.bbl)
+Package biblatex Info: Reference section=0 on input line 74.
+Package biblatex Info: Reference segment=0 on input line 74.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: rotating package is loaded.
 Package caption Info: wrapfig package is loaded.
 Package caption Info: End \AtBeginDocument code.
+
 *geometry* detected driver: xetex
 *geometry* verbose mode - [ preamble ] result:
 * driver: xetex
@@ -1604,7 +1599,7 @@ Package caption Info: End \AtBeginDocument code.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 76.
+Package hyperref Info: Link coloring ON on input line 74.
 (./DevlooManuBP.out) (./DevlooManuBP.out)
 \@outlinefile=\write6
 \openout6 = `DevlooManuBP.out'.
@@ -1621,13 +1616,13 @@ Package pdflscape Info: Auto-detected driver: dvipdfm (xetex) on input line 98.
 Package microtype Info: Patching varwidth to enable character protrusion.
 \MT@vwid@leftmargin=\dimen350
 \MT@vwid@rightmargin=\dimen351
-LaTeX Info: Redefining \microtypecontext on input line 76.
-Package microtype Info: Applying patch `item' on input line 76.
-Package microtype Info: Applying patch `toc' on input line 76.
-Package microtype Info: Applying patch `eqnum' on input line 76.
-Package microtype Info: Applying patch `footnote' on input line 76.
-Package microtype Info: Applying patch `verbatim' on input line 76.
-LaTeX Info: Redefining \microtypesetup on input line 76.
+LaTeX Info: Redefining \microtypecontext on input line 74.
+Package microtype Info: Applying patch `item' on input line 74.
+Package microtype Info: Applying patch `toc' on input line 74.
+Package microtype Info: Applying patch `eqnum' on input line 74.
+Package microtype Info: Applying patch `footnote' on input line 74.
+Package microtype Info: Applying patch `verbatim' on input line 74.
+LaTeX Info: Redefining \microtypesetup on input line 74.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: No adjustment of tracking.
@@ -1637,7 +1632,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `Montserrat' (encoding: TU).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-Package hyperref Info: Option `pageanchor' set `false' on input line 82.
+Package hyperref Info: Option `pageanchor' set `false' on input line 80.
 *geometry* verbose mode - [ newgeometry ] result:
 * driver: xetex
 * paper: a4paper
@@ -1671,34 +1666,34 @@ Package hyperref Info: Option `pageanchor' set `false' on input line 82.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 
-Overfull \hbox (47.27733pt too wide) in paragraph at lines 93--93
+Overfull \hbox (47.27733pt too wide) in paragraph at lines 91--91
 []\TU/Montserrat(0)/b/n/24.88 Dynamisch Docker-omgevingbeheer voor
  []
 
 
-Overfull \hbox (3.2397pt too wide) in paragraph at lines 93--93
+Overfull \hbox (3.2397pt too wide) in paragraph at lines 91--91
 \TU/Montserrat(0)/b/n/24.88 CTF-events op on-prem infrastructuur. 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 93--93
+Underfull \hbox (badness 10000) in paragraph at lines 91--91
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 93--93
+Underfull \hbox (badness 10000) in paragraph at lines 91--91
 
  []
 
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 93 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 91 replaced by U+FFFD.
 File: ../graphics/hogent_logo.eps Graphic file (type eps)
 <../graphics/hogent_logo.eps>
 
@@ -1711,14 +1706,29 @@ File: ../graphics/hogent_logo.eps Graphic file (type eps)
 ]
 
 [2]
-Package hyperref Info: Option `pageanchor' set `true' on input line 94.
- (./voorwoord.tex) (./samenvatting.tex
+Package hyperref Info: Option `pageanchor' set `true' on input line 92.
+ (./voorwoord.tex
+Overfull \hbox (3.06885pt too wide) in paragraph at lines 14--15
+\TU/Montserrat(1)/m/n/10.95 bachelor toegepaste informatica aan HOGENT. Mijn interesse in cybersecurity, naast
+ []
+
+) (./samenvatting.tex
 
 [3
 
 
 
-])
+]
+Overfull \hbox (4.64053pt too wide) in paragraph at lines 50--51
+[]\TU/Montserrat(1)/m/n/10.95 Deze bachelorproef onderzoekt hoe Docker-containers die gekoppeld zijn aan CTFd-
+ []
+
+)
+Overfull \hbox (1.97017pt too wide) in paragraph at lines 54--96
+[]\TU/Montserrat(1)/m/n/10.95 De oplossing wordt gevalideerd met een testplan dat functionele tests, beveiligings-
+ []
+
+
 
 [4
 
@@ -1762,10 +1772,19 @@ Package hyperref Info: Option `pageanchor' set `true' on input line 94.
 ] (./inleiding.tex
 Hoofdstuk 1.
 
-LaTeX Warning: Citation 'Innovirtuoso2025' on page 1 undefined on input line 8.
+Overfull \hbox (2.05147pt too wide) in paragraph at lines 10--11
+\TU/Montserrat(1)/m/n/10.95 schaalbare infrastructuur om dergelijke challenges betrouwbaar aan te bieden. Mo-
+ []
 
 
-LaTeX Warning: Citation 'Singier2025' on page 1 undefined on input line 10.
+Overfull \hbox (23.84682pt too wide) in paragraph at lines 10--11
+\TU/Montserrat(1)/m/n/10.95 menteel worden challenges op eigen infrastructuur vaak manueel of semi-automatisch
+ []
+
+
+Overfull \hbox (6.6473pt too wide) in paragraph at lines 10--11
+\TU/Montserrat(1)/m/n/10.95 beheerd, wat leidt tot operationele overhead, beveiligingsrisico’s en schaalbaarheids-
+ []
 
 
 
@@ -1779,31 +1798,17 @@ LaTeX Warning: Citation 'Singier2025' on page 1 undefined on input line 10.
 [3]
 Hoofdstuk 2.
 
-LaTeX Warning: Citation 'Innovirtuoso2025' on page 4 undefined on input line 10.
-
-
 
 [4
 
 ]
-
-LaTeX Warning: Citation 'CTFd' on page 5 undefined on input line 26.
-
-
-LaTeX Warning: Citation 'CTFdGitHub' on page 5 undefined on input line 33.
+Overfull \hbox (0.79124pt too wide) in paragraph at lines 34--35
+[]\TU/Montserrat(2)/b/n/10.95 rCTF\TU/Montserrat(1)/m/n/10.95 : een alternatief platform ontwikkeld door het redpwn-team ([]redpwn, [][]z.d.[][]). 
+ []
 
 
-LaTeX Warning: Citation 'rCTF' on page 5 undefined on input line 34.
-
-
-LaTeX Warning: Citation 'kCTF' on page 5 undefined on input line 35.
-
-
-LaTeX Warning: Citation 'CTFdGitHub' on page 5 undefined on input line 42.
-
-
-Overfull \hbox (86.57205pt too wide) in paragraph at lines 42--43
-\TU/Montserrat(1)/m/n/10.95 CTFd is een open-source CTF-platform gebouwd in Python met het Flask-framework ([]).
+Overfull \hbox (40.92151pt too wide) in paragraph at lines 42--43
+\TU/Montserrat(1)/m/n/10.95 CTFd is een open-source CTF-platform gebouwd in Python met het Flask-framework ([]CTFd
  []
 
 Package microtype Info: Loading generic protrusion settings for font family
@@ -1811,27 +1816,8 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-LaTeX Warning: Citation 'CTFdGitHub' on page 5 undefined on input line 50.
-
-
-LaTeX Warning: Citation 'CTFdWhale' on page 5 undefined on input line 54.
-
-
 
 [5]
-
-LaTeX Warning: Citation 'Arxiv2024' on page 6 undefined on input line 62.
-
-
-LaTeX Warning: Citation 'DockerEngineAPI' on page 6 undefined on input line 68.
-
-
-LaTeX Warning: Citation 'DockerSDKPython' on page 6 undefined on input line 72.
-
-
-LaTeX Warning: Citation 'DockerCompose' on page 6 undefined on input line 76.
-
-
 Overfull \hbox (22.29555pt too wide) in paragraph at lines 76--77
 \TU/Montserrat(1)/m/n/10.95 configuraties biedt Compose een declaratieve manier om containerparameters (image,
  []
@@ -1839,42 +1825,21 @@ Overfull \hbox (22.29555pt too wide) in paragraph at lines 76--77
 
 
 [6]
-
-LaTeX Warning: Citation 'OWASP2024' on page 7 undefined on input line 108.
-
-
-LaTeX Warning: Citation 'Aikido2025' on page 7 undefined on input line 108.
-
-
-LaTeX Warning: Citation 'CISDocker' on page 7 undefined on input line 119.
-
-
-LaTeX Warning: Citation 'NVD' on page 7 undefined on input line 123.
+Overfull \hbox (38.42491pt too wide) in paragraph at lines 119--120
+\TU/Montserrat(1)/m/n/10.95 breide checklist van aanbevolen beveiligingsinstellingen voor Docker-hosts en -containers. 
+ []
 
 
 
 [7]
-
-LaTeX Warning: Citation 'kCTF' on page 8 undefined on input line 135.
-
-
-Overfull \hbox (29.48605pt too wide) in paragraph at lines 135--136
-\TU/Montserrat(1)/m/n/10.95 Kubernetes is het de-facto standaardplatform voor containerorkestratie op schaal ([]).
+Overfull \hbox (36.66925pt too wide) in paragraph at lines 135--136
+\TU/Montserrat(1)/m/n/10.95 Kubernetes is het de-facto standaardplatform voor containerorkestratie op schaal ([]Google,
  []
 
 
-LaTeX Warning: Citation 'DockerSwarm' on page 8 undefined on input line 140.
-
-
-Overfull \hbox (79.03845pt too wide) in paragraph at lines 140--141
-[]\TU/Montserrat(2)/b/n/10.95 Docker Swarm\TU/Montserrat(1)/m/n/10.95 : Docker’s ingebouwde orkestratielaag voor meerdere nodes ([]).
+Overfull \hbox (17.80608pt too wide) in paragraph at lines 140--141
+[]\TU/Montserrat(2)/b/n/10.95 Docker Swarm\TU/Montserrat(1)/m/n/10.95 : Docker’s ingebouwde orkestratielaag voor meerdere nodes ([]Doc-
  []
-
-
-LaTeX Warning: Citation 'Traefik' on page 8 undefined on input line 141.
-
-
-LaTeX Warning: Citation 'HAProxy' on page 8 undefined on input line 142.
 
 ) (./methodologie.tex
 
@@ -1885,61 +1850,137 @@ Overfull \hbox (5.74162pt too wide) in paragraph at lines 14--15
 \TU/Montserrat(1)/m/n/10.95 maatregelen die in de literatuurstudie zijn geïdentificeerd. De schaalbaarheid wordt
  []
 
-
-LaTeX Warning: Citation 'k6' on page 9 undefined on input line 16.
-
-
-LaTeX Warning: Citation 'Locust' on page 9 undefined on input line 16.
-
 ) (./huidigesituatie.tex
 
 [9
 
 ]
 Hoofdstuk 4.
-) (./gewenstesituatie.tex
+
+Overfull \hbox (63.7647pt too wide) in paragraph at lines 16--17
+\TU/Montserrat(1)/m/n/10.95 ners op een Docker-host. De deelnemer krijgt vervolgens een URL of een host/poortcombinatie
+ []
+
+
+Overfull \hbox (6.64366pt too wide) in paragraph at lines 22--23
+\TU/Montserrat(1)/m/n/10.95 Docker-images beheren, poortmapping instellen, DNS- of reverse-proxyconfiguratie
+ []
+
+
 
 [10
 
 ]
+Overfull \hbox (33.76753pt too wide) in paragraph at lines 30--31
+\TU/Montserrat(1)/m/n/10.95 gebouwde orkestratie voor het per gebruiker/team opstarten van service-instanties ([]CTFd
+ []
+
+
+Overfull \hbox (6.62787pt too wide) in paragraph at lines 30--31
+\TU/Montserrat(1)/m/n/10.95 LLC, [][]z.d.[][]). Voor dynamische deployments bestaan er community-plugins, zoals CTFd-
+ []
+
+
+Overfull \hbox (10.74478pt too wide) in paragraph at lines 32--33
+[]\TU/Montserrat(1)/m/n/10.95 Hoewel dergelijke oplossingen een goed vertrekpunt vormen, voldoet een bestaande
+ []
+
+
+Overfull \hbox (4.29378pt too wide) in paragraph at lines 45--46
+[]\TU/Montserrat(1)/m/n/10.95 schaalbaar omgaat met piekbelasting zonder dat organisatoren manueel moe-
+ []
+
+) (./gewenstesituatie.tex
+
+[11]
 Hoofdstuk 5.
 
-Overfull \hbox (9.57294pt too wide) in paragraph at lines 53--53
+Overfull \hbox (12.07558pt too wide) in paragraph at lines 22--23
+[]\TU/Montserrat(1)/m/n/10.95 netwerkisolatie afdwingen tussen instanties van verschillende gebruikers/teams
+ []
+
+
+Overfull \hbox (5.58005pt too wide) in paragraph at lines 25--26
+[]\TU/Montserrat(1)/m/n/10.95 een overzicht bieden van actieve instanties, inclusief eigenaar (gebruiker/team),
+ []
+
+
+
+[12
+
+]
+Overfull \hbox (9.31616pt too wide) in paragraph at lines 34--35
+[]\TU/Montserrat(2)/b/n/10.95 Beveiliging\TU/Montserrat(1)/m/n/10.95 : veilige standaardinstellingen en een minimale aanvalsoppervlakte,
+ []
+
+
+Overfull \hbox (25.83969pt too wide) in paragraph at lines 45--46
+\TU/Montserrat(1)/m/n/10.95 De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem ([]CTFd
+ []
+
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `FiraMathRegular' (encoding: TU).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+LaTeX Font Info:    Font shape `TU/FiraMathRegular(2)/m/n' will be
+(Font)              scaled to size 10.95116pt on input line 51.
+LaTeX Font Info:    Font shape `TU/FiraMathRegular(2)/m/n' will be
+(Font)              scaled to size 7.88484pt on input line 51.
+LaTeX Font Info:    Font shape `TU/FiraMathRegular(2)/m/n' will be
+(Font)              scaled to size 6.35167pt on input line 51.
+LaTeX Font Info:    Font shape `TU/FiraMathRegular(3)/m/n' will be
+(Font)              scaled to size 10.94882pt on input line 51.
+LaTeX Font Info:    Font shape `TU/FiraMathRegular(3)/m/n' will be
+(Font)              scaled to size 7.88315pt on input line 51.
+LaTeX Font Info:    Font shape `TU/FiraMathRegular(3)/m/n' will be
+(Font)              scaled to size 6.35031pt on input line 51.
+
+Overfull \hbox (3.59958pt too wide) in paragraph at lines 51--52
+\TU/Montserrat(1)/m/n/10.95 bruiker/team $[]$ container) en past beleidsregels toe (timeouts, quota, resource-
+ []
+
+
+Overfull \hbox (4.57481pt too wide) in paragraph at lines 53--54
+[]\TU/Montserrat(2)/b/n/10.95 Reverse proxy\TU/Montserrat(1)/m/n/10.95 : fungeert als toegangspunt en routeert verkeer naar dynamisch
+ []
+
+
+
+[13]
+Overfull \hbox (9.57294pt too wide) in paragraph at lines 66--66
 |[][]\TU/Montserrat(0)/b/n/14.4 Granulariteitsbeslissing: container per gebruiker of per
  []
 
-) (./poc.tex
 
-[11
+Overfull \hbox (3.5516pt too wide) in paragraph at lines 87--88
+\TU/Montserrat(1)/m/n/10.95 dere Docker-hosts. Voor taakverdeling over meerdere hosts kan Docker Swarm
+ []
 
-]
+
+
+[14]) (./poc.tex
+
+[15]
 Hoofdstuk 6.
 ) (./validatie.tex
 
-[12
+[16
 
 ]
 Hoofdstuk 7.
 ) (./conclusie.tex
 
-[13
+[17
 
 ]
 Hoofdstuk 8.
 )
 
-[14
+[18
 
 ]
 B\ij lage A.
 (../voorstel/voorstel-inhoud.tex
-
-LaTeX Warning: Citation 'Innovirtuoso2025' on page 15 undefined on input line 6.
-
-
-LaTeX Warning: Citation 'Singier2025' on page 15 undefined on input line 6.
-
-
 Overfull \hbox (5.1333pt too wide) in paragraph at lines 6--7
 \TU/Montserrat(1)/m/n/10.95 Dit onderzoeksvoorstel richt zich op het dynamisch beheer van Docker-omgevingen
  []
@@ -1951,7 +1992,7 @@ Overfull \hbox (12.56468pt too wide) in paragraph at lines 9--10
 
 
 
-[15
+[19
 
 ]
 Overfull \hbox (23.05838pt too wide) in paragraph at lines 23--24
@@ -1964,25 +2005,13 @@ Overfull \hbox (3.16592pt too wide) in paragraph at lines 24--25
  []
 
 
-LaTeX Warning: Citation 'CTFd' on page 16 undefined on input line 45.
 
-
-Overfull \hbox (26.1463pt too wide) in paragraph at lines 45--46
-\TU/Montserrat(1)/m/n/10.95 Er is al documentatie beschikbaar over het deployen van challenges binnen CTFd ([]).
+[20]
+Overfull \hbox (22.08385pt too wide) in paragraph at lines 45--46
+\TU/Montserrat(1)/m/n/10.95 Er is al documentatie beschikbaar over het deployen van challenges binnen CTFd ([]CTFd,
  []
 
 
-LaTeX Warning: Citation 'OWASP2024' on page 16 undefined on input line 47.
-
-
-LaTeX Warning: Citation 'Aikido2025' on page 16 undefined on input line 47.
-
-
-LaTeX Warning: Citation 'Arxiv2024' on page 16 undefined on input line 49.
-
-
-
-[16]
 Overfull \hbox (7.8002pt too wide) in paragraph at lines 59--60
 \TU/Montserrat(1)/m/n/10.95 omgeving wordt opgezet die communiceert met een Docker-daemon. Hierbij wordt
  []
@@ -1993,71 +2022,81 @@ Overfull \hbox (1.57451pt too wide) in paragraph at lines 67--69
  []
 
 
+
+[21]
 Overfull \hbox (11.78868pt too wide) in paragraph at lines 73--74
 []\TU/Montserrat(1)/m/n/10.95 Technische documentatie van de ontwikkelde architectuur, zodat derden hierop
  []
 
 )
 
-[17]
-
-[18]
+[22]
 B\ij lage B.
 
 
-[19
+[23
 
 ]
 B\ij lage C.
 
 
-[20
+[24
 
 ]
 B\ij lage D.
 
 
-[21
+[25
 
 ]
 B\ij lage E.
 
 
-[22
+[26
+
+]
+Overfull \hbox (4.76299pt too wide) in paragraph at lines 191--191
+\TU/Montserrat(1)/m/n/10.95 gen november 28, 2025, van [][]$[][][][][] [] [] [] [][][] [] [][][][][][] [] [][][] [] [][][][] [] [][][][][][] [][] [][][][][][][][][][] [][]
+ []
+
+
+Overfull \hbox (16.88676pt too wide) in paragraph at lines 191--191
+\TU/Montserrat(2)/m/it/10.95 Turn You Into a Cyber Pro\TU/Montserrat(1)/m/n/10.95 . Verkregen december 11, 2025, van [][]$[][][][][] [] [] [] [][][][][][][][][][][][] []
+ []
+
+
+Overfull \hbox (20.58705pt too wide) in paragraph at lines 191--191
+[][][] [] [][][][][][][][][][][][][] [] [][][][][][][] [][] [][][] [][] [][][][] [][] [][][] [][] [][][][][][][][][] [][] [][][] [][] [][][][][][][] [][] [][][][][][][][][][][][] [][]
+ []
+
+
+
+[27
+
 
 ]
 
-LaTeX Warning: Empty bibliography on input line 193.
+[28]
+runsystem(latexminted cleantemp  --timestamp 20260222102349 4379515D007F3BC40C2F41FACA92D39B)...executed.
 
-runsystem(latexminted cleantemp  --timestamp 20260222095521 4379515D007F3BC40C2F41FACA92D39B)...executed.
-
-(./DevlooManuBP.aux)
+ (./DevlooManuBP.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
 Package rerunfilecheck Info: File `DevlooManuBP.out' has not changed.
-(rerunfilecheck)             Checksum: 99BB77FFAF66B69F7D0C93B498885BC2;16099.
-
-Package biblatex Warning: Please (re)run Biber on the file:
-(biblatex)                DevlooManuBP
-(biblatex)                and rerun LaTeX afterwards.
-
+(rerunfilecheck)             Checksum: 68D3D86328B31677C9556BF15D75D331;16646.
 Package logreq Info: Writing requests to 'DevlooManuBP.run.xml'.
 \openout1 = `DevlooManuBP.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 49788 strings out of 473832
- 1024744 string characters out of 5729481
- 2274134 words of memory out of 5000000
- 72081 multiletter control sequences out of 15000+600000
- 560126 words of font info for 89 fonts, out of 8000000 for 9000
+ 49651 strings out of 473832
+ 1023363 string characters out of 5729481
+ 2184206 words of memory out of 5000000
+ 71935 multiletter control sequences out of 15000+600000
+ 561849 words of font info for 102 fonts, out of 8000000 for 9000
  1349 hyphenation exceptions out of 8191
- 110i,12n,131p,1238b,5925s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 110i,12n,131p,1238b,5923s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on DevlooManuBP.pdf (32 pages).
+Output written on DevlooManuBP.pdf (38 pages).

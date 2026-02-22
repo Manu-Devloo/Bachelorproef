@@ -11,37 +11,39 @@ Dit hoofdstuk analyseert hoe CTF-events vandaag worden georganiseerd op eigen in
 \section{Organisatie van CTF-events op eigen infrastructuur}%
 \label{sec:asis-organisatie}
 
-% TODO: Beschrijf hoe CTF-events vandaag typisch worden georganiseerd op
-% on-premise infrastructuur. Welke tools en processen worden gebruikt?
-% Verwijs naar gesprekken met organisatoren of bestaande documentatie.
-% Bronverwijzingen: \autocite{CTFd}, \autocite{Singier2025}
+Bij een on-premise CTF-opzet draait een centraal platform (zoals CTFd) voor gebruikersbeheer, challenges en scoring. Challenges die enkel uit een beschrijving en een download bestaan, vergen weinig infrastructuur. Service-gebaseerde challenges (bijv.\ een webapplicatie die aangevallen moet worden) vereisen echter een runtime-omgeving die voor deelnemers bereikbaar is.
+
+In veel opzetten wordt die runtime-omgeving gescheiden van het platform beheerd: de organisator bouwt een Docker-image en start één of meerdere containers op een Docker-host. De deelnemer krijgt vervolgens een URL of een host/poortcombinatie om de challenge te bereiken. De documentatie van CTFd beschrijft dit principe expliciet: de challenge-service wordt extern uitgerold en daarna gelinkt vanuit het platform~\autocite{CTFd}. Op basis van gesprekken en beschikbare interne documentatie blijkt dat deze werkwijze vaak handmatig of met beperkte automatisering wordt uitgevoerd~\autocite{Singier2025}.
 
 %%----------------------------------------------------------------------
 \section{Manuele container deployments}%
 \label{sec:asis-manueel}
 
-% TODO: Bespreek hoe challenges vandaag worden uitgerold:
-% - handmatige docker run / docker-compose commando's
-% - scripts zonder foutafhandeling
-% - geen geautomatiseerd opruimen van gestopte containers
-% Welke problemen en beperkingen zijn hier aan verbonden?
+Wanneer challenge-containers manueel worden uitgerold, gebeurt dit doorgaans via \texttt{docker run} of \texttt{docker compose}. Organisatoren moeten daarbij onder meer Docker-images beheren, poortmapping instellen, DNS- of reverse-proxyconfiguratie voorzien en containers opruimen na afloop. Tijdens een event, met piekbelasting en veel gelijktijdige deelnemers, zorgt dit voor operationele overhead en een verhoogde kans op fouten.
+
+Bovendien ontbreken bij manuele uitrol vaak centrale beleidsregels. Zonder consistente standaardinstellingen voor resource-limieten en netwerkisolatie ontstaat het risico dat één of meerdere containers de host overbelasten of dat deelnemers elkaars instanties kunnen beïnvloeden. Ook het correct en tijdig verwijderen van containers (bijv.\ na een timeout) vereist bijkomende scripts en monitoring, wat niet in alle scenario's sluitend is.
 
 %%----------------------------------------------------------------------
 \section{Overzicht van bestaande tools en hun tekortkomingen}%
 \label{sec:asis-tools}
 
-% TODO: Geef een overzicht van de tools die vandaag gebruikt worden en
-% beschrijf hun beperkingen:
-% - CTFd zonder plugin: enkel statische challenges
-% - CTFd-Whale: \autocite{CTFdWhale} - bestaande plugin, maar beperkingen?
-% - Handmatige scripts: niet schaalbaar, geen isolatiegaranties
-% - Hosted platforms (bijv. CTFd cloud): niet self-hosted, kostprijs
+CTFd is in de basis gericht op het beheren van de wedstrijdlogica en bevat geen ingebouwde orkestratie voor het per gebruiker/team opstarten van service-instanties~\autocite{CTFdGitHub}. Voor dynamische deployments bestaan er community-plugins, zoals CTFd-Whale~\autocite{CTFdWhale}, die proberen containerbeheer te integreren in het platform.
+
+Hoewel dergelijke oplossingen een goed vertrekpunt vormen, voldoet een bestaande tool niet automatisch aan de randvoorwaarden van dit onderzoek: volledig self-hosted inzetbaar, zonder terugkerende kosten, met een voorkeur voor open-source componenten en met voldoende controle over beveiligingsinstellingen en afhankelijkheden. Een alternatief is het gebruik van eigen scripts en conventies, maar dan ontbreekt doorgaans een nauwe koppeling met gebruikersacties in CTFd en is het moeilijker om uniforme beleidsregels (isolatie, quota, timeouts) af te dwingen.
+
+Tot slot bestaan er gehoste of cloud-gebaseerde platformen, maar die vallen buiten de scope van deze bachelorproef wanneer organisaties omwille van privacy, controle of koststructuur op eigen hardware willen blijven.
 
 %%----------------------------------------------------------------------
 \section{Conclusie: wat ontbreekt er?}%
 \label{sec:asis-conclusie}
 
-% TODO: Formuleer op basis van de analyse welke elementen ontbreken in de
-% huidige aanpak. Dit vormt de directe input voor de TO-BE beschrijving.
-% Denk aan: automatisering, isolatie, resource-beheer, schaalbaarheid,
-% gebruiksgemak voor organisatoren.
+Uit de analyse volgt dat de huidige aanpak vooral tekortschiet op het vlak van automatisering en afdwingbaarheid. Concreet ontbreekt er een mechanisme dat:
+
+\begin{itemize}
+  \item de containerlevenscyclus rechtstreeks koppelt aan acties in CTFd (start/stop, timeouts en automatisch opruimen);
+  \item beveiligings- en resourcebeleid standaard toepast (CPU/RAM-limieten, netwerkisolatie en veilige standaardinstellingen);
+  \item schaalbaar omgaat met piekbelasting zonder dat organisatoren manueel moeten ingrijpen;
+  \item beheer en monitoring vereenvoudigt (overzicht van actieve instanties en toewijzing aan gebruiker/team).
+\end{itemize}
+
+Deze ontbrekende elementen vormen de input voor de gewenste situatie (TO-BE) en de ontwerpkeuzes van de proof-of-concept.

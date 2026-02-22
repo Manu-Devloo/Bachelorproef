@@ -7,7 +7,7 @@
 
 Capture The Flag (CTF)-events zijn cybersecuritywedstrijden waarbij deelnemers technische uitdagingen oplossen om punten te scoren~\autocite{Innovirtuoso2025}. Ze worden georganiseerd door hogescholen, universiteiten, bedrijven en onafhankelijke gemeenschappen als educatieve en competitieve oefeningen. Elke deelnemer of elk team werkt aan zogenaamde \textit{challenges}: geïsoleerde omgevingen met een kwetsbaarheid die uitgebuit moet worden om een \textit{flag} te bemachtigen.
 
-Naarmate CTF-events populairder worden, groeit ook de behoefte aan robuuste, schaalbare infrastructuur om deze challenges te hosten. Vandaag de dag worden challenges op eigen infrastructuur dikwijls manueel of semi-automatisch beheerd, wat leidt tot operationele overhead, beveiligingsrisico's en schaalbaarheidsknelpunten~\autocite{Singier2025}.
+Naarmate CTF-events populairder worden, groeit ook de behoefte aan robuuste, schaalbare infrastructuur om dergelijke challenges betrouwbaar aan te bieden. Momenteel worden challenges op eigen infrastructuur vaak manueel of semi-automatisch beheerd, wat leidt tot operationele overhead, beveiligingsrisico's en schaalbaarheidsknelpunten~\autocite{Singier2025}.
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
@@ -18,10 +18,10 @@ Bij het organiseren van CTF-events op eigen (on-premise) infrastructuur is het d
   \item Manuele interventie bij het opstarten en stopzetten van containers kost tijd en is foutgevoelig.
   \item Er is geen gegarandeerde isolatie tussen containers van verschillende teams of gebruikers.
   \item Resource-uitputting (CPU, RAM) door ongecontroleerde containers vormt een risico voor de stabiliteit van de host.
-  \item Bestaande cloud-gebaseerde platforms (bijv. hosted CTFd) zijn niet altijd geschikt voor organisaties die werken met privédata of op eigen hardware willen draaien.
+  \item Bestaande cloud-gebaseerde platformen (bijv.\ gehoste CTFd-diensten) zijn niet altijd geschikt voor organisaties die werken met privédata of op eigen hardware willen draaien.
 \end{itemize}
 
-De doelgroep van dit onderzoek zijn CTF-organisatoren en systeembeheerders die events hosten op eigen on-premise infrastructuur en op zoek zijn naar een geautomatiseerde, veilige en schaalbare oplossing.
+De doelgroep van dit onderzoek zijn CTF-organisatoren en systeembeheerders die events organiseren op eigen on-premise infrastructuur en op zoek zijn naar een geautomatiseerde, veilige en schaalbare oplossing.
 
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
@@ -49,7 +49,7 @@ Het beoogde resultaat van deze bachelorproef is een werkende proof-of-concept (P
 \section{\IfLanguageName{dutch}{Scope en afbakening}{Scope}}%
 \label{sec:scope}
 
-Dit onderzoek beperkt zich tot on-premise, self-hosted omgevingen. Kubernetes wordt bewust niet als primaire oplossing gekozen omwille van de operationele complexiteit die niet in verhouding staat met de schaal van een typisch CTF-event. Cloudplatforms en betaalde diensten vallen buiten scope. De focus ligt op open-source tooling die draait op standaard Linux-servers.
+Dit onderzoek beperkt zich tot on-premise, self-hosted omgevingen. Kubernetes wordt bewust niet als primaire oplossing gekozen omwille van de operationele complexiteit die niet in verhouding staat met de schaal van een doorsnee CTF-event. Cloudplatforms en betaalde diensten vallen buiten scope. De focus ligt op open-source tooling die draait op standaard Linux-servers.
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}

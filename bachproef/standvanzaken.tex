@@ -7,7 +7,7 @@ Dit hoofdstuk biedt de lezer alle achtergrondkennis die nodig is om de rest van 
 \section{Capture The Flag (CTF)}%
 \label{sec:ctf}
 
-Een Capture The Flag (CTF)-event is een cybersecuritywedstrijd waarbij deelnemers technische uitdagingen moeten oplossen om een geheime reeks tekens — de \textit{flag} — te bemachtigen en in te dienen voor punten~\autocite{Innovirtuoso2025}. CTF-events worden ingezet als educatief middel, als rekruteringstool en als competitieve sport binnen de cybersecuritygemeenschap.
+Een Capture The Flag (CTF)-event is een cybersecuritywedstrijd waarbij deelnemers technische uitdagingen moeten oplossen om een geheime reeks tekens, de zogenaamde \textit{flag}, te bemachtigen en in te dienen voor punten~\autocite{Innovirtuoso2025}. CTF-events worden ingezet als educatief middel, als rekruteringstool en als competitieve sport binnen de cybersecuritygemeenschap.
 
 \subsection{Types challenges}
 
@@ -43,7 +43,7 @@ CTFd is een open-source CTF-platform gebouwd in Python met het Flask-framework~\
 
 \subsection{Architectuur van CTFd}
 
-CTFd bestaat uit een Flask-backend, een relationele database (standaard SQLite, in productie MySQL of PostgreSQL) en een frontend op basis van Bootstrap. De applicatie draait typisch achter een reverse proxy zoals Nginx. Alle functionaliteit is bereikbaar via een REST API.
+CTFd bestaat uit een Flask-backend, een relationele database (standaard SQLite, in productie MySQL of PostgreSQL) en een frontend op basis van Bootstrap. De applicatie draait doorgaans achter een reverse proxy zoals Nginx. Alle functionaliteit is bereikbaar via een REST API.
 
 \subsection{Het plugin-systeem}
 
@@ -51,7 +51,7 @@ CTFd ondersteunt plugins die extra functionaliteit toevoegen aan het platform. E
 
 \subsection{Challenge-beheer en granulariteit}
 
-CTFd ondersteunt standaard statische challenges. Voor dynamische instanties — waarbij elke gebruiker of elk team een eigen containerinstantie krijgt — zijn plugins vereist, zoals de CTFd-Whale plugin~\autocite{CTFdWhale}. De granulariteit (container per gebruiker of per team) is een ontwerpbeslissing met impact op resource-gebruik en isolatie.
+CTFd ondersteunt standaard statische challenges. Voor dynamische instanties, waarbij elke gebruiker of elk team een eigen containerinstantie krijgt, zijn plugins vereist, zoals de CTFd-Whale plugin~\autocite{CTFdWhale}. De granulariteit (container per gebruiker of per team) is een ontwerpbeslissing met impact op resource-gebruik en isolatie.
 
 %%----------------------------------------------------------------------
 \section{Docker en containerisatie}%
@@ -103,17 +103,17 @@ Docker biedt verschillende netwerkmodi:
 
 Wanneer containers dynamisch worden aangemaakt op basis van gebruikersinvoer, ontstaan extra risico's: een kwaadaardige deelnemer kan proberen de configuratie te manipuleren om bevoorrechte toegang te krijgen of om resources te monopoliseren.
 
-\subsection{Low-hanging fruit: basismaatregelen}
+\subsection{Direct toepasbare basismaatregelen}
 
 De OWASP Docker Security Cheat Sheet~\autocite{OWASP2024} en artikelen over containerbeveiliging~\autocite{Aikido2025} identificeren een reeks basismaatregelen:
 
 \begin{itemize}
-  \item \textbf{Privilege management}: containers draaien standaard als root; dit moet worden voorkomen via \texttt{--user}.
-  \item \textbf{Read-only filesystems}: via \texttt{--read-only} worden schrijfacties beperkt.
-  \item \textbf{Capabilities droppen}: Linux capabilities die niet nodig zijn (bijv.\ \texttt{NET\_ADMIN}, \texttt{SYS\_ADMIN}) worden verwijderd via \texttt{--cap-drop ALL}.
+  \item \textbf{Privilegebeheer}: containers draaien standaard als root; dit wordt bij voorkeur vermeden via \texttt{--user}.
+  \item \textbf{Read-only bestandssysteem}: via \texttt{--read-only} worden schrijfacties beperkt.
+  \item \textbf{Capabilities beperken}: Linux capabilities die niet nodig zijn (bijv.\ \texttt{NET\_ADMIN}, \texttt{SYS\_ADMIN}) worden verwijderd via \texttt{--cap-drop ALL}.
   \item \textbf{Seccomp-profielen}: beperken de systeemoproepen die een container mag uitvoeren.
   \item \textbf{AppArmor/SELinux}: MAC-profielen die extra toegangscontrole bieden.
-  \item \textbf{No new privileges}: het \texttt{--security-opt no-new-privileges}-vlag voorkomt privilege-escalatie.
+  \item \textbf{No-new-privileges}: de optie \texttt{--security-opt no-new-privileges} voorkomt privilege-escalatie.
 \end{itemize}
 
 Het CIS Docker Benchmark~\autocite{CISDocker} biedt een uitgebreide checklist van aanbevolen beveiligingsinstellingen voor Docker-hosts en -containers.
