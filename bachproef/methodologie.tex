@@ -1,0 +1,16 @@
+%%=============================================================================
+%% Methodologie
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Methodologie}{Methodology}}%
+\label{ch:methodologie}
+
+Dit onderzoek combineert een literatuurstudie met praktijkgericht werk. Het verloopt in vier opeenvolgende fasen.
+
+\textbf{Fase 1 -- Literatuurstudie en begrippenkader} (Hoofdstuk~\ref{ch:stand-van-zaken}): Via literatuurstudie worden de relevante concepten en de state-of-the-art in kaart gebracht. De focus ligt op CTFd, de Docker Engine API, containerbeveiliging en load balancing op on-premise infrastructuur.
+
+\textbf{Fase 2 -- Analyse van de huidige en gewenste situatie} (Hoofdstukken~\ref{ch:huidige-situatie} en~\ref{ch:gewenste-situatie}): De huidige aanpak voor het beheren van CTF-challenges op eigen infrastructuur wordt geanalyseerd (AS-IS). Op basis hiervan en de literatuurstudie worden functionele en niet-functionele vereisten opgesteld en een architectuurvisie uitgetekend (TO-BE).
+
+\textbf{Fase 3 -- Proof-of-Concept} (Hoofdstuk~\ref{ch:poc}): Er wordt een werkende PoC ontwikkeld: een CTFd-plugin die via de Docker Engine API containers dynamisch beheert. De PoC implementeert resource-limieten, netwerkisolatie en de basisbeveiligingsmaatregelen die in de literatuurstudie zijn geïdentificeerd. De schaalbaarheid wordt getest met een multi-VM opzet en een reverse proxy.
+
+\textbf{Fase 4 -- Validatie en testing} (Hoofdstuk~\ref{ch:validatie}): De PoC wordt gevalideerd aan de hand van een testplan met functionele tests, beveiligingstests (container escape pogingen, resource exhaustion) en load tests met tools zoals k6~\autocite{k6} of Locust~\autocite{Locust}.

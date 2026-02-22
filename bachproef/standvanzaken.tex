@@ -1,0 +1,148 @@
+\chapter{\IfLanguageName{dutch}{Achtergrond en begrippenkader}{Background and terminology}}%
+\label{ch:stand-van-zaken}
+
+Dit hoofdstuk biedt de lezer alle achtergrondkennis die nodig is om de rest van de bachelorproef te begrijpen. Iemand die niet vertrouwd is met CTF-events, Docker of containerbeveiliging, beschikt na het lezen van dit hoofdstuk over een solide basis. Achtereenvolgens komen CTF-events, het CTFd-platform, Docker en containerisatie, containerbeveiliging en load balancing zonder Kubernetes aan bod.
+
+%%----------------------------------------------------------------------
+\section{Capture The Flag (CTF)}%
+\label{sec:ctf}
+
+Een Capture The Flag (CTF)-event is een cybersecuritywedstrijd waarbij deelnemers technische uitdagingen moeten oplossen om een geheime reeks tekens — de \textit{flag} — te bemachtigen en in te dienen voor punten~\autocite{Innovirtuoso2025}. CTF-events worden ingezet als educatief middel, als rekruteringstool en als competitieve sport binnen de cybersecuritygemeenschap.
+
+\subsection{Types challenges}
+
+CTF-challenges zijn doorgaans opgedeeld in categorieën:
+
+\begin{itemize}
+  \item \textbf{Web}: kwetsbaarheden in webapplicaties zoals SQL-injectie, Cross-Site Scripting (XSS) en onveilige autorisatie.
+  \item \textbf{Pwn (Binary Exploitation)}: het exploiteren van kwetsbaarheden in gecompileerde binaire bestanden, bijv.\ buffer overflows.
+  \item \textbf{Reverse Engineering}: analyse en begrip van gecompileerde software zonder broncode.
+  \item \textbf{Cryptografie}: het kraken of omzeilen van cryptografische systemen en protocollen.
+  \item \textbf{Forensics}: het reconstrueren van gebeurtenissen uit digitale artefacten zoals logbestanden, geheugenafbeeldingen of netwerkopnamen.
+\end{itemize}
+
+\subsection{Deployment van challenges: statisch vs.\ dynamisch}
+
+Challenges kunnen op twee manieren worden uitgerold. Bij een \textbf{statische deployment} wordt één gedeelde instantie van de challenge opgezet die alle deelnemers tegelijk gebruiken. Dit is eenvoudig te beheren, maar brengt risico's mee: één deelnemer kan de omgeving voor alle anderen beïnvloeden. Bij een \textbf{dynamische deployment} krijgt elk team of elke gebruiker een eigen, geïsoleerde containerinstantie. Dit verhoogt de integriteit van de wedstrijd maar vereist automatisering~\autocite{CTFd}.
+
+\subsection{Bekende CTF-platformen}
+
+De meest gebruikte platformen voor het organiseren van CTF-events zijn:
+
+\begin{itemize}
+  \item \textbf{CTFd}: het meest wijdverspreide open-source platform, met ondersteuning voor plugins~\autocite{CTFdGitHub}.
+  \item \textbf{rCTF}: een alternatief platform ontwikkeld door het redpwn-team~\autocite{rCTF}.
+  \item \textbf{kCTF}: een door Google ontwikkeld Kubernetes-gebaseerd platform, ontworpen voor grote-schaal events~\autocite{kCTF}.
+\end{itemize}
+
+%%----------------------------------------------------------------------
+\section{CTFd als platform}%
+\label{sec:ctfd}
+
+CTFd is een open-source CTF-platform gebouwd in Python met het Flask-framework~\autocite{CTFdGitHub}. Het biedt een gebruiksvriendelijke interface voor zowel organisatoren als deelnemers en is modulair uitbreidbaar via een plugin-systeem.
+
+\subsection{Architectuur van CTFd}
+
+CTFd bestaat uit een Flask-backend, een relationele database (standaard SQLite, in productie MySQL of PostgreSQL) en een frontend op basis van Bootstrap. De applicatie draait typisch achter een reverse proxy zoals Nginx. Alle functionaliteit is bereikbaar via een REST API.
+
+\subsection{Het plugin-systeem}
+
+CTFd ondersteunt plugins die extra functionaliteit toevoegen aan het platform. Een plugin is een Python-pakket dat in de \texttt{CTFd/plugins/}-map geplaatst wordt. Plugins kunnen nieuwe challenge-types registreren, routes toevoegen en bestaande logica uitbreiden~\autocite{CTFdGitHub}.
+
+\subsection{Challenge-beheer en granulariteit}
+
+CTFd ondersteunt standaard statische challenges. Voor dynamische instanties — waarbij elke gebruiker of elk team een eigen containerinstantie krijgt — zijn plugins vereist, zoals de CTFd-Whale plugin~\autocite{CTFdWhale}. De granulariteit (container per gebruiker of per team) is een ontwerpbeslissing met impact op resource-gebruik en isolatie.
+
+%%----------------------------------------------------------------------
+\section{Docker en containerisatie}%
+\label{sec:docker}
+
+\subsection{Wat is Docker?}
+
+Docker is een platform voor het bouwen, distribueren en draaien van applicaties in containers~\autocite{Arxiv2024}. Een container is een geïsoleerd, lichtgewicht proces dat gebruikmaakt van Linux-kernelmechanismen (namespaces, cgroups) om te worden afgeschermd van andere processen en van de host.
+
+\textbf{Containers versus virtuele machines}: waar een virtuele machine een volledig besturingssysteem emuleert, deelt een container de kernel van de host. Dit maakt containers veel sneller op te starten en minder resource-intensief, maar vergt zorgvuldigere beveiligingsconfiguratie.
+
+\subsection{Docker Engine API}
+
+De Docker Engine API is een RESTful HTTP-API die het mogelijk maakt om programmatisch te communiceren met de Docker-daemon~\autocite{DockerEngineAPI}. Via deze API kunnen containers worden aangemaakt, gestart, gestopt en verwijderd, en kunnen netwerken en volumes worden beheerd. De API is de basis voor alle Docker-tooling, inclusief de Docker CLI.
+
+\subsection{Docker SDK voor Python}
+
+De Docker SDK voor Python is een officiële client-bibliotheek die de Docker Engine API omhult en in Python aanroept~\autocite{DockerSDKPython}. Het is de aanbevolen manier om Docker programmatisch te besturen vanuit Python-applicaties, zoals een CTFd-plugin.
+
+\subsection{Docker Compose}
+
+Docker Compose is een tool voor het definiëren en draaien van multi-container applicaties via een YAML-configuratiebestand~\autocite{DockerCompose}. Voor challenge-configuraties biedt Compose een declaratieve manier om containerparameters (image, netwerk, resource-limieten) te definiëren.
+
+\subsection{Resource management}
+
+Docker biedt mechanismen voor het beperken van resource-gebruik per container, gebaseerd op Linux cgroups:
+
+\begin{itemize}
+  \item CPU-limieten: \texttt{--cpus} en \texttt{--cpu-shares}
+  \item Geheugenlimieten: \texttt{--memory} en \texttt{--memory-swap}
+  \item I/O-limieten via \texttt{blkio}-cgroup-parameters
+\end{itemize}
+
+\subsection{Netwerkisolatie}
+
+Docker biedt verschillende netwerkmodi:
+
+\begin{itemize}
+  \item \textbf{Bridge}: de standaardmodus waarbij containers communiceren via een virtuele brug, maar gescheiden zijn van de host.
+  \item \textbf{None}: geen netwerktoegang.
+  \item \textbf{Custom overlay/bridge networks}: containers kunnen worden ingedeeld in geïsoleerde virtuele netwerken.
+\end{itemize}
+
+%%----------------------------------------------------------------------
+\section{Beveiliging van containers}%
+\label{sec:containerbeveiliging}
+
+\subsection{Beveiligingsrisico's bij dynamisch aanmaken van containers}
+
+Wanneer containers dynamisch worden aangemaakt op basis van gebruikersinvoer, ontstaan extra risico's: een kwaadaardige deelnemer kan proberen de configuratie te manipuleren om bevoorrechte toegang te krijgen of om resources te monopoliseren.
+
+\subsection{Low-hanging fruit: basismaatregelen}
+
+De OWASP Docker Security Cheat Sheet~\autocite{OWASP2024} en artikelen over containerbeveiliging~\autocite{Aikido2025} identificeren een reeks basismaatregelen:
+
+\begin{itemize}
+  \item \textbf{Privilege management}: containers draaien standaard als root; dit moet worden voorkomen via \texttt{--user}.
+  \item \textbf{Read-only filesystems}: via \texttt{--read-only} worden schrijfacties beperkt.
+  \item \textbf{Capabilities droppen}: Linux capabilities die niet nodig zijn (bijv.\ \texttt{NET\_ADMIN}, \texttt{SYS\_ADMIN}) worden verwijderd via \texttt{--cap-drop ALL}.
+  \item \textbf{Seccomp-profielen}: beperken de systeemoproepen die een container mag uitvoeren.
+  \item \textbf{AppArmor/SELinux}: MAC-profielen die extra toegangscontrole bieden.
+  \item \textbf{No new privileges}: het \texttt{--security-opt no-new-privileges}-vlag voorkomt privilege-escalatie.
+\end{itemize}
+
+Het CIS Docker Benchmark~\autocite{CISDocker} biedt een uitgebreide checklist van aanbevolen beveiligingsinstellingen voor Docker-hosts en -containers.
+
+\subsection{Container escape}
+
+Een container escape is een aanval waarbij een kwaadaardige actor de isolatielaag van de container doorbreekt en toegang verkrijgt tot de host of andere containers. Bekende technieken maken gebruik van kwetsbaarheden in de Docker-daemon, misbruik van gemounte sockets (\texttt{/var/run/docker.sock}) of misconfiguraties (bijv.\ privileged mode)~\autocite{NVD}.
+
+\subsection{Resource exhaustion en DoS-risico's}
+
+Zonder resource-limieten kan een deelnemer de hostserver overbelasten door een excessief aantal containers te starten of door een container alle CPU- en geheugencapaciteit te laten consumeren. Dit vormt een \textit{Denial-of-Service} (DoS)-risico voor alle overige deelnemers.
+
+%%----------------------------------------------------------------------
+\section{Load balancing zonder Kubernetes}%
+\label{sec:loadbalancing}
+
+\subsection{Waarom geen Kubernetes?}
+
+Kubernetes is het de-facto standaardplatform voor containerorkestratie op schaal~\autocite{kCTF}. Het biedt ingebouwde load balancing, automatische schaling en zelfherstel. Voor kleinschalige CTF-events wegen de voordelen echter niet op tegen de operationele complexiteit: Kubernetes vereist een substantieel cluster, diepgaande kennis en aanzienlijke overhead voor beheer.
+
+\subsection{Alternatieven}
+
+\begin{itemize}
+  \item \textbf{Docker Swarm}: Docker's ingebouwde orkestratielaag voor meerdere nodes~\autocite{DockerSwarm}. Eenvoudiger dan Kubernetes, maar minder uitgebreid.
+  \item \textbf{Traefik}: een dynamische reverse proxy die automatisch routes configureert op basis van Docker-labels~\autocite{Traefik}. Ideaal als \textit{entry point} voor dynamisch aangemaakte containers.
+  \item \textbf{HAProxy}: een betrouwbare, performante TCP/HTTP load balancer~\autocite{HAProxy} voor geavanceerdere routeringsconfiguraties.
+  \item \textbf{Nginx}: een veelgebruikte webserver die ook als reverse proxy en load balancer kan fungeren.
+\end{itemize}
+
+\subsection{Wanneer is schaling nodig?}
+
+Bij CTF-events varieert de belasting sterk: er zijn piekbelastingen bij de start van een event wanneer veel deelnemers tegelijk challenges starten. De infrastructuur moet deze piekbelasting kunnen opvangen zonder de stabiliteit van het platform te compromitteren.

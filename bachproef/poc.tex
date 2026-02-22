@@ -1,0 +1,93 @@
+%%=============================================================================
+%% Proof-of-Concept
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Proof-of-Concept}{Proof of Concept}}%
+\label{ch:poc}
+
+Dit hoofdstuk beschrijft de uitwerking van de proof-of-concept (PoC). Na de architectuurbespreking komen de implementatiedetails van de CTFd-plugin, de beveiligingsmaatregelen, de schaalbaarheidsopzet en het gebruiksgemak voor organisatoren aan bod.
+
+%%----------------------------------------------------------------------
+\section{Architectuur van de PoC}%
+\label{sec:poc-architectuur}
+
+% TODO: Beschrijf de componenten van de PoC:
+% - CTFd-instantie met de zelfgebouwde plugin
+% - Docker daemon (op dezelfde of een aparte host)
+% - Reverse proxy (Traefik \autocite{Traefik} of Nginx)
+% - Netwerktopologie tussen de componenten
+%
+% TODO: Voeg een componentendiagram in.
+
+%%----------------------------------------------------------------------
+\section{Implementatie van de CTFd-plugin}%
+\label{sec:poc-plugin}
+
+\subsection{Technische keuzes}
+
+% TODO: Verantwoord de gemaakte technische keuzes:
+% - Python als implementatietaal (vereist door CTFd \autocite{CTFdGitHub})
+% - Docker SDK voor Python \autocite{DockerSDKPython} vs. directe API-calls
+%   naar \autocite{DockerEngineAPI}
+% - Keuze van datamodel voor het bijhouden van actieve instanties
+
+\subsection{Container lifecycle management}
+
+% TODO: Beschrijf hoe de plugin de volledige levenscyclus van een container
+% beheert:
+% - Aanmaken (image ophalen, netwerk aanmaken, limieten instellen)
+% - Starten en beschikbaar stellen aan de deelnemer
+% - Stoppen na timeout of op verzoek van de deelnemer
+% - Verwijderen en resources vrijmaken
+% Voeg relevante codefragmenten in met de minted-omgeving.
+
+\subsection{Configuratie van een challenge-container}
+
+% TODO: Beschrijf hoe een organisator een nieuwe challenge toevoegt:
+% - Welke parameters worden geconfigureerd? (image, poort, resource-limieten,
+%   timeout, max. instanties)
+% - Wordt Docker Compose \autocite{DockerCompose} gebruikt voor de definitie?
+
+\subsection{Gebruikersinterface in CTFd}
+
+% TODO: Beschrijf wat de deelnemer ziet en hoe hij/zij een instantie start.
+% Voeg schermafbeeldingen in indien beschikbaar.
+
+%%----------------------------------------------------------------------
+\section{Beveiliging in de PoC}%
+\label{sec:poc-beveiliging}
+
+% TODO: Beschrijf welke beveiligingsmaatregelen zijn geïmplementeerd:
+% - Capabilities droppen (\autocite{OWASP2024})
+% - Read-only filesystem
+% - Seccomp-profielen
+% - No-new-privileges vlag
+% - Resource-limieten (CPU, RAM) als eerste verdedigingslinie tegen DoS
+% - Netwerkisolatie: elke instantie in een eigen bridge network
+%   zonder toegang tot interne services
+% Verwijs naar de CIS Docker Benchmark \autocite{CISDocker} voor motivatie.
+
+\subsection{Isolatie tussen containers van verschillende teams/gebruikers}
+
+% TODO: Leg uit hoe wordt gewaarborgd dat containers van verschillende
+% deelnemers elkaar niet kunnen bereiken of beïnvloeden.
+
+%%----------------------------------------------------------------------
+\section{Schaalbaarheid en load balancing}%
+\label{sec:poc-schaalbaarheid}
+
+% TODO: Beschrijf de opzet met meerdere VM's:
+% - Hoe worden containers verdeeld over hosts?
+%   (Docker Swarm \autocite{DockerSwarm} of een eenvoudigere aanpak)
+% - Traefik \autocite{Traefik} of HAProxy \autocite{HAProxy} als entry point
+% - Monitoring en resource-overzicht
+
+%%----------------------------------------------------------------------
+\section{Automatisatie en gebruiksgemak voor organisatoren}%
+\label{sec:poc-automatisatie}
+
+% TODO: Beschrijf hoe een organisator de oplossing gebruikt:
+% - Hoe voeg je een nieuwe challenge toe? (Docker image uploaden/refereren)
+% - Hoe stel je resource-limieten per challenge in?
+% - Hoe configureer je de levensduur van containers (timeout, max. actieve
+%   instanties)?

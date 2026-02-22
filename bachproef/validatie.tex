@@ -1,0 +1,90 @@
+%%=============================================================================
+%% Validatie & Testing
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Validatie en testing}{Validation and testing}}%
+\label{ch:validatie}
+
+Dit hoofdstuk beschrijft het testplan en de testresultaten waarmee de correctheid, veiligheid en schaalbaarheid van de PoC worden aangetoond.
+
+%%----------------------------------------------------------------------
+\section{Testplan}%
+\label{sec:validatie-testplan}
+
+\subsection{Doelstellingen}
+
+% TODO: Beschrijf wat het testplan beoogt te valideren:
+% - Werkt het dynamisch aanmaken en beëindigen van containers correct?
+% - Is de isolatie tussen instanties gegarandeerd?
+% - Zijn de beveiligingsmaatregelen effectief?
+% - Houdt het systeem stand onder zware belasting?
+
+\subsection{Testomgeving}
+
+% TODO: Beschrijf de testomgeving:
+% - Hardware/VM-specificaties
+% - Betrokken software en versies (CTFd, Docker, plugin, OS)
+% - Netwerktopologie van de testopstelling
+
+%%----------------------------------------------------------------------
+\section{Functionele tests}%
+\label{sec:validatie-functioneel}
+
+\subsection{Aanmaken en beëindigen van containers}
+
+% TODO: Beschrijf de testscenario's:
+% - Deelnemer start een challenge: wordt de container correct aangemaakt?
+% - Deelnemer stopt de challenge: wordt de container correct verwijderd?
+% - Timeout: wordt de container automatisch gestopt na de ingestelde tijd?
+% - Meerdere deelnemers starten tegelijk dezelfde challenge.
+
+\subsection{Isolatie tussen gebruikers}
+
+% TODO: Beschrijf hoe wordt geverifieerd dat containers van verschillende
+% deelnemers elkaar niet kunnen bereiken:
+% - Netwerktest: kan container A container B pingen?
+% - Kan een deelnemer de omgeving van een andere deelnemer manipuleren?
+
+%%----------------------------------------------------------------------
+\section{Beveiligingstests}%
+\label{sec:validatie-beveiliging}
+
+\subsection{Container escape pogingen}
+
+% TODO: Beschrijf welke aanvalstechnieken werden getest:
+% - Misbruik van gemounte volumes
+% - Privilege escalation via capabilities
+% - Docker socket exposure
+% Welke beschermingen verhinderden succesvolle escapes?
+
+\subsection{Resource exhaustion simulaties}
+
+% TODO: Beschrijf hoe resource exhaustion werd gesimuleerd:
+% - Fork bomb binnen een container
+% - Geheugenoverbelasting
+% Hoe reageerde het systeem? Werden de resource-limieten afgedwongen?
+
+%%----------------------------------------------------------------------
+\section{Load testing}%
+\label{sec:validatie-loadtest}
+
+\subsection{Testopzet}
+
+% TODO: Beschrijf de load test:
+% - Gebruikte tool: k6 \autocite{k6} of Locust \autocite{Locust}
+% - Testscenario: X gelijktijdige gebruikers starten een challenge
+% - Duur en ramp-up profiel
+
+\subsection{Meetpunten}
+
+% TODO: Welke metrics werden gemeten?
+% - Latency bij het aanmaken van een container
+% - CPU- en RAM-gebruik op de host(s)
+% - Foutpercentage (mislukte container-starts)
+% - Doorvoer (containers per seconde)
+
+\subsection{Resultaten en conclusies}
+
+% TODO: Presenteer de testresultaten in tabellen of grafieken.
+% Wat zijn de grenzen van de PoC? Bij welk aantal gelijktijdige gebruikers
+% treedt er degradatie op?

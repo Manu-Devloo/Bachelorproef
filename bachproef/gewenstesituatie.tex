@@ -1,0 +1,69 @@
+%%=============================================================================
+%% Gewenste situatie (TO-BE)
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Gewenste situatie}{Target situation}}%
+\label{ch:gewenste-situatie}
+
+Op basis van de tekortkomingen die in het vorige hoofdstuk werden geïdentificeerd, beschrijft dit hoofdstuk de vereisten voor de oplossing en de architectuurvisie voor het gewenste systeem.
+
+%%----------------------------------------------------------------------
+\section{Vereisten voor de oplossing}%
+\label{sec:tobe-vereisten}
+
+\subsection{Functionele vereisten}
+
+% TODO: Lijst de functionele vereisten op:
+% - Automatisch aanmaken van een containerinstantie per gebruiker/team bij
+%   het starten van een challenge
+% - Automatisch stoppen en verwijderen na afloop of timeout
+% - Configureerbare resource-limieten per challenge (CPU, RAM)
+% - Netwerkisolatie tussen instanties van verschillende gebruikers
+% - Ondersteuning voor meerdere challenge-types
+% - Gebruiksvriendelijke interface voor organisatoren om challenges toe te voegen
+
+\subsection{Niet-functionele vereisten}
+
+% TODO: Lijst de niet-functionele vereisten op:
+% - Volledig self-hosted en open-source
+% - Geen Kubernetes als primaire vereiste
+% - Schaalbaar over meerdere VM's
+% - Veilig: minimale aanvalsoppervlakte, container escapes voorkomen
+% - Beheerbaar: monitoring en logging van actieve instanties
+% - Reproduceerbaar: gedocumenteerde installatie-instructies
+
+%%----------------------------------------------------------------------
+\section{Architectuurvisie}%
+\label{sec:tobe-architectuur}
+
+% TODO: Beschrijf de architectuur van het gewenste systeem:
+% - CTFd communiceert via plugin met Docker Engine API
+%   (\autocite{DockerEngineAPI}, \autocite{DockerSDKPython})
+% - Containers worden automatisch aangemaakt/vernietigd op basis van
+%   gebruikersacties in CTFd
+% - Resource-limieten worden afgedwongen bij aanmaak
+% - Netwerkisolatie via custom Docker bridge networks
+% - Reverse proxy (Traefik \autocite{Traefik} of Nginx) als entry point
+% - Systeem is modulair: nieuwe challenge-types toevoegen zonder kerncode
+%   te wijzigen
+
+% TODO: Voeg hier een componentendiagram in.
+
+%%----------------------------------------------------------------------
+\section{Granulariteitsbeslissing: container per gebruiker of per team}%
+\label{sec:tobe-granulariteit}
+
+% TODO: Bespreek de voor- en nadelen van beide opties:
+% - Per gebruiker: maximale isolatie, meer resource-gebruik
+% - Per team: minder instanties, risico op interne interferentie
+% Verantwoord de keuze die in de PoC wordt geïmplementeerd.
+
+%%----------------------------------------------------------------------
+\section{Schaalbaarheidsvereisten}%
+\label{sec:tobe-schaalbaarheid}
+
+% TODO: Beschrijf wat het systeem moet aankunnen:
+% - Hoeveel gelijktijdige deelnemers?
+% - Hoeveel actieve containers tegelijk?
+% - Hoe worden containers verdeeld over meerdere hosts?
+% - Docker Swarm \autocite{DockerSwarm} of andere orchestratielaag?

@@ -1,0 +1,71 @@
+%%=============================================================================
+%% Inleiding
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
+\label{ch:inleiding}
+
+Capture The Flag (CTF)-events zijn cybersecuritywedstrijden waarbij deelnemers technische uitdagingen oplossen om punten te scoren~\autocite{Innovirtuoso2025}. Ze worden georganiseerd door hogescholen, universiteiten, bedrijven en onafhankelijke gemeenschappen als educatieve en competitieve oefeningen. Elke deelnemer of elk team werkt aan zogenaamde \textit{challenges}: geïsoleerde omgevingen met een kwetsbaarheid die uitgebuit moet worden om een \textit{flag} te bemachtigen.
+
+Naarmate CTF-events populairder worden, groeit ook de behoefte aan robuuste, schaalbare infrastructuur om deze challenges te hosten. Vandaag de dag worden challenges op eigen infrastructuur dikwijls manueel of semi-automatisch beheerd, wat leidt tot operationele overhead, beveiligingsrisico's en schaalbaarheidsknelpunten~\autocite{Singier2025}.
+
+\section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
+\label{sec:probleemstelling}
+
+Bij het organiseren van CTF-events op eigen (on-premise) infrastructuur is het dynamisch en veilig beheren van containers voor challenges een bijzonder complexe opgave. Organisatoren moeten voor elke challenge een geïsoleerde containeromgeving opzetten, beheren en weer afbreken op basis van gebruikersacties. Dit proces verloopt vandaag grotendeels manueel of met eenvoudige scripts, wat de volgende problemen met zich meebrengt:
+
+\begin{itemize}
+  \item Manuele interventie bij het opstarten en stopzetten van containers kost tijd en is foutgevoelig.
+  \item Er is geen gegarandeerde isolatie tussen containers van verschillende teams of gebruikers.
+  \item Resource-uitputting (CPU, RAM) door ongecontroleerde containers vormt een risico voor de stabiliteit van de host.
+  \item Bestaande cloud-gebaseerde platforms (bijv. hosted CTFd) zijn niet altijd geschikt voor organisaties die werken met privédata of op eigen hardware willen draaien.
+\end{itemize}
+
+De doelgroep van dit onderzoek zijn CTF-organisatoren en systeembeheerders die events hosten op eigen on-premise infrastructuur en op zoek zijn naar een geautomatiseerde, veilige en schaalbare oplossing.
+
+\section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
+\label{sec:onderzoeksvraag}
+
+De centrale onderzoeksvraag luidt:
+
+\begin{quote}
+  Hoe kunnen Docker-containers die gelinkt zijn aan CTFd-challenges dynamisch worden beheerd, aangemaakt en beëindigd op basis van gebruikersacties en ingestelde parameters, op on-premise infrastructuur?
+\end{quote}
+
+Hieruit volgen de volgende deelvragen:
+
+\begin{itemize}
+  \item Welke beveiligingsmaatregelen zijn minimaal vereist om container-escapes en misbruik te voorkomen?
+  \item Op welke manier kunnen resource-limieten (CPU, RAM) en netwerkisolatie technisch worden afgedwongen?
+  \item Hoe kan een CTFd-plugin de Docker Engine API aanspreken zonder zware externe afhankelijkheden?
+  \item Hoe valideert men de stabiliteit en veiligheid van de oplossing onder zware belasting?
+\end{itemize}
+
+\section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
+\label{sec:onderzoeksdoelstelling}
+
+Het beoogde resultaat van deze bachelorproef is een werkende proof-of-concept (PoC) die aantoont hoe CTFd-challenges dynamisch en veilig beheerd kunnen worden op eigen infrastructuur. De PoC omvat een CTFd-plugin die communiceert met de Docker Engine API, resource-limieten afdwingt en netwerkisolatie garandeert. De oplossing is volledig self-hosted, open-source en modulair uitbreidbaar.
+
+\section{\IfLanguageName{dutch}{Scope en afbakening}{Scope}}%
+\label{sec:scope}
+
+Dit onderzoek beperkt zich tot on-premise, self-hosted omgevingen. Kubernetes wordt bewust niet als primaire oplossing gekozen omwille van de operationele complexiteit die niet in verhouding staat met de schaal van een typisch CTF-event. Cloudplatforms en betaalde diensten vallen buiten scope. De focus ligt op open-source tooling die draait op standaard Linux-servers.
+
+\section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
+\label{sec:opzet-bachelorproef}
+
+De rest van deze bachelorproef is als volgt opgebouwd:
+
+In Hoofdstuk~\ref{ch:stand-van-zaken} wordt de achtergrond en het begrippenkader geschetst: wat zijn CTF-events, hoe werkt CTFd, wat zijn de relevante Docker-concepten en welke beveiligingsaspecten spelen een rol?
+
+In Hoofdstuk~\ref{ch:methodologie} wordt de onderzoeksmethodologie toegelicht.
+
+In Hoofdstuk~\ref{ch:huidige-situatie} wordt de huidige situatie (AS-IS) geanalyseerd: hoe worden CTF-events vandaag beheerd en wat zijn de tekortkomingen?
+
+In Hoofdstuk~\ref{ch:gewenste-situatie} wordt de gewenste situatie (TO-BE) beschreven, inclusief de architectuurvisie en de vereisten voor de oplossing.
+
+In Hoofdstuk~\ref{ch:poc} wordt de proof-of-concept uitgewerkt: architectuur, implementatie, beveiliging en schaalbaarheid.
+
+In Hoofdstuk~\ref{ch:validatie} worden de testresultaten besproken: functionele tests, beveiligingstests en load tests.
+
+In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen, samen met aanbevelingen voor toekomstig werk.
