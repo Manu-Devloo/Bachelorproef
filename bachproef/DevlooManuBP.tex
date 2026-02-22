@@ -180,8 +180,37 @@ Dit onderzoeksvoorstel behandelt het dynamisch beheer van Docker-containers voor
 \chapter{Onderzoekslog}
 \label{app:onderzoekslog}
 
-% TODO: Documenteer de belangrijkste beslissingen die tijdens het onderzoek
-% werden genomen, met motivatie.
+Dit appendix documenteert de belangrijkste beslissingen die tijdens het onderzoek werden genomen, met hun motivatie. Het geeft inzicht in het verloop van het onderzoeksproces en de keuzes die de uiteindelijke proof-of-concept hebben gevormd.
+
+%%----------------------------------------------------------------------
+\section*{Fase 1 -- Literatuurstudie en begrippenkader}
+
+\textbf{Beslissing: afbakening van de literatuurstudie}\\
+Bij de start van het onderzoek werd beslist de literatuurstudie te richten op vier thema's: CTF-events en het CTFd-platform, Docker en containerisatie, containerbeveiliging en load balancing zonder Kubernetes. Dit stelde de lezer in staat de rest van de bachelorproef te volgen zonder voorkennis. Diepgaande theoretische beveiligingsmodellen (zoals formele verificatie of CVE-analyse) werden bewust buiten scope gelaten ten voordele van direct toepasbare best practices~\autocite{OWASP2024,CISDocker}.
+
+\textbf{Beslissing: focus op ``low-hanging fruit'' beveiliging}\\
+Na het bestuderen van de OWASP Docker Security Cheat Sheet~\autocite{OWASP2024} en het CIS Docker Benchmark~\autocite{CISDocker} werd gekozen om de focus te leggen op praktisch toepasbare basismaatregelen: capabilities droppen, read-only bestandssysteem, seccomp-profielen, no-new-privileges en resource-limieten. Deze maatregelen bieden een goede balans tussen beveiliging en implementatiecomplexiteit voor een CTF-context.
+
+%%----------------------------------------------------------------------
+\section*{Fase 2 -- Analyse van de huidige en gewenste situatie}
+
+\textbf{Beslissing: Kubernetes niet als primaire oplossing}\\
+Kubernetes werd vroeg in het onderzoek overwogen als orkestratieplatform. Na analyse werd besloten het niet als primaire oplossing te gebruiken omdat de operationele complexiteit (clusteropzet, beheer, leercurve) niet in verhouding staat met de schaal van een doorsnee CTF-event. Als alternatief werd gefocust op Docker Swarm~\autocite{DockerSwarm} en Traefik~\autocite{Traefik} als lichtere alternatieven. Dit sluit ook aan bij de randvoorwaarde van eenvoudige inzetbaarheid op eigen infrastructuur.
+
+\textbf{Beslissing: granulariteit -- container per gebruiker of per team}\\
+Bij de architectuuranalyse werd de keuze tussen een instantie per gebruiker en een instantie per team bestudeerd. Per gebruiker biedt maximale isolatie maar verhoogt het aantal containers snel. Per team beperkt het resource-gebruik maar verlaagt de isolatiegarantie. Uiteindelijk werd gekozen voor een flexibele aanpak: in teammodus wordt één instantie per team voorzien, bij individuele deelname één per gebruiker. Dit koppelt de granulariteit aan het wedstrijdmodel en vermijdt onnodige containerexplosie.
+
+\textbf{Beslissing: Docker SDK voor Python vs.\ directe API-calls}\\
+Voor de integratie tussen de CTFd-plugin en de Docker-daemon werden twee opties afgewogen: de officiële Docker SDK voor Python~\autocite{DockerSDKPython} en directe HTTP-aanroepen naar de Docker Engine API~\autocite{DockerEngineAPI}. De SDK biedt een hogere abstractie, minder foutgevoeligheid en is de aanbevolen aanpak voor Python-applicaties. Directe API-calls zouden meer controle geven maar ook meer boilerplate en foutafhandeling vergen. Gekozen werd voor de SDK, tenzij er specifieke beperkingen opduiken tijdens de implementatie.
+
+\textbf{Beslissing: keuze van reverse proxy}\\
+Als toegangspunt voor dynamisch aangemaakte containers werd Traefik~\autocite{Traefik} verkozen boven Nginx en HAProxy~\autocite{HAProxy}. De belangrijkste reden is dat Traefik automatisch routes configureert op basis van Docker-labels, wat ideaal is voor dynamisch beheerde containers zonder manuele configuratie-aanpassingen. Nginx en HAProxy vereisen een herstart of dynamische herconfiguratie bij elke nieuwe container, wat de automatisering bemoeilijkt.
+
+\textbf{Beslissing: plugin-architectuur binnen CTFd}\\
+Als implementatiestrategie werd gekozen voor een CTFd-plugin in plaats van een externe service. CTFd ondersteunt plugins via het \texttt{CTFd/plugins/}-mechanisme~\autocite{CTFdGitHub}, waarmee nieuwe challenge-types geregistreerd en extra routes toegevoegd kunnen worden. Een interne plugin koppelt gebruikersacties direct aan containeracties zonder extra netwerkverkeer of externe authenticatie.
+
+\textbf{Beslissing: bestaande plugin CTFd-Whale als referentie, niet als basis}\\
+De bestaande CTFd-Whale plugin~\autocite{CTFdWhale} werd bestudeerd als referentie voor de architectuuranalyse. Er werd besloten geen fork of uitbreiding te maken, maar een eigen implementatie te schrijven. CTFd-Whale voldoet niet volledig aan de randvoorwaarden van dit onderzoek (volledig self-hosted, open-source, controleerbare beveiligingsinstellingen) en een eigen implementatie biedt meer controle over de beveiligings- en resourceconfiguratie.
 
 %%---------- Backmatter, referentielijst ---------------------------------------
 

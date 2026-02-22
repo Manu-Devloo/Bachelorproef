@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.22)  22 FEB 2026 10:23
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.22)  22 FEB 2026 10:43
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1816,6 +1816,11 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
+Overfull \hbox (8.71785pt too wide) in paragraph at lines 54--55
+\TU/Montserrat(1)/m/n/10.95 CTFd ondersteunt standaard statische challenges. Voor dynamische instanties, waar-
+ []
+
+
 
 [5]
 Overfull \hbox (22.29555pt too wide) in paragraph at lines 76--77
@@ -2051,33 +2056,60 @@ B\ij lage D.
 ]
 B\ij lage E.
 
+Overfull \hbox (29.07289pt too wide) in paragraph at lines 191--193
+\TU/Montserrat(1)/m/n/10.95 read-only bestandssysteem, seccomp-profielen, no-new-privileges en resource-limieten.
+ []
+
+
 
 [26
 
 ]
-Overfull \hbox (4.76299pt too wide) in paragraph at lines 191--191
+Overfull \hbox (2.61842pt too wide) in paragraph at lines 206--208
+\TU/Montserrat(1)/m/n/10.95 langrijkste reden is dat Traefik automatisch routes configureert op basis van Docker-
+ []
+
+
+Overfull \hbox (19.04124pt too wide) in paragraph at lines 206--208
+\TU/Montserrat(1)/m/n/10.95 labels, wat ideaal is voor dynamisch beheerde containers zonder manuele configuratie-
+ []
+
+
+Overfull \hbox (15.3922pt too wide) in paragraph at lines 209--211
+\TU/Montserrat(1)/m/n/10.95 externe service. CTFd ondersteunt plugins via het \TU/FiraCode(0)/m/n/10.95 CTFd/plugins/\TU/Montserrat(1)/m/n/10.95 -mechanisme ([]CTFd
+ []
+
+
+Overfull \hbox (2.4286pt too wide) in paragraph at lines 212--214
+\TU/Montserrat(1)/m/n/10.95 bare beveiligingsinstellingen) en een eigen implementatie biedt meer controle over
+ []
+
+
+
+[27]
+Overfull \hbox (4.76299pt too wide) in paragraph at lines 220--220
 \TU/Montserrat(1)/m/n/10.95 gen november 28, 2025, van [][]$[][][][][] [] [] [] [][][] [] [][][][][][] [] [][][] [] [][][][] [] [][][][][][] [][] [][][][][][][][][][] [][]
  []
 
 
-Overfull \hbox (16.88676pt too wide) in paragraph at lines 191--191
+Overfull \hbox (16.88676pt too wide) in paragraph at lines 220--220
 \TU/Montserrat(2)/m/it/10.95 Turn You Into a Cyber Pro\TU/Montserrat(1)/m/n/10.95 . Verkregen december 11, 2025, van [][]$[][][][][] [] [] [] [][][][][][][][][][][][] []
  []
 
 
-Overfull \hbox (20.58705pt too wide) in paragraph at lines 191--191
+Overfull \hbox (20.58705pt too wide) in paragraph at lines 220--220
 [][][] [] [][][][][][][][][][][][][] [] [][][][][][][] [][] [][][] [][] [][][][] [][] [][][] [][] [][][][][][][][][] [][] [][][] [][] [][][][][][][] [][] [][][][][][][][][][][][] [][]
  []
 
 
 
-[27
+[28
 
 
 ]
 
-[28]
-runsystem(latexminted cleantemp  --timestamp 20260222102349 4379515D007F3BC40C2F41FACA92D39B)...executed.
+[29]
+runsystem(latexminted cleantemp  --timestamp 20260222104305 4379515D007F3BC40C2F41FACA92D39B)...executed.
 
  (./DevlooManuBP.aux)
  ***********
@@ -2091,12 +2123,12 @@ Package logreq Info: Writing requests to 'DevlooManuBP.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 49651 strings out of 473832
- 1023363 string characters out of 5729481
- 2184206 words of memory out of 5000000
- 71935 multiletter control sequences out of 15000+600000
+ 49663 strings out of 473832
+ 1023495 string characters out of 5729481
+ 2184266 words of memory out of 5000000
+ 71947 multiletter control sequences out of 15000+600000
  561849 words of font info for 102 fonts, out of 8000000 for 9000
  1349 hyphenation exceptions out of 8191
  110i,12n,131p,1238b,5923s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on DevlooManuBP.pdf (38 pages).
+Output written on DevlooManuBP.pdf (39 pages).
