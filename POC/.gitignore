@@ -1,0 +1,13 @@
+# Python caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local envs
+app/.venv/
+.venv/
+
+# Local runtime artifacts
+*.db
+*.sqlite
+.DS_Store

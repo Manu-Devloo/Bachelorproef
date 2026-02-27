@@ -1,0 +1,22 @@
+services:
+  orchestrator:
+    build:
+      context: ./app
+    image: poc-orchestrator:latest
+    container_name: poc-orchestrator
+    environment:
+      POC_BACKEND: ${POC_BACKEND:-docker}
+      POC_DB_PATH: /data/poc.db
+      POC_BIND_HOST: 0.0.0.0
+      POC_BIND_PORT: 8000
+      POC_PUBLIC_HOST: ${POC_PUBLIC_HOST:-127.0.0.1}
+      POC_REAPER_INTERVAL_SECONDS: ${POC_REAPER_INTERVAL_SECONDS:-5}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - poc_data:/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+volumes:
+  poc_data:
