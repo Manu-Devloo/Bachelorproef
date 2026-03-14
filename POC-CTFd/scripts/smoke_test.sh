@@ -19,8 +19,10 @@ cleanup
 trap cleanup EXIT
 
 docker build -t poc-demo-http:latest ../POC/challenges/demo-http
-archive_path="$(mktemp /tmp/poc-demo-http.XXXXXX.tar)"
+archive_base="$(mktemp /tmp/poc-demo-http.XXXXXX)"
+archive_path="${archive_base}.tar"
 docker save -o "$archive_path" poc-demo-http:latest
 docker compose up -d --build
 IMAGE_ARCHIVE_PATH="$archive_path" ./scripts/smoke_test.py
 rm -f "$archive_path"
+rm -f "$archive_base"

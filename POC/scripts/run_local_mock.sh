@@ -13,5 +13,6 @@ export POC_DB_PATH="$ROOT_DIR/mock.db"
 export POC_BIND_HOST=127.0.0.1
 export POC_BIND_PORT=8000
 export POC_PUBLIC_HOST=127.0.0.1
+export POC_BOOTSTRAP_CHALLENGES='[{"challenge_id":"demo-http","name":"Demo HTTP Challenge","image":"poc-demo-http:latest","container_port":8080,"cpu_limit":0.5,"memory_limit_mb":256,"timeout_seconds":900,"max_instances":30}]'
 
 python -m poc_orchestrator.web

@@ -103,15 +103,22 @@ def post_multipart_file(
     csrf_nonce: str,
 ) -> tuple[int, dict[str, Any]]:
     boundary = f"----ctfdcontainer{int(time.time() * 1000)}"
+    nonce_part = (
+        f"--{boundary}\r\n"
+        'Content-Disposition: form-data; name="nonce"\r\n\r\n'
+        f"{csrf_nonce}\r\n"
+    ).encode()
     with open(file_path, "rb") as handle:
         file_bytes = handle.read()
 
     filename = os.path.basename(file_path)
-    body = (
+    file_part = (
         f"--{boundary}\r\n"
         f'Content-Disposition: form-data; name="{field_name}"; filename="{filename}"\r\n'
         "Content-Type: application/x-tar\r\n\r\n"
-    ).encode() + file_bytes + f"\r\n--{boundary}--\r\n".encode()
+    ).encode() + file_bytes + b"\r\n"
+    closing = f"--{boundary}--\r\n".encode()
+    body = nonce_part + file_part + closing
 
     status, raw_body, _ = session.request(
         path,
@@ -120,7 +127,6 @@ def post_multipart_file(
         headers={
             "Content-Type": f"multipart/form-data; boundary={boundary}",
             "Accept": "application/json",
-            "CSRF-Token": csrf_nonce,
         },
     )
     try:

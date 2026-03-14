@@ -28,6 +28,7 @@ class Settings:
     bind_port: int
     reaper_interval_seconds: int
     default_public_host: str
+    bootstrap_challenges_json: str | None = None
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -41,6 +42,7 @@ class Settings:
                 10,
             ),
             default_public_host=os.getenv("POC_PUBLIC_HOST", "127.0.0.1").strip(),
+            bootstrap_challenges_json=os.getenv("POC_BOOTSTRAP_CHALLENGES"),
         )
 
     @property

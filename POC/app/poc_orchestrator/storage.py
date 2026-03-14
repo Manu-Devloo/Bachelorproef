@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from contextlib import contextmanager
 import sqlite3
-from threading import Lock
+from threading import RLock
 from typing import Any
 
 
@@ -18,8 +19,13 @@ class SQLiteStore:
     def __init__(self, db_path: str) -> None:
         self._conn = sqlite3.connect(db_path, check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
-        self._lock = Lock()
+        self._lock = RLock()
         self._init_schema()
+
+    @contextmanager
+    def locked(self) -> Any:
+        with self._lock:
+            yield
 
     def _init_schema(self) -> None:
         with self._lock:

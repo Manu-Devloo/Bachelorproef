@@ -7,9 +7,12 @@ It is designed for your bachelorproef scope: dynamic lifecycle management, basel
 
 - Flask API for challenge registration and instance lifecycle.
 - Registry-first flow: add container templates, then pick one to start for a team.
+- Optional startup bootstrap for demo/showcase registry entries via `POC_BOOTSTRAP_CHALLENGES`.
 - Event logs persisted in SQLite and exposed through `/api/logs`.
 - Docker backend with per-instance network creation.
 - Automatic timeout reaper thread.
+- Serialized start handling so duplicate concurrent starts for the same team/challenge
+  reuse the same running instance and in-process `max_instances` checks stay consistent.
 - Baseline hardening at container launch:
   - `read_only` root filesystem
   - `cap_drop=['ALL']`
@@ -38,6 +41,12 @@ cd POC
 Open dashboard:
 
 - [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
+Showcase flow:
+
+- `docker compose -f docker-compose.yml up -d --build`
+- Open the dashboard and use the pre-registered `demo-http` container from the registry dropdown.
+- Start it for a team such as `team-01`.
 
 Stop stack:
 
@@ -68,6 +77,13 @@ Force cleanup all managed runtime artifacts (including leftover challenge contai
 - `POST /api/logs`
 - `DELETE /api/logs`
 
+Notable response behavior:
+
+- Duplicate start for the same `challenge_id + user_id` returns `200` with `created: false`.
+- Capacity exhaustion returns `409`.
+- Backend startup failures return `503` instead of being reported as capacity conflicts.
+- Automatic timeout expiry writes an event log entry (`instance expired by timeout`).
+
 ## Test commands
 
 ```bash
@@ -88,9 +104,34 @@ app/.venv/bin/locust -f tests/locustfile.py --host=http://127.0.0.1:8000 --headl
 - `tests/`: pytest and Locust files
 - `docs/`: research notes, experiments, and validation logs
 - `docs/06_bp-alignment.md`: alignment check against BP PoC chapter expectations
+- `docs/07_ctfd-plugin-comparison.md`: comparison with a CTFd plugin approach and rationale for a standalone orchestrator
 
 ## Known limitations
 
 - No direct CTFd plugin integration yet; this PoC exposes a service API that can be called from a CTFd plugin.
 - Uses Docker socket mount in the PoC stack; acceptable for prototype, but production should isolate this with stricter host controls.
 - Load tests currently hit `max_instances` quickly unless that value is increased per challenge.
+
+## Startup bootstrap
+
+You can preload one or more registry entries at process start with `POC_BOOTSTRAP_CHALLENGES`.
+The value must be valid JSON containing either one object or an array of objects using the same schema as `POST /api/challenges`.
+
+Example:
+
+```bash
+export POC_BOOTSTRAP_CHALLENGES='[
+  {
+    "challenge_id":"demo-http",
+    "name":"Demo HTTP Challenge",
+    "image":"poc-demo-http:latest",
+    "container_port":8080,
+    "cpu_limit":0.5,
+    "memory_limit_mb":256,
+    "timeout_seconds":900,
+    "max_instances":30
+  }
+]'
+```
+
+`docker-compose.yml` and `scripts/run_local_mock.sh` already set this for the default showcase container.

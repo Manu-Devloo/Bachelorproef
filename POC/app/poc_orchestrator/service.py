@@ -26,6 +26,10 @@ class CapacityError(RuntimeError):
     pass
 
 
+class BackendUnavailableError(RuntimeError):
+    pass
+
+
 @dataclass(frozen=True)
 class StartInstanceResult:
     instance: dict[str, Any]
@@ -85,60 +89,63 @@ class OrchestratorService:
         challenge_key = payload.get("challenge_id", payload.get("registry_id"))
         challenge_id = self._normalize_identifier(challenge_key, "challenge_id")
         user_id = self._normalize_identifier(payload.get("user_id"), "user_id")
-        challenge = self.store.get_challenge(challenge_id)
-        if not challenge:
-            raise NotFoundError(f"Unknown challenge '{challenge_id}'")
+        with self.store.locked():
+            challenge = self.store.get_challenge(challenge_id)
+            if not challenge:
+                raise NotFoundError(f"Unknown challenge '{challenge_id}'")
 
-        existing = self.store.get_running_instance(challenge_id=challenge_id, user_id=user_id)
-        if existing:
-            return StartInstanceResult(instance=self._enrich_instance(existing), created=False)
+            existing = self.store.get_running_instance(challenge_id=challenge_id, user_id=user_id)
+            if existing:
+                return StartInstanceResult(instance=self._enrich_instance(existing), created=False)
 
-        running = self.store.count_running_instances_for_challenge(challenge_id)
-        if running >= int(challenge["max_instances"]):
-            raise CapacityError(
-                f"Challenge '{challenge_id}' reached max_instances={challenge['max_instances']}"
-            )
+            running = self.store.count_running_instances_for_challenge(challenge_id)
+            if running >= int(challenge["max_instances"]):
+                raise CapacityError(
+                    f"Challenge '{challenge_id}' reached max_instances={challenge['max_instances']}"
+                )
 
-        instance_id = uuid4().hex
-        instance_name = self._build_container_name(challenge_id, user_id, instance_id)
-        network_name = f"pocnet-{instance_id[:12]}"
-        labels = {
-            "poc.managed": "true",
-            "poc.challenge": challenge_id,
-            "poc.user": user_id,
-            "poc.instance": instance_id,
-        }
+            instance_id = uuid4().hex
+            instance_name = self._build_container_name(challenge_id, user_id, instance_id)
+            network_name = f"pocnet-{instance_id[:12]}"
+            labels = {
+                "poc.managed": "true",
+                "poc.challenge": challenge_id,
+                "poc.user": user_id,
+                "poc.instance": instance_id,
+            }
 
-        try:
-            started = self.backend.start(
-                instance_name=instance_name,
-                image=challenge["image"],
-                network_name=network_name,
-                container_port=int(challenge["container_port"]),
-                cpu_limit=float(challenge["cpu_limit"]),
-                memory_limit_mb=int(challenge["memory_limit_mb"]),
-                labels=labels,
-            )
-        except BackendError as exc:
-            raise CapacityError(f"Failed to start challenge container: {exc}") from exc
+            try:
+                started = self.backend.start(
+                    instance_name=instance_name,
+                    image=challenge["image"],
+                    network_name=network_name,
+                    container_port=int(challenge["container_port"]),
+                    cpu_limit=float(challenge["cpu_limit"]),
+                    memory_limit_mb=int(challenge["memory_limit_mb"]),
+                    labels=labels,
+                )
+            except BackendError as exc:
+                raise BackendUnavailableError(
+                    f"Failed to start challenge container: {exc}"
+                ) from exc
 
-        started_at = utc_now()
-        expires_at = started_at + timedelta(seconds=int(challenge["timeout_seconds"]))
-        record = {
-            "instance_id": instance_id,
-            "challenge_id": challenge_id,
-            "user_id": user_id,
-            "container_id": started.container_id,
-            "network_name": network_name,
-            "host_port": started.host_port,
-            "status": "running",
-            "started_at": as_utc_iso(started_at),
-            "expires_at": as_utc_iso(expires_at),
-            "stopped_at": None,
-            "stop_reason": None,
-        }
-        created = self.store.create_instance(record)
-        return StartInstanceResult(instance=self._enrich_instance(created), created=True)
+            started_at = utc_now()
+            expires_at = started_at + timedelta(seconds=int(challenge["timeout_seconds"]))
+            record = {
+                "instance_id": instance_id,
+                "challenge_id": challenge_id,
+                "user_id": user_id,
+                "container_id": started.container_id,
+                "network_name": network_name,
+                "host_port": started.host_port,
+                "status": "running",
+                "started_at": as_utc_iso(started_at),
+                "expires_at": as_utc_iso(expires_at),
+                "stopped_at": None,
+                "stop_reason": None,
+            }
+            created = self.store.create_instance(record)
+            return StartInstanceResult(instance=self._enrich_instance(created), created=True)
 
     def stop_instance(self, instance_id: str, *, reason: str = "manual") -> dict[str, Any]:
         clean_instance_id = self._normalize_identifier(instance_id, "instance_id")
@@ -166,6 +173,8 @@ class OrchestratorService:
         )
         if not updated:
             raise NotFoundError(f"Unknown instance '{clean_instance_id}'")
+        if reason == "timeout":
+            self._record_timeout_expiry(updated)
         return self._enrich_instance(updated)
 
     def list_instances(self, *, status: str | None = None) -> list[dict[str, Any]]:
@@ -247,6 +256,23 @@ class OrchestratorService:
         else:
             enriched["access_url"] = None
         return enriched
+
+    def _record_timeout_expiry(self, instance: dict[str, Any]) -> None:
+        try:
+            self.record_log(
+                level="info",
+                message="instance expired by timeout",
+                metadata={
+                    "instance_id": instance["instance_id"],
+                    "challenge_id": instance["challenge_id"],
+                    "user_id": instance["user_id"],
+                    "status": instance["status"],
+                    "stopped_at": instance["stopped_at"],
+                },
+            )
+        except Exception:
+            # Expiry cleanup must not fail if observability storage is unavailable.
+            pass
 
     @staticmethod
     def _require_str(value: Any, field: str) -> str:

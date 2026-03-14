@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import atexit
+import json
 import logging
 import os
 from typing import Any
@@ -12,7 +13,13 @@ from flask import Flask, jsonify, render_template, request
 from .backend import DockerBackend, InMemoryBackend
 from .config import Settings
 from .reaper import ReaperThread
-from .service import CapacityError, NotFoundError, OrchestratorService, ValidationError
+from .service import (
+    BackendUnavailableError,
+    CapacityError,
+    NotFoundError,
+    OrchestratorService,
+    ValidationError,
+)
 from .storage import SQLiteStore
 
 logging.basicConfig(
@@ -40,6 +47,36 @@ def _safe_record_log(
         logging.exception("failed to persist log entry")
 
 
+def _bootstrap_challenges(service: OrchestratorService, cfg: Settings) -> None:
+    if not cfg.bootstrap_challenges_json:
+        return
+
+    try:
+        parsed = json.loads(cfg.bootstrap_challenges_json)
+    except json.JSONDecodeError as exc:
+        raise RuntimeError("POC_BOOTSTRAP_CHALLENGES must contain valid JSON") from exc
+
+    if isinstance(parsed, dict):
+        payloads = [parsed]
+    elif isinstance(parsed, list) and all(isinstance(item, dict) for item in parsed):
+        payloads = parsed
+    else:
+        raise RuntimeError(
+            "POC_BOOTSTRAP_CHALLENGES must be a JSON object or array of objects"
+        )
+
+    for payload in payloads:
+        challenge = service.register_challenge(payload)
+        _safe_record_log(
+            service,
+            message="bootstrap registry item loaded",
+            metadata={
+                "challenge_id": challenge["challenge_id"],
+                "image": challenge["image"],
+            },
+        )
+
+
 def create_app(settings: Settings | None = None) -> Flask:
     cfg = settings or Settings.from_env()
     _ensure_parent_dir(cfg.db_path)
@@ -51,6 +88,7 @@ def create_app(settings: Settings | None = None) -> Flask:
         backend=backend,
         public_host=cfg.default_public_host,
     )
+    _bootstrap_challenges(service, cfg)
     reaper = ReaperThread(service=service, interval_seconds=cfg.reaper_interval)
     reaper.start()
 
@@ -245,6 +283,16 @@ def create_app(settings: Settings | None = None) -> Flask:
             level="warn",
         )
         return jsonify({"error": str(exc)}), 409
+
+    @app.errorhandler(BackendUnavailableError)
+    def handle_backend_error(exc: BackendUnavailableError) -> Any:
+        _safe_record_log(
+            service,
+            message="backend unavailable",
+            metadata={"error": str(exc)},
+            level="error",
+        )
+        return jsonify({"error": str(exc)}), 503
 
     return app
 
