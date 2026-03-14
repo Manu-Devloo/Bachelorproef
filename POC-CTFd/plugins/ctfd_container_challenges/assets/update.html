@@ -1,0 +1,88 @@
+{% extends "admin/challenges/update.html" %}
+
+{% block connection_info %}
+{{ super() }}
+
+<div class="form-group">
+  <label>
+    Container Image<br>
+    <small class="form-text text-muted">
+      Docker image to launch for each player instance. You can also replace it with an uploaded Docker archive.
+    </small>
+  </label>
+  <input type="text" class="form-control" name="image" value="{{ challenge.image }}" required>
+  {% if challenge.image_source == "archive" and challenge.image_archive_name %}
+  <small class="form-text text-muted">
+    Current uploaded archive: <code>{{ challenge.image_archive_name }}</code>
+  </small>
+  {% endif %}
+</div>
+
+<div class="form-group">
+  <label>
+    Docker Image Archive<br>
+    <small class="form-text text-muted">
+      Optional `.tar`, `.tar.gz`, or `.tgz` archive from `docker save`. Uploading a new archive replaces the image field with a local imported tag.
+    </small>
+  </label>
+  <input type="file" class="form-control-file" name="image_archive" accept=".tar,.tar.gz,.tgz">
+  <input type="hidden" name="uploaded_image_token" value="">
+  <small class="form-text text-muted" data-upload-status>
+    {% if challenge.image_source == "archive" and challenge.image_archive_name %}
+    Using uploaded archive {{ challenge.image_archive_name }}.
+    {% else %}
+    No archive uploaded for this challenge.
+    {% endif %}
+  </small>
+</div>
+
+<div class="form-row row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Container Port</label>
+      <input type="number" class="form-control" name="container_port" value="{{ challenge.container_port }}" min="1" max="65535" required>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Timeout (seconds)</label>
+      <input type="number" class="form-control" name="timeout_seconds" value="{{ challenge.timeout_seconds }}" min="30" max="86400" required>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>
+    Resource Allocation<br>
+    <small class="form-text text-muted">
+      These limits are enforced per launched player container.
+    </small>
+  </label>
+</div>
+
+<div class="form-row row">
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>CPU Limit</label>
+      <input type="number" class="form-control" name="cpu_limit" value="{{ challenge.cpu_limit }}" min="0.1" max="8" step="0.1" required>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Memory (MB)</label>
+      <input type="number" class="form-control" name="memory_limit_mb" value="{{ challenge.memory_limit_mb }}" min="64" max="16384" required>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Max Instances</label>
+      <input type="number" class="form-control" name="max_instances" value="{{ challenge.max_instances }}" min="1" max="2000" required>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block function %}{% endblock %}
+{% block initial %}{% endblock %}
+{% block decay %}{% endblock %}
+{% block minimum %}{% endblock %}

@@ -1,0 +1,34 @@
+services:
+  ctfd:
+    build:
+      context: .
+    container_name: ctfd-plugin-poc
+    restart: unless-stopped
+    user: root
+    ports:
+      - "8001:8000"
+    environment:
+      UPLOAD_FOLDER: /var/uploads
+      DATABASE_URL: sqlite:////var/ctfd/db/ctfd.db
+      WORKERS: "1"
+      ACCESS_LOG: "-"
+      ERROR_LOG: "-"
+      SECRET_KEY: ctfd-container-plugin-poc-secret
+      SKIP_DB_PING: "true"
+      CTFD_CONTAINER_BACKEND: docker
+      CTFD_CONTAINER_DB_PATH: /var/ctfd-container/runtime.db
+      CTFD_CONTAINER_PUBLIC_HOST: 127.0.0.1
+      CTFD_CONTAINER_PUBLIC_SCHEME: http
+      CTFD_CONTAINER_REAPER_INTERVAL: "3"
+    volumes:
+      - ctfd_uploads:/var/uploads
+      - ctfd_db:/var/ctfd/db
+      - ctfd_logs:/var/log/CTFd
+      - ctfd_runtime:/var/ctfd-container
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  ctfd_uploads:
+  ctfd_db:
+  ctfd_logs:
+  ctfd_runtime:

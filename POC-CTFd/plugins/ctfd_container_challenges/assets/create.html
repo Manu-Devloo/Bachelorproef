@@ -1,0 +1,84 @@
+{% extends "admin/challenges/create.html" %}
+
+{% block attribution %}
+<div class="form-group">
+  <label>
+    Connection Info:<br>
+    <small class="form-text text-muted">
+      Optional static instructions shown alongside the runtime launch panel.
+    </small>
+  </label>
+  <input type="text" class="form-control" name="connection_info" placeholder="Optional static hostname or notes">
+</div>
+
+<div class="form-group">
+  <label>
+    Container Image:<br>
+    <small class="form-text text-muted">
+      Docker image to launch for each player instance. You can also upload a Docker archive to populate this automatically.
+    </small>
+  </label>
+  <input type="text" class="form-control" name="image" placeholder="poc-demo-http:latest" required>
+</div>
+
+<div class="form-group">
+  <label>
+    Docker Image Archive<br>
+    <small class="form-text text-muted">
+      Optional `.tar`, `.tar.gz`, or `.tgz` archive from `docker save`. The plugin imports it into the local Docker daemon and assigns a local image tag.
+    </small>
+  </label>
+  <input type="file" class="form-control-file" name="image_archive" accept=".tar,.tar.gz,.tgz">
+  <input type="hidden" name="uploaded_image_token" value="">
+  <small class="form-text text-muted" data-upload-status>No archive uploaded yet.</small>
+</div>
+
+<div class="form-row row">
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Container Port</label>
+      <input type="number" class="form-control" name="container_port" value="8080" min="1" max="65535" required>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-group">
+      <label>Timeout (seconds)</label>
+      <input type="number" class="form-control" name="timeout_seconds" value="900" min="30" max="86400" required>
+    </div>
+  </div>
+</div>
+
+<div class="form-group">
+  <label>
+    Resource Allocation<br>
+    <small class="form-text text-muted">
+      These limits are enforced per launched player container.
+    </small>
+  </label>
+</div>
+
+<div class="form-row row">
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>CPU Limit</label>
+      <input type="number" class="form-control" name="cpu_limit" value="0.5" min="0.1" max="8" step="0.1" required>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Memory (MB)</label>
+      <input type="number" class="form-control" name="memory_limit_mb" value="256" min="64" max="16384" required>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="form-group">
+      <label>Max Instances</label>
+      <input type="number" class="form-control" name="max_instances" value="30" min="1" max="2000" required>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block type %}
+<input type="hidden" name="type" value="containerized">
+{% endblock %}

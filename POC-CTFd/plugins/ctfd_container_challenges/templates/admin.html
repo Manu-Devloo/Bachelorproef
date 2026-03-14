@@ -1,0 +1,187 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="jumbotron">
+  <div class="container">
+    <h1>Container Challenge Runtime</h1>
+    <p class="lead mb-0">Inspect challenge resource profiles and force-stop active containers from the admin UI.</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="mb-4 d-flex align-items-center justify-content-between gap-3 flex-wrap">
+    <div>
+      <h3 class="mb-1">Runtime Health</h3>
+      <p class="text-muted mb-0">Live backend and storage state for the plugin runtime.</p>
+    </div>
+    <form method="POST" action="{{ url_for('ctfd_container_challenges_api.admin_run_reaper_page') }}">
+      <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+      <button type="submit" class="btn btn-outline-primary">Run Reaper Now</button>
+    </form>
+  </div>
+
+  <div class="mb-4">
+    <pre>{{ health | tojson(indent=2) }}</pre>
+  </div>
+
+  <div class="mb-5">
+    <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap mb-3">
+      <div>
+        <h3 class="mb-1">Challenge Configuration</h3>
+        <p class="text-muted mb-0">Per-challenge resource allocation, timeout, and capacity limits.</p>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Challenge</th>
+            <th>Image</th>
+            <th>Port</th>
+            <th>CPU</th>
+            <th>Memory</th>
+            <th>Timeout</th>
+            <th>Capacity</th>
+            <th>Running</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for challenge in challenges %}
+          <tr>
+            <td>
+              <strong>{{ challenge.name }}</strong><br>
+              <small class="text-muted">#{{ challenge.id }}{% if challenge.category %} · {{ challenge.category }}{% endif %}</small>
+            </td>
+            <td>
+              <code>{{ challenge.image }}</code>
+              {% if challenge.image_archive_name %}
+              <br><small class="text-muted">archive: {{ challenge.image_archive_name }}</small>
+              {% endif %}
+            </td>
+            <td>{{ challenge.container_port }}</td>
+            <td>{{ challenge.cpu_limit }}</td>
+            <td>{{ challenge.memory_limit_mb }} MB</td>
+            <td>{{ challenge.timeout_seconds }}s</td>
+            <td>{{ challenge.max_instances }}</td>
+            <td>{{ challenge.running_instances }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('ctfd_container_challenges_api.admin_force_stop_challenge', challenge_id=challenge.id) }}">
+                <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                <button
+                  type="submit"
+                  class="btn btn-sm btn-outline-danger"
+                  {% if challenge.running_instances == 0 %}disabled{% endif %}
+                >
+                  Stop All Running
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="9">No containerized challenges configured yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mb-5">
+    <h3>Instances</h3>
+    <p class="text-muted">Force-stop individual runtime instances or inspect the effective challenge profile that launched them.</p>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Challenge</th>
+            <th>Account</th>
+            <th>Status</th>
+            <th>Access</th>
+            <th>Profile</th>
+            <th>Started</th>
+            <th>Expires</th>
+            <th>Stopped</th>
+            <th>Reason</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in instances %}
+          <tr>
+            <td>
+              <strong>{{ item.challenge_name }}</strong><br>
+              <small class="text-muted">#{{ item.challenge_id }}{% if item.challenge_category %} · {{ item.challenge_category }}{% endif %}</small>
+            </td>
+            <td>{{ item.account_id }}</td>
+            <td>{{ item.status }}</td>
+            <td>
+              {% if item.access_url %}
+              <a href="{{ item.access_url }}" target="_blank" rel="noopener noreferrer">{{ item.access_url }}</a>
+              {% endif %}
+            </td>
+            <td>
+              {% if item.image %}
+              <code>{{ item.image }}</code><br>
+              <small class="text-muted">{{ item.cpu_limit }} CPU · {{ item.memory_limit_mb }} MB · {{ item.timeout_seconds }}s · max {{ item.max_instances }}</small>
+              {% endif %}
+            </td>
+            <td>{{ item.started_at }}</td>
+            <td>{{ item.expires_at }}</td>
+            <td>{{ item.stopped_at or "" }}</td>
+            <td>{{ item.stop_reason or "" }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('ctfd_container_challenges_api.admin_force_stop_instance', instance_id=item.instance_id) }}">
+                <input type="hidden" name="nonce" value="{{ Session.nonce }}">
+                <button
+                  type="submit"
+                  class="btn btn-sm btn-outline-danger"
+                  {% if item.status != "running" %}disabled{% endif %}
+                >
+                  Force Stop
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="10">No runtime activity yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <h3>Recent Logs</h3>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Level</th>
+            <th>Message</th>
+            <th>Metadata</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in logs %}
+          <tr>
+            <td>{{ item.created_at }}</td>
+            <td>{{ item.level }}</td>
+            <td>{{ item.message }}</td>
+            <td><pre class="mb-0">{{ item.metadata | tojson(indent=2) }}</pre></td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="4">No logs yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

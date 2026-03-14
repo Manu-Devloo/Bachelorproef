@@ -1,0 +1,27 @@
+{% extends "challenge.html" %}
+
+{% block description %}
+{{ challenge.html }}
+
+<div id="container-runtime-panel" class="ctfd-container-panel mt-4" data-timeout-seconds="{{ challenge.timeout_seconds }}">
+  <div class="ctfd-container-panel__header">
+    <h4 class="mb-1">Runtime Access</h4>
+    <small class="text-muted">Per-player container with automatic cleanup.</small>
+  </div>
+
+  <div class="ctfd-container-panel__body">
+    <p id="container-runtime-status" class="mb-2 text-muted">Checking runtime status...</p>
+    <p id="container-runtime-access" class="mb-2"></p>
+    <p id="container-runtime-expiry" class="mb-3 small text-muted"></p>
+
+    <div class="d-flex gap-2">
+      <button id="container-runtime-start" class="btn btn-sm btn-primary" type="button">
+        Start Instance
+      </button>
+      <button id="container-runtime-stop" class="btn btn-sm btn-outline-secondary" type="button" disabled>
+        Stop Instance
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}
