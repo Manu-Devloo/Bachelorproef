@@ -30,7 +30,7 @@ Niet alle oorspronkelijk overwogen validaties zijn in deze fase volledig uitgevo
 \section{Pre-validatie via de standalone PoC}%
 \label{sec:validatie-standalone}
 
-De standalone PoC werd gebruikt om de meest fundamentele runtime-mechanismen los van CTFd te testen. Die resultaten zijn relevant omdat dezelfde ontwerpprincipes later in de plugin-PoC zijn toegepast.
+De standalone PoC werd gebruikt om fundamentele runtime-mechanismen los van CTFd te testen. De resultaten zijn relevant, omdat dezelfde ontwerpprincipes later in de plugin-PoC zijn toegepast.
 
 \subsection{Geautomatiseerde tests en API-validatie}
 
@@ -44,7 +44,7 @@ Voor de standalone orchestrator zijn geautomatiseerde tests uitgevoerd met \text
   \item het basis happy-path van de API.
 \end{itemize}
 
-De gerapporteerde uitkomst van deze testset was \texttt{4 passed in 0.60s}. Hoewel dit nog geen bewijs is voor de CTFd-integratie zelf, bevestigt het wel dat de gekozen lifecycle-logica technisch correct werkt in een afgebakende testomgeving.
+De gerapporteerde uitkomst van deze testset was \texttt{4 passed in 0.60s}. Hoewel dit nog geen bewijs is voor de CTFd-integratie zelf, wijst het er wel op dat de gekozen lifecycle-logica technisch correct werkt in een afgebakende testomgeving.
 
 \subsection{End-to-end smoke test}
 
@@ -62,7 +62,7 @@ Drie gerichte experimenten waren bijzonder bruikbaar als pre-validatie van de pl
 
 \subsection{Load snapshot met Locust}
 
-Een beperkte loadtest met Locust~\autocite{Locust} werd gebruikt om capaciteitsgedrag te observeren. In een create-only scenario werden 128 requests uitgevoerd, waarvan 84 faalden met \texttt{409 CONFLICT} zodra de ingestelde capaciteit bereikt werd. Dit resultaat bewijst niet dat de oplossing al grootschalig geoptimaliseerd is, maar toont wel aan dat de capaciteitslimiet effectief wordt afgedwongen in plaats van stilzwijgend overschreden te worden.
+Een beperkte loadtest met Locust~\autocite{Locust} werd gebruikt om capaciteitsgedrag te observeren. In een create-only scenario werden 128 requests uitgevoerd, waarvan 84 faalden met \texttt{409 CONFLICT} zodra de ingestelde capaciteit bereikt werd. Dit resultaat wijst niet op een al grootschalig geoptimaliseerde oplossing, maar laat wel zien dat de capaciteitslimiet effectief wordt afgedwongen in plaats van stilzwijgend overschreden te worden.
 
 %%----------------------------------------------------------------------
 \section{Validatie van de CTFd-plugin}%
@@ -85,9 +85,9 @@ De plugin-PoC werd gevalideerd met een volledige smoke test in een draaiende CTF
   \item verifi\"eren via het admin-overzicht dat de stopreden als \texttt{challenge-solved} geregistreerd werd.
 \end{itemize}
 
-Deze smoke test is belangrijk omdat ze aantoont dat de plugin niet enkel losse Docker-acties kan uitvoeren, maar ook correct samenwerkt met de challenge-flow van CTFd.
+Deze smoke test is relevant omdat ze laat zien dat de plugin niet enkel losse Docker-acties kan uitvoeren, maar ook correct samenwerkt met de challenge-flow van CTFd.
 
-\subsection{Wat de pluginvalidatie effectief aantoont}
+\subsection{Wat de pluginvalidatie laat zien}
 
 Op basis van de plugin smoke test kunnen binnen de scope van deze bachelorproef de volgende uitspraken verantwoord worden:
 
@@ -102,7 +102,7 @@ Op basis van de plugin smoke test kunnen binnen de scope van deze bachelorproef 
 
 \subsection{Wat bewust niet als bewezen claim wordt opgenomen}
 
-De plugin-PoC bewijst in deze fase nog niet dat de oplossing al klaar is voor een meerhost-architectuur of productie-inzet. In het bijzonder werden de volgende punten niet volledig gevalideerd en worden ze daarom niet als gerealiseerd resultaat voorgesteld:
+De plugin-PoC toont in deze fase nog niet aan dat de oplossing al klaar is voor een meerhost-architectuur of productie-inzet. In het bijzonder werden de volgende punten niet volledig gevalideerd en worden ze daarom niet als gerealiseerd resultaat voorgesteld:
 
 \begin{itemize}
   \item remote deployment waarbij CTFd en Docker op aparte VM's draaien;
@@ -122,6 +122,6 @@ De plugin-PoC bewijst in deze fase nog niet dat de oplossing al klaar is voor ee
 \section{Interpretatie van de resultaten}%
 \label{sec:validatie-conclusie}
 
-De combinatie van standalone pre-validatie en plugin-validatie levert voldoende bewijs om drie conclusies te trekken. Ten eerste is de kern van het probleem technisch oplosbaar: challenge-containers kunnen dynamisch gestart, hergebruikt en opgeruimd worden op basis van acties in CTFd. Ten tweede kunnen direct toepasbare beveiligingsmaatregelen zoals read-only filesystems, capability dropping, no-new-privileges en resource-limieten effectief in de runtime worden opgenomen. Ten derde toont de plugin smoke test aan dat deze runtime-logica bruikbaar kan worden ingepast in het CTFd-platform zelf.
+De combinatie van standalone pre-validatie en plugin-validatie biedt voldoende basis om drie observaties te formuleren. Ten eerste is de kern van het probleem technisch oplosbaar: challenge-containers kunnen dynamisch gestart, hergebruikt en opgeruimd worden op basis van acties in CTFd. Ten tweede kunnen direct toepasbare beveiligingsmaatregelen zoals read-only filesystems, capability dropping, no-new-privileges en resource-limieten effectief in de runtime worden opgenomen. Ten derde laat de plugin smoke test zien dat deze runtime-logica bruikbaar kan worden ingepast in het CTFd-platform zelf.
 
 De validatie maakt tegelijk duidelijk waar de grenzen van de huidige PoC liggen. Schaalbaarheid over meerdere VM's, veilige remote Docker-communicatie en meer geavanceerde production hardening zijn nog niet volledig onderzocht. De twee-VM-opstelling waarbij CTFd en plugin op een eerste VM draaien en challenge-containers op een tweede VM worden gestart, vormt daarom de belangrijkste volgende validatiestap.

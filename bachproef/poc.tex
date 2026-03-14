@@ -5,7 +5,7 @@
 \chapter{\IfLanguageName{dutch}{Proof-of-Concept}{Proof of Concept}}%
 \label{ch:poc}
 
-Dit hoofdstuk beschrijft de praktische uitwerking van het onderzoek. De nadruk ligt op de uiteindelijke CTFd-plugin, omdat die het best aansluit bij de onderzoeksvraag: challenge-containers dynamisch beheren vanuit CTFd. Voorafgaand daaraan werd echter een beperkte standalone PoC gebouwd om de kernmechanismen sneller te testen. Die verkennende stap wordt kort besproken omdat ze verschillende ontwerpkeuzes voor de plugin heeft onderbouwd.
+Dit hoofdstuk beschrijft de praktische uitwerking van het onderzoek. De nadruk ligt op de uiteindelijke CTFd-plugin, omdat die rechtstreeks aansluit bij de onderzoeksvraag: challenge-containers dynamisch beheren vanuit CTFd. Voorafgaand daaraan werd echter een beperkte standalone PoC gebouwd om de kernmechanismen sneller te testen. Die verkennende stap wordt kort besproken omdat ze verschillende ontwerpkeuzes voor de plugin heeft onderbouwd.
 
 %%----------------------------------------------------------------------
 \section{Architectuuroverzicht}%
@@ -46,7 +46,7 @@ De standalone PoC bood een challenge-registry, een eenvoudige webinterface, API-
   \item netwerkisolatie per instantie.
 \end{itemize}
 
-De standalone PoC was dus vooral een technische voorstudie die toeliet om de risicovolste runtime-aspecten vroeg te toetsen. Zodra die basis werkte, werd de focus verschoven naar de CTFd-plugin, omdat die veel beter aansluit bij het doel van dit onderzoek: de containerlevenscyclus rechtstreeks koppelen aan acties in het CTF-platform.
+De standalone PoC was dus vooral een technische voorstudie die toeliet om de risicovolste runtime-aspecten vroeg te toetsen. Zodra die basis werkte, werd de focus verschoven naar de CTFd-plugin, omdat die nauwer aansluit bij het doel van dit onderzoek: de containerlevenscyclus rechtstreeks koppelen aan acties in het CTF-platform.
 
 %%----------------------------------------------------------------------
 \section{Implementatie van de CTFd-plugin}%
@@ -144,4 +144,4 @@ Daarbij moeten minstens vier vragen verder onderzocht worden:
   \item onderzoeken of een extra orchestratorlaag nuttig blijft in een remote deployment zonder de plugin als hoofdinterface te verlaten.
 \end{itemize}
 
-De plugin blijft daarmee de aanbevolen oplossingsrichting binnen de scope van deze bachelorproef, maar de deployment over meerdere VM's is expliciet een nog te valideren uitbreiding.
+De plugin blijft daarmee binnen de scope van deze bachelorproef de centrale oplossingsrichting, maar de deployment over meerdere VM's is expliciet een nog te valideren uitbreiding.

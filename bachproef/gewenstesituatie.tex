@@ -19,7 +19,8 @@ De gewenste oplossing automatiseert het beheer van service-gebaseerde challenges
   \item bij het starten van een challenge automatisch een containerinstantie voorzien per gebruiker of per team;
   \item de volledige containerlevenscyclus beheren (aanmaken, starten, stopzetten, verwijderen en opruimen na timeout);
   \item per challenge configureerbare resource-limieten afdwingen (CPU en RAM);
-  \item netwerkisolatie afdwingen tussen instanties van verschillende gebruikers/teams en ongewenste laterale beweging verhinderen;
+  \item netwerkisolatie afdwingen tussen instanties van gebruikers of teams;
+  \item ongewenste laterale beweging tussen instanties verhinderen;
   \item een mechanisme voorzien om het aantal actieve instanties te limiteren (per challenge en/of globaal) om resource-uitputting te vermijden;
   \item organisatoren een beheerbare manier bieden om challenge-parameters te configureren (Docker-image, poorten, timeouts, limieten);
   \item een overzicht bieden van actieve instanties, inclusief eigenaar (gebruiker/team), status en vervaltijd, met voldoende logging voor foutopsporing.

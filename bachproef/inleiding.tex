@@ -7,7 +7,7 @@
 
 Capture The Flag (CTF)-events zijn cybersecuritywedstrijden waarbij deelnemers technische uitdagingen oplossen om punten te scoren~\autocite{Innovirtuoso2025}. Ze worden georganiseerd door hogescholen, universiteiten, bedrijven en onafhankelijke gemeenschappen als educatieve en competitieve oefeningen. Elke deelnemer of elk team werkt aan zogenaamde \textit{challenges}: geïsoleerde omgevingen met een kwetsbaarheid die uitgebuit moet worden om een \textit{flag} te bemachtigen.
 
-Naarmate CTF-events populairder worden, groeit ook de behoefte aan robuuste, schaalbare infrastructuur om dergelijke challenges betrouwbaar aan te bieden. Momenteel worden challenges op eigen infrastructuur vaak manueel of semi-automatisch beheerd, wat leidt tot operationele overhead, beveiligingsrisico's en schaalbaarheidsknelpunten~\autocite{Singier2025}.
+Naarmate CTF-events populairder worden, groeit ook de behoefte aan infrastructuur die dergelijke challenges betrouwbaar kan aanbieden. Op eigen infrastructuur worden challenges vandaag vaak manueel of semi-automatisch beheerd. Dat leidt tot operationele overhead, beveiligingsrisico's en schaalbaarheidsknelpunten~\autocite{Singier2025}.
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
@@ -44,7 +44,7 @@ Hieruit volgen de volgende deelvragen:
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Het beoogde resultaat van deze bachelorproef is een werkende proof-of-concept (PoC) die aantoont hoe CTFd-challenges dynamisch en veilig beheerd kunnen worden op eigen infrastructuur. De uiteindelijke PoC is een CTFd-plugin die communiceert met de Docker Engine API, resource-limieten afdwingt en netwerkisolatie garandeert. Tijdens de uitwerking werd eerst een beperkte standalone proefopstelling gebouwd om de haalbaarheid van container lifecycle management, basisbeveiliging en validatieaanpak te toetsen. Die verkennende stap diende niet als eindarchitectuur, maar als technische voorbereiding op de plugin-gebaseerde oplossing. De aanbevolen oplossing in deze bachelorproef blijft dus een volledig self-hosted en open-source plugin-aanpak binnen CTFd.
+Het beoogde resultaat van deze bachelorproef is een werkende proof-of-concept (PoC) die onderzoekt hoe CTFd-challenges dynamisch en veilig beheerd kunnen worden op eigen infrastructuur. De uiteindelijke PoC is een CTFd-plugin die communiceert met de Docker Engine API, resource-limieten afdwingt en netwerkisolatie toepast. Tijdens de uitwerking werd eerst een beperkte standalone proefopstelling gebouwd om de haalbaarheid van container lifecycle management, basisbeveiliging en validatieaanpak te toetsen. Die verkennende stap diende niet als eindarchitectuur, maar als technische voorbereiding op de plugin-gebaseerde oplossing. Binnen deze bachelorproef geldt een volledig self-hosted en open-source plugin-aanpak binnen CTFd als de centrale oplossingsrichting.
 
 \section{\IfLanguageName{dutch}{Scope en afbakening}{Scope}}%
 \label{sec:scope}

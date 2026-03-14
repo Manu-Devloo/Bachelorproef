@@ -5,7 +5,7 @@
 \chapter{Conclusie}%
 \label{ch:conclusie}
 
-Deze bachelorproef onderzocht hoe Docker-containers die gelinkt zijn aan CTFd-challenges dynamisch beheerd, aangemaakt en beeindigd kunnen worden op basis van gebruikersacties en ingestelde parameters op on-premise infrastructuur. Op basis van de literatuurstudie, de verkennende standalone PoC en de uiteindelijke plugin-PoC kan geconcludeerd worden dat een plugin-gebaseerde aanpak binnen CTFd hiervoor een haalbare en zinvolle oplossing is.
+Deze bachelorproef onderzocht hoe Docker-containers die gelinkt zijn aan CTFd-challenges dynamisch beheerd, aangemaakt en beeindigd kunnen worden op basis van gebruikersacties en ingestelde parameters op on-premise infrastructuur. Op basis van de literatuurstudie, de verkennende standalone PoC en de uiteindelijke plugin-PoC kan geconcludeerd worden dat een plugin-gebaseerde aanpak binnen CTFd hiervoor een haalbare oplossingsrichting is.
 
 %%----------------------------------------------------------------------
 \section{Beantwoording van de onderzoeksvragen}%
@@ -26,9 +26,9 @@ Ook de deelvragen kunnen op basis van de resultaten beantwoord worden:
 \section{Beperkingen van de PoC}%
 \label{sec:conclusie-beperkingen}
 
-Hoewel de plugin-PoC de kern van de onderzoeksvraag beantwoordt, zijn er duidelijke beperkingen. De huidige implementatie draait op een enkele host en bewijst dus nog niet hoe de oplossing zich gedraagt in een split deployment of meerhost-opstelling. Ook reverse-proxy-routing, geavanceerde production hardening en aangepaste seccomp-profielen maken nog geen afgerond deel uit van de PoC.
+Hoewel de plugin-PoC de kern van de onderzoeksvraag beantwoordt, zijn er duidelijke beperkingen. De huidige implementatie draait op een enkele host en toont dus nog niet hoe de oplossing zich gedraagt in een split deployment of meerhost-opstelling. Ook reverse-proxy-routing, geavanceerde production hardening en aangepaste seccomp-profielen maken nog geen afgerond deel uit van de PoC.
 
-Daarnaast was de standalone PoC nuttig als exploratief tussenresultaat, maar ze is niet bedoeld als aanbevolen eindarchitectuur. De standalone stap diende vooral om risico's vroeg te reduceren en technische keuzes te onderbouwen voordat de pluginintegratie werd gebouwd.
+Daarnaast was de standalone PoC nuttig als exploratief tussenresultaat, maar ze is niet bedoeld als eindarchitectuur. De standalone stap diende vooral om risico's vroeg te reduceren en technische keuzes te onderbouwen voordat de pluginintegratie werd gebouwd.
 
 %%----------------------------------------------------------------------
 \section{Aanbevelingen voor productiegebruik}%
@@ -43,7 +43,7 @@ Voor productiegebruik volstaat de huidige PoC nog niet zonder bijkomende maatreg
   \item operationele procedures voor imagebeheer, updates en incidentrespons.
 \end{itemize}
 
-De plugin-aanpak blijft daarbij wel de meest logische basis, omdat ze de gebruikerservaring en het beheer in CTFd centraliseert en tegelijk voldoende controle biedt over runtime-beleid.
+De plugin-aanpak blijft daarbij een passende basis, omdat ze de gebruikerservaring en het beheer in CTFd centraliseert en tegelijk voldoende controle biedt over runtime-beleid.
 
 %%----------------------------------------------------------------------
 \section{Mogelijke uitbreidingen}%
@@ -58,6 +58,6 @@ De belangrijkste volgende stap is het onderzoeken van een deployment waarbij CTF
   \item hoe reageert het systeem wanneer de Docker-host tijdelijk onbereikbaar is.
 \end{itemize}
 
-Andere interessante uitbreidingen zijn een reverse-proxy-gebaseerd toegangspunt, uitgebreidere loadtesting en verdere production hardening. Binnen de scope van deze bachelorproef is de voornaamste conclusie echter dat een CTFd-plugin de juiste aanbevolen oplossingsrichting vormt, terwijl de twee-VM-opstelling en verdere schaaluitbreiding expliciet toekomstig werk blijven.
+Andere interessante uitbreidingen zijn een reverse-proxy-gebaseerd toegangspunt, uitgebreidere loadtesting en verdere production hardening. Binnen de scope van deze bachelorproef is de voornaamste conclusie echter dat een CTFd-plugin de meest passende oplossingsrichting vormt, terwijl de twee-VM-opstelling en verdere schaaluitbreiding expliciet toekomstig werk blijven.
 
 \textbf{TODO voor vervolgwerk}: de eerstvolgende praktische stap is een echte proefopstelling bouwen waarin CTFd en plugin op een eerste VM draaien en de challenge-containers op een tweede VM worden gestart. Pas na die validatie kan beoordeeld worden of een remote Docker-koppeling volstaat of dat een extra tussenlaag alsnog verantwoord is.

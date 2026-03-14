@@ -50,7 +50,7 @@
 \supervisor{Dhr. T. Clauwaert}
 \cosupervisor{Dhr. L. Singier}
 \title[Dynamisch Docker-omgevingbeheer voor CTF-events]%
-    {Dynamisch Docker-omgevingbeheer voor CTF-events op on-prem infrastructuur}
+    {\texorpdfstring{Dynamisch Docker-omgevingbeheer\\voor CTF-events\\op on-prem infrastructuur}{Dynamisch Docker-omgevingbeheer voor CTF-events op on-prem infrastructuur}}
 \academicyear{2025--2026}
 \examperiod{1}
 \degreesought{\IfLanguageName{dutch}{Professionele bachelor in de toegepaste informatica}{Bachelor of applied computer science}}
@@ -69,6 +69,7 @@
 \renewcommand{\cleardoublepage}{\clearpage}
 
 \renewcommand{\arraystretch}{1.2}
+\setlength{\emergencystretch}{2em}
 
 %% Content starts here.
 \begin{document}
@@ -198,7 +199,7 @@ Voor de plugin-PoC gebeurt beheer grotendeels vanuit CTFd zelf. De plugin voegt 
   \item per challenge het resourceprofiel raadplegen.
 \end{itemize}
 
-Voor de standalone PoC bestaan daarnaast helper-scripts zoals \texttt{cleanup\_runtime.sh} om alle beheerde runtime-artifacten op te ruimen.
+Voor de standalone PoC bestaan daarnaast helper-scripts, zoals \path{cleanup_runtime.sh}, om alle beheerde runtime-artifacten op te ruimen.
 
 \chapter{Configuratiebestanden}
 \label{app:configuratie}
@@ -275,7 +276,9 @@ Resultaat: de demo-image en orchestrator werden opgebouwd, twee instanties werde
 \textbf{Load snapshot}
 \begin{verbatim}
 cd POC
-app/.venv/bin/locust -f tests/locustfile.py --host=http://127.0.0.1:8000 \
+app/.venv/bin/locust \
+  -f tests/locustfile.py \
+  --host=http://127.0.0.1:8000 \
   --headless -u 10 -r 5 -t 10s
 \end{verbatim}
 
@@ -322,7 +325,7 @@ Bij de architectuuranalyse werd de keuze tussen een instantie per gebruiker en e
 Voor de integratie tussen de CTFd-plugin en de Docker-daemon werden twee opties afgewogen: de officiële Docker SDK voor Python~\autocite{DockerSDKPython} en directe HTTP-aanroepen naar de Docker Engine API~\autocite{DockerEngineAPI}. De SDK biedt een hogere abstractie, minder foutgevoeligheid en is de aanbevolen aanpak voor Python-applicaties. Directe API-calls zouden meer controle geven maar ook meer boilerplate en foutafhandeling vergen. Gekozen werd voor de SDK, tenzij er specifieke beperkingen opduiken tijdens de implementatie.
 
 \textbf{Beslissing: reverse proxy niet in de eerste implementatie}\\
-Een reverse proxy met dynamische routing, bijvoorbeeld via Traefik~\autocite{Traefik}, bleef architecturaal interessant, maar werd niet in de eerste implementatiefase opgenomen. De reden daarvoor was pragmatisch: eerst moest aangetoond worden dat container lifecycle management, cleanup en basisbeveiliging betrouwbaar werkten. Reverse-proxy-routing werd daarom verschoven naar een latere uitbreidingsfase.
+Een reverse proxy met dynamische routing, bijvoorbeeld via Traefik~\autocite{Traefik}, bleef architecturaal interessant, maar werd niet in de eerste implementatiefase opgenomen. De reden daarvoor was pragmatisch: eerst moest duidelijk worden dat container lifecycle management, cleanup en basisbeveiliging betrouwbaar werkten. Reverse-proxy-routing werd daarom verschoven naar een latere uitbreidingsfase.
 
 \textbf{Beslissing: eerst een verkennende standalone stap, daarna plugin-integratie}\\
 Hoewel de einddoelstelling altijd plugin-gebaseerd bleef, werd tijdens de analyse beslist eerst een beperkte standalone PoC te bouwen. Die keuze liet toe om de kern van container lifecycle management los van CTFd te valideren en technische risico's vroeg te reduceren. Zodra die basis stabiel genoeg bleek, werd de focus verschoven naar de eigenlijke CTFd-plugin.
@@ -334,10 +337,10 @@ De bestaande CTFd-Whale plugin~\autocite{CTFdWhale} werd bestudeerd als referent
 \section*{Fase 3 -- Uitwerking en herori\"entatie}
 
 \textbf{Beslissing: standalone PoC behouden als voorstudie, niet als eindarchitectuur}\\
-Na de eerste experimenten bleek dat de standalone PoC waardevol was voor het valideren van timeouts, netwerkisolatie, logging en basisresourcebeleid. Tegelijk werd duidelijk dat deze opzet niet het beste eindresultaat vormde voor de centrale onderzoeksvraag, omdat de gebruikersinteractie dan buiten CTFd bleef. De standalone PoC werd daarom behouden als onderzoeksstap en niet als aanbevolen oplossing.
+Na de eerste experimenten bleek dat de standalone PoC bruikbaar was voor het valideren van timeouts, netwerkisolatie, logging en basisresourcebeleid. Tegelijk werd duidelijk dat deze opzet minder goed aansloot bij de centrale onderzoeksvraag, omdat de gebruikersinteractie dan buiten CTFd bleef. De standalone PoC werd daarom behouden als onderzoeksstap en niet als finale oplossingsrichting.
 
-\textbf{Beslissing: plugin aanbevelen als finale oplossingsrichting}\\
-Na de realisatie van de plugin-PoC werd beslist om de plugin als aanbevolen oplossingsrichting naar voren te schuiven. De plugin koppelt gebruikersacties rechtstreeks aan challenge-runtimes, houdt de beheerinterface binnen CTFd en sluit daardoor het best aan bij de context van CTF-events op eigen infrastructuur.
+\textbf{Beslissing: plugin behouden als voorkeursrichting}\\
+Na de realisatie van de plugin-PoC werd beslist om de plugin als voorkeursrichting naar voren te schuiven. De plugin koppelt gebruikersacties rechtstreeks aan challenge-runtimes, houdt de beheerinterface binnen CTFd en sluit daardoor goed aan bij de context van CTF-events op eigen infrastructuur.
 
 \textbf{Beslissing: split deployment over twee VM's opnemen als TODO}\\
 Tijdens de uitwerking kwam een bijkomende architectuurvraag naar voren: kan CTFd met plugin op een eerste VM draaien terwijl de challenge-containers op een tweede VM worden gestart. Omdat die opzet bijkomende validatie vereist rond remote Docker-communicatie, latency en toegangscontrole, werd beslist dit expliciet als toekomstig werk op te nemen in plaats van het onvolledig als resultaat te presenteren.
