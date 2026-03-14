@@ -336,7 +336,9 @@
         not running XeLaTeX/LuaLaTeX: using native fonts}
 
     \RequirePackage[defaultfam,tabular,lining]{montserrat}
-    \RequirePackage{firamath}
+    \IfFileExists{firamath.sty}{%
+        \RequirePackage{firamath}%
+    }{}
     \RequirePackage{sfmath} % Fallback sans serif math font
 
     \RequirePackage[T1]{fontenc}
@@ -445,6 +447,8 @@
 \setlength{\parindent}{0cm}              %% Don't indent paragraph text
 \renewcommand{\baselinestretch}{1.2}     %% Increase line height
 \raggedbottom                            %% Don't equalize content on pages
+
+\providecommand*{\@addpunct}[1]{#1}
 
 
 %% Redefine maketitle for our custom title page

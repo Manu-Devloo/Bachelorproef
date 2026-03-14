@@ -5,48 +5,59 @@
 \chapter{Conclusie}%
 \label{ch:conclusie}
 
-% TODO: Trek een duidelijke conclusie als antwoord op de centrale onderzoeksvraag:
-% "Hoe kunnen Docker-containers die gelinkt zijn aan CTFd-challenges dynamisch
-% worden beheerd, aangemaakt en beëindigd op basis van gebruikersacties en
-% ingestelde parameters, op on-premise infrastructuur?"
+Deze bachelorproef onderzocht hoe Docker-containers die gelinkt zijn aan CTFd-challenges dynamisch beheerd, aangemaakt en beeindigd kunnen worden op basis van gebruikersacties en ingestelde parameters op on-premise infrastructuur. Op basis van de literatuurstudie, de verkennende standalone PoC en de uiteindelijke plugin-PoC kan geconcludeerd worden dat een plugin-gebaseerde aanpak binnen CTFd hiervoor een haalbare en zinvolle oplossing is.
 
 %%----------------------------------------------------------------------
 \section{Beantwoording van de onderzoeksvragen}%
 \label{sec:conclusie-onderzoeksvragen}
 
-% TODO: Beantwoord elke deelvraag op basis van de bevindingen:
-% - Welke beveiligingsmaatregelen zijn minimaal vereist? → verwijzing naar
-%   bevindingen uit hoofdstuk beveiliging
-% - Hoe worden resource-limieten en netwerkisolatie technisch afgedwongen?
-% - Hoe communiceert een CTFd-plugin met de Docker Engine API?
-% - Hoe werd de stabiliteit gevalideerd?
+De centrale onderzoeksvraag kan positief beantwoord worden. Het is mogelijk om vanuit CTFd challenge-containers dynamisch te starten en opnieuw te stoppen, zolang de containerlevenscyclus expliciet wordt gekoppeld aan challenge-acties en runtime-beleid. In de uitgewerkte PoC gebeurt dat via een eigen \texttt{containerized} challenge-type dat Docker-containers start met vooraf ingestelde limieten en ze achteraf ook weer opruimt.
+
+Ook de deelvragen kunnen op basis van de resultaten beantwoord worden:
+
+\begin{itemize}
+  \item \textbf{Welke beveiligingsmaatregelen zijn minimaal vereist?} Een bruikbaar basisprofiel bestaat uit een read-only root filesystem, het droppen van Linux capabilities, \texttt{no-new-privileges}, CPU- en geheugenlimieten, een PID-limiet en netwerkisolatie per instantie.
+  \item \textbf{Hoe worden resource-limieten en netwerkisolatie afgedwongen?} De PoC gebruikt Docker runtime-opties voor CPU, geheugen en PID-limieten en maakt per runtime-instantie een eigen bridge-netwerk aan.
+  \item \textbf{Hoe communiceert CTFd met Docker?} In deze bachelorproef gebeurt dat via een eigen plugin in Python die de Docker SDK voor Python gebruikt om containers, netwerken en image-imports aan te sturen.
+  \item \textbf{Hoe werd de stabiliteit gevalideerd?} Via een combinatie van geautomatiseerde tests, smoke tests, timeout-validatie, isolatie-experimenten en een beperkte loadtest met Locust.
+\end{itemize}
 
 %%----------------------------------------------------------------------
 \section{Beperkingen van de PoC}%
 \label{sec:conclusie-beperkingen}
 
-% TODO: Reflecteer kritisch over de beperkingen:
-% - Schaal: wat zijn de limieten van de gekozen architectuur?
-% - Beveiliging: welke aanvalsvectoren zijn niet (volledig) afgedekt?
-% - Functionaliteit: welke features ontbreken nog voor productiegebruik?
+Hoewel de plugin-PoC de kern van de onderzoeksvraag beantwoordt, zijn er duidelijke beperkingen. De huidige implementatie draait op een enkele host en bewijst dus nog niet hoe de oplossing zich gedraagt in een split deployment of meerhost-opstelling. Ook reverse-proxy-routing, geavanceerde production hardening en aangepaste seccomp-profielen maken nog geen afgerond deel uit van de PoC.
+
+Daarnaast was de standalone PoC nuttig als exploratief tussenresultaat, maar ze is niet bedoeld als aanbevolen eindarchitectuur. De standalone stap diende vooral om risico's vroeg te reduceren en technische keuzes te onderbouwen voordat de pluginintegratie werd gebouwd.
 
 %%----------------------------------------------------------------------
 \section{Aanbevelingen voor productiegebruik}%
 \label{sec:conclusie-aanbevelingen}
 
-% TODO: Formuleer concrete aanbevelingen voor organisaties die de oplossing
-% in productie willen inzetten:
-% - Infrastructuurvereisten
-% - Aanvullende beveiligingsmaatregelen
-% - Monitoring en alerting
-% - Onderhoud en updates
+Voor productiegebruik volstaat de huidige PoC nog niet zonder bijkomende maatregelen. Organisaties die verder willen bouwen op deze aanpak, moeten minstens rekening houden met:
+
+\begin{itemize}
+  \item hardening van de Docker-host en het netwerksegment waarin challenge-containers draaien;
+  \item versleutelde en streng afgeschermde communicatie indien Docker niet lokaal op dezelfde host draait;
+  \item bijkomende monitoring en alerting voor mislukte starts, cleanupfouten en capaciteitspieken;
+  \item operationele procedures voor imagebeheer, updates en incidentrespons.
+\end{itemize}
+
+De plugin-aanpak blijft daarbij wel de meest logische basis, omdat ze de gebruikerservaring en het beheer in CTFd centraliseert en tegelijk voldoende controle biedt over runtime-beleid.
 
 %%----------------------------------------------------------------------
 \section{Mogelijke uitbreidingen}%
 \label{sec:conclusie-uitbreidingen}
 
-% TODO: Beschrijf interessante richtingen voor toekomstig onderzoek:
-% - Migratie naar Kubernetes (\autocite{kCTF}) voor grotere events
-% - CI/CD-integratie: automatisch inladen van nieuwe challenge-images
-% - Multi-tenancy: meerdere CTF-events op dezelfde infrastructuur
-% - Geavanceerde monitoring en anomaliedetectie
+De belangrijkste volgende stap is het onderzoeken van een deployment waarbij CTFd en de plugin op een eerste VM draaien, terwijl de challenge-containers op een tweede VM worden gestart. Daarbij moeten minstens vier vragen beantwoord worden:
+
+\begin{itemize}
+  \item is rechtstreekse communicatie met een remote Docker API voldoende veilig en betrouwbaar;
+  \item of is een dunne tussenlaag toch wenselijk tussen plugin en Docker-host;
+  \item wat is de impact van die opsplitsing op opstartlatency en cleanupbetrouwbaarheid;
+  \item hoe reageert het systeem wanneer de Docker-host tijdelijk onbereikbaar is.
+\end{itemize}
+
+Andere interessante uitbreidingen zijn een reverse-proxy-gebaseerd toegangspunt, uitgebreidere loadtesting en verdere production hardening. Binnen de scope van deze bachelorproef is de voornaamste conclusie echter dat een CTFd-plugin de juiste aanbevolen oplossingsrichting vormt, terwijl de twee-VM-opstelling en verdere schaaluitbreiding expliciet toekomstig werk blijven.
+
+\textbf{TODO voor vervolgwerk}: de eerstvolgende praktische stap is een echte proefopstelling bouwen waarin CTFd en plugin op een eerste VM draaien en de challenge-containers op een tweede VM worden gestart. Pas na die validatie kan beoordeeld worden of een remote Docker-koppeling volstaat of dat een extra tussenlaag alsnog verantwoord is.

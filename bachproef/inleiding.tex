@@ -44,7 +44,7 @@ Hieruit volgen de volgende deelvragen:
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Het beoogde resultaat van deze bachelorproef is een werkende proof-of-concept (PoC) die aantoont hoe CTFd-challenges dynamisch en veilig beheerd kunnen worden op eigen infrastructuur. De PoC omvat een CTFd-plugin die communiceert met de Docker Engine API, resource-limieten afdwingt en netwerkisolatie garandeert. De oplossing is volledig self-hosted, open-source en modulair uitbreidbaar.
+Het beoogde resultaat van deze bachelorproef is een werkende proof-of-concept (PoC) die aantoont hoe CTFd-challenges dynamisch en veilig beheerd kunnen worden op eigen infrastructuur. De uiteindelijke PoC is een CTFd-plugin die communiceert met de Docker Engine API, resource-limieten afdwingt en netwerkisolatie garandeert. Tijdens de uitwerking werd eerst een beperkte standalone proefopstelling gebouwd om de haalbaarheid van container lifecycle management, basisbeveiliging en validatieaanpak te toetsen. Die verkennende stap diende niet als eindarchitectuur, maar als technische voorbereiding op de plugin-gebaseerde oplossing. De aanbevolen oplossing in deze bachelorproef blijft dus een volledig self-hosted en open-source plugin-aanpak binnen CTFd.
 
 \section{\IfLanguageName{dutch}{Scope en afbakening}{Scope}}%
 \label{sec:scope}
@@ -64,8 +64,8 @@ In Hoofdstuk~\ref{ch:huidige-situatie} wordt de huidige situatie (AS-IS) geanaly
 
 In Hoofdstuk~\ref{ch:gewenste-situatie} wordt de gewenste situatie (TO-BE) beschreven, inclusief de architectuurvisie en de vereisten voor de oplossing.
 
-In Hoofdstuk~\ref{ch:poc} wordt de proof-of-concept uitgewerkt: architectuur, implementatie, beveiliging en schaalbaarheid.
+In Hoofdstuk~\ref{ch:poc} wordt de proof-of-concept uitgewerkt. Eerst komt de verkennende standalone PoC kort aan bod als tussenstap, daarna volgt de plugin-PoC als hoofdresultaat van het onderzoek.
 
-In Hoofdstuk~\ref{ch:validatie} worden de testresultaten besproken: functionele tests, beveiligingstests en load tests.
+In Hoofdstuk~\ref{ch:validatie} worden de testresultaten besproken. Daarbij wordt een onderscheid gemaakt tussen de standalone pre-validatie van ontwerpkeuzes en de uiteindelijke validatie van de plugin-integratie.
 
 In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen, samen met aanbevelingen voor toekomstig werk.

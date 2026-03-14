@@ -5,7 +5,7 @@
 \chapter{\IfLanguageName{dutch}{Validatie en testing}{Validation and testing}}%
 \label{ch:validatie}
 
-Dit hoofdstuk beschrijft het testplan en de testresultaten waarmee de correctheid, veiligheid en schaalbaarheid van de PoC worden aangetoond.
+Dit hoofdstuk bespreekt hoe de oplossing werd gevalideerd. De validatie verloopt in twee lagen. Eerst werd een aantal ontwerpkeuzes vooraf getoetst in de standalone PoC. Daarna werd de uiteindelijke plugin-PoC end-to-end gevalideerd in een werkende CTFd-opstelling. Op die manier wordt een onderscheid gemaakt tussen pre-validatie van technische mechanismen en validatie van de finale integratie.
 
 %%----------------------------------------------------------------------
 \section{Testplan}%
@@ -13,78 +13,115 @@ Dit hoofdstuk beschrijft het testplan en de testresultaten waarmee de correcthei
 
 \subsection{Doelstellingen}
 
-% TODO: Beschrijf wat het testplan beoogt te valideren:
-% - Werkt het dynamisch aanmaken en beëindigen van containers correct?
-% - Is de isolatie tussen instanties gegarandeerd?
-% - Zijn de beveiligingsmaatregelen effectief?
-% - Houdt het systeem stand onder zware belasting?
+Het testplan had vier concrete doelen:
 
-\subsection{Testomgeving}
+\begin{itemize}
+  \item aantonen dat challenge-containers correct gestart, hergebruikt en gestopt worden;
+  \item verifi\"eren dat timeout cleanup en solve-triggered cleanup werken;
+  \item nagaan of de gekozen basisbeveiligingsmaatregelen effectief op containers worden toegepast;
+  \item observeren hoe de oplossing zich gedraagt onder gelijktijdige startverzoeken.
+\end{itemize}
 
-% TODO: Beschrijf de testomgeving:
-% - Hardware/VM-specificaties
-% - Betrokken software en versies (CTFd, Docker, plugin, OS)
-% - Netwerktopologie van de testopstelling
+\subsection{Afbakening}
 
-%%----------------------------------------------------------------------
-\section{Functionele tests}%
-\label{sec:validatie-functioneel}
-
-\subsection{Aanmaken en beëindigen van containers}
-
-% TODO: Beschrijf de testscenario's:
-% - Deelnemer start een challenge: wordt de container correct aangemaakt?
-% - Deelnemer stopt de challenge: wordt de container correct verwijderd?
-% - Timeout: wordt de container automatisch gestopt na de ingestelde tijd?
-% - Meerdere deelnemers starten tegelijk dezelfde challenge.
-
-\subsection{Isolatie tussen gebruikers}
-
-% TODO: Beschrijf hoe wordt geverifieerd dat containers van verschillende
-% deelnemers elkaar niet kunnen bereiken:
-% - Netwerktest: kan container A container B pingen?
-% - Kan een deelnemer de omgeving van een andere deelnemer manipuleren?
+Niet alle oorspronkelijk overwogen validaties zijn in deze fase volledig uitgevoerd. Vooral multi-VM schaalverdeling, reverse-proxy-gebaseerde routing en uitgebreide testing van remote Docker-communicatie vallen buiten de effectief afgeronde validatie. Deze punten worden daarom niet als bewezen resultaat voorgesteld, maar als toekomstig werk.
 
 %%----------------------------------------------------------------------
-\section{Beveiligingstests}%
-\label{sec:validatie-beveiliging}
+\section{Pre-validatie via de standalone PoC}%
+\label{sec:validatie-standalone}
 
-\subsection{Container escape pogingen}
+De standalone PoC werd gebruikt om de meest fundamentele runtime-mechanismen los van CTFd te testen. Die resultaten zijn relevant omdat dezelfde ontwerpprincipes later in de plugin-PoC zijn toegepast.
 
-% TODO: Beschrijf welke aanvalstechnieken werden getest:
-% - Misbruik van gemounte volumes
-% - Privilege escalation via capabilities
-% - Docker socket exposure
-% Welke beschermingen verhinderden succesvolle escapes?
+\subsection{Geautomatiseerde tests en API-validatie}
 
-\subsection{Resource exhaustion simulaties}
+Voor de standalone orchestrator zijn geautomatiseerde tests uitgevoerd met \texttt{pytest}. Deze tests valideren onder meer:
 
-% TODO: Beschrijf hoe resource exhaustion werd gesimuleerd:
-% - Fork bomb binnen een container
-% - Geheugenoverbelasting
-% Hoe reageerde het systeem? Werden de resource-limieten afgedwongen?
+\begin{itemize}
+  \item registreren van challenge-configuraties;
+  \item idempotent startgedrag per \texttt{challenge\_id + user\_id};
+  \item afdwingen van \texttt{max\_instances};
+  \item timeout expiry in de servicelaag;
+  \item het basis happy-path van de API.
+\end{itemize}
+
+De gerapporteerde uitkomst van deze testset was \texttt{4 passed in 0.60s}. Hoewel dit nog geen bewijs is voor de CTFd-integratie zelf, bevestigt het wel dat de gekozen lifecycle-logica technisch correct werkt in een afgebakende testomgeving.
+
+\subsection{End-to-end smoke test}
+
+Daarnaast werd een Docker-gebaseerde smoke test uitgevoerd op de standalone PoC. Daarbij werden een demo-image en de orchestrator opgebouwd, werd een challenge geregistreerd, werden twee instanties gestart en werd gecontroleerd of beide challenge-endpoints bereikbaar waren. Nadien werden de instanties opnieuw stopgezet. Deze test bevestigde dat de kernstroom start $\rightarrow$ bereikbaar $\rightarrow$ stop correct werkt in een echte Docker-opstelling.
+
+\subsection{Timeout, isolatie en resourcebeperking}
+
+Drie gerichte experimenten waren bijzonder bruikbaar als pre-validatie van de pluginkeuzes:
+
+\begin{itemize}
+  \item \textbf{Timeout cleanup}: een challenge met een timeout van 30 seconden werd gestart en na 35 seconden opnieuw gecontroleerd. De instantie kreeg correct de status \texttt{expired} met stopreden \texttt{timeout}.
+  \item \textbf{Netwerkisolatie}: twee containers op aparte bridge-netwerken konden elkaar niet via naamresolutie ontdekken, wat de gekozen netwerkaanpak ondersteunt.
+  \item \textbf{Hardening flags}: inspectie van een draaiende container toonde aan dat \texttt{ReadonlyRootfs}, \texttt{CapDrop}, \texttt{SecurityOpt}, geheugenlimiet, CPU-limiet en \texttt{PidsLimit} effectief waren toegepast.
+\end{itemize}
+
+\subsection{Load snapshot met Locust}
+
+Een beperkte loadtest met Locust~\autocite{Locust} werd gebruikt om capaciteitsgedrag te observeren. In een create-only scenario werden 128 requests uitgevoerd, waarvan 84 faalden met \texttt{409 CONFLICT} zodra de ingestelde capaciteit bereikt werd. Dit resultaat bewijst niet dat de oplossing al grootschalig geoptimaliseerd is, maar toont wel aan dat de capaciteitslimiet effectief wordt afgedwongen in plaats van stilzwijgend overschreden te worden.
 
 %%----------------------------------------------------------------------
-\section{Load testing}%
-\label{sec:validatie-loadtest}
+\section{Validatie van de CTFd-plugin}%
+\label{sec:validatie-plugin}
 
-\subsection{Testopzet}
+\subsection{Functionele end-to-end validatie}
 
-% TODO: Beschrijf de load test:
-% - Gebruikte tool: k6 \autocite{k6} of Locust \autocite{Locust}
-% - Testscenario: X gelijktijdige gebruikers starten een challenge
-% - Duur en ramp-up profiel
+De plugin-PoC werd gevalideerd met een volledige smoke test in een draaiende CTFd-omgeving. Die test doorloopt de belangrijkste gebruikers- en beheerstappen:
 
-\subsection{Meetpunten}
+\begin{itemize}
+  \item initialiseren van CTFd;
+  \item uploaden van een Docker-archief via de plugin;
+  \item aanmaken van een \texttt{containerized} challenge met runtime-parameters;
+  \item registreren van een speler;
+  \item starten van een persoonlijke runtime-instantie;
+  \item controleren of de challenge-service effectief bereikbaar is;
+  \item opnieuw starten van dezelfde challenge om te bevestigen dat de bestaande instantie hergebruikt wordt;
+  \item indienen van de correcte flag;
+  \item controleren of de runtime na solve automatisch werd opgeruimd;
+  \item verifi\"eren via het admin-overzicht dat de stopreden als \texttt{challenge-solved} geregistreerd werd.
+\end{itemize}
 
-% TODO: Welke metrics werden gemeten?
-% - Latency bij het aanmaken van een container
-% - CPU- en RAM-gebruik op de host(s)
-% - Foutpercentage (mislukte container-starts)
-% - Doorvoer (containers per seconde)
+Deze smoke test is belangrijk omdat ze aantoont dat de plugin niet enkel losse Docker-acties kan uitvoeren, maar ook correct samenwerkt met de challenge-flow van CTFd.
 
-\subsection{Resultaten en conclusies}
+\subsection{Wat de pluginvalidatie effectief aantoont}
 
-% TODO: Presenteer de testresultaten in tabellen of grafieken.
-% Wat zijn de grenzen van de PoC? Bij welk aantal gelijktijdige gebruikers
-% treedt er degradatie op?
+Op basis van de plugin smoke test kunnen binnen de scope van deze bachelorproef de volgende uitspraken verantwoord worden:
+
+\begin{itemize}
+  \item de plugin kan een eigen challenge-type toevoegen aan CTFd;
+  \item een organisator kan een image-archief uploaden en aan een challenge koppelen;
+  \item een deelnemer kan vanuit CTFd een eigen runtime-instantie starten;
+  \item een tweede startverzoek voor dezelfde gebruiker hergebruikt de bestaande instantie;
+  \item een correcte solve triggert automatische cleanup van de actieve runtime;
+  \item de admin-interface houdt de runtimegeschiedenis bij en toont de finale status.
+\end{itemize}
+
+\subsection{Wat bewust niet als bewezen claim wordt opgenomen}
+
+De plugin-PoC bewijst in deze fase nog niet dat de oplossing al klaar is voor een meerhost-architectuur of productie-inzet. In het bijzonder werden de volgende punten niet volledig gevalideerd en worden ze daarom niet als gerealiseerd resultaat voorgesteld:
+
+\begin{itemize}
+  \item remote deployment waarbij CTFd en Docker op aparte VM's draaien;
+  \item reverse-proxy-routing naar dynamisch aangemaakte instanties;
+  \item ondersteuning voor aangepaste seccomp-profielen;
+  \item uitgebreide foutinjectie, bijvoorbeeld een tijdelijk onbereikbare Docker-host.
+\end{itemize}
+
+\textbf{TODO's voor verdere validatie}
+\begin{itemize}
+  \item end-to-end testen met CTFd en plugin op een andere VM dan de Docker runtime;
+  \item gedrag meten bij netwerkvertraging of tijdelijke onbeschikbaarheid van de Docker-host;
+  \item bevestigen of de plugin zonder extra tussenlaag veilig genoeg kan communiceren met een remote Docker-endpoint.
+\end{itemize}
+
+%%----------------------------------------------------------------------
+\section{Interpretatie van de resultaten}%
+\label{sec:validatie-conclusie}
+
+De combinatie van standalone pre-validatie en plugin-validatie levert voldoende bewijs om drie conclusies te trekken. Ten eerste is de kern van het probleem technisch oplosbaar: challenge-containers kunnen dynamisch gestart, hergebruikt en opgeruimd worden op basis van acties in CTFd. Ten tweede kunnen direct toepasbare beveiligingsmaatregelen zoals read-only filesystems, capability dropping, no-new-privileges en resource-limieten effectief in de runtime worden opgenomen. Ten derde toont de plugin smoke test aan dat deze runtime-logica bruikbaar kan worden ingepast in het CTFd-platform zelf.
+
+De validatie maakt tegelijk duidelijk waar de grenzen van de huidige PoC liggen. Schaalbaarheid over meerdere VM's, veilige remote Docker-communicatie en meer geavanceerde production hardening zijn nog niet volledig onderzocht. De twee-VM-opstelling waarbij CTFd en plugin op een eerste VM draaien en challenge-containers op een tweede VM worden gestart, vormt daarom de belangrijkste volgende validatiestap.

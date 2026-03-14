@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.22)  22 FEB 2026 10:43
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.22)  14 MAR 2026 10:25
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1177,15 +1177,15 @@ Package fontspec Info:
 (fontspec)             <->"Montserrat/BI/OT:script=latn;language=dflt;+smcp;mapping=tex-text;"
 
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/Montserrat(3)/m/n on input line 403.
+(Font)                  OT1/cmr/m/n --> TU/Montserrat(3)/m/n on input line 405.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> TU/Montserrat(3)/m/it on input line 403.
+(Font)                  OT1/cmr/m/it --> TU/Montserrat(3)/m/it on input line 405.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> TU/Montserrat(3)/b/n on input line 403.
+(Font)                  OT1/cmr/bx/n --> TU/Montserrat(3)/b/n on input line 405.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> TU/Montserrat(3)/m/n on input line 404.
+(Font)                  OT1/cmss/m/n --> TU/Montserrat(3)/m/n on input line 406.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> TU/Montserrat(3)/b/n on input line 404.
+(Font)                  OT1/cmss/bx/n --> TU/Montserrat(3)/b/n on input line 406.
 
 Package fontspec Info: 
 (fontspec)             Could not resolve font "Fira Code/I" (it probably
@@ -1228,9 +1228,9 @@ Package fontspec Info:
 (fontspec)             Code/BI/OT:script=latn;language=dflt;+ss01;+ss03;mapping=tex-text;"
 
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> TU/FiraCode(1)/m/n on input line 417.
+(Font)                  OT1/cmtt/m/n --> TU/FiraCode(1)/m/n on input line 419.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> TU/FiraCode(1)/b/n on input line 417.
+(Font)                  OT1/cmtt/m/n --> TU/FiraCode(1)/b/n on input line 419.
 
 Package fontspec Info: 
 (fontspec)             Font family 'FiraMathRegular(0)' created for font 'Fira
@@ -1268,13 +1268,13 @@ Package fontspec Info:
 (fontspec)             Bold/OT:script=math;language=dflt;mapping=tex-text;"
 
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `normal' on input line 431.
+(Font)              `operators' in the math version `normal' on input line 433.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> TU/FiraMathRegular(1)/m/n on input line 431.
+(Font)                  OT1/cmr/m/n --> TU/FiraMathRegular(1)/m/n on input line 433.
 LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
-(Font)              `operators' in the math version `bold' on input line 431.
+(Font)              `operators' in the math version `bold' on input line 433.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> TU/FiraMathRegular(1)/b/n on input line 431.
+(Font)                  OT1/cmr/bx/n --> TU/FiraMathRegular(1)/b/n on input line 433.
 
 Package fontspec Info: 
 (fontspec)             Fira Math Regular scale = 1.0001.
@@ -1328,13 +1328,13 @@ Package fontspec Info:
 (fontspec)             Bold/OT:script=math;language=dflt;mapping=tex-text;"
 
 LaTeX Font Info:    Encoding `OMS' has changed to `TU' for symbol font
-(Font)              `symbols' in the math version `normal' on input line 431.
+(Font)              `symbols' in the math version `normal' on input line 433.
 LaTeX Font Info:    Overwriting symbol font `symbols' in version `normal'
-(Font)                  OMS/cmsy/m/n --> TU/FiraMathRegular(2)/m/n on input line 431.
+(Font)                  OMS/cmsy/m/n --> TU/FiraMathRegular(2)/m/n on input line 433.
 LaTeX Font Info:    Encoding `OMS' has changed to `TU' for symbol font
-(Font)              `symbols' in the math version `bold' on input line 431.
+(Font)              `symbols' in the math version `bold' on input line 433.
 LaTeX Font Info:    Overwriting symbol font `symbols' in version `bold'
-(Font)                  OMS/cmsy/b/n --> TU/FiraMathRegular(2)/b/n on input line 431.
+(Font)                  OMS/cmsy/b/n --> TU/FiraMathRegular(2)/b/n on input line 433.
 
 Package fontspec Info: 
 (fontspec)             Fira Math Regular scale = 0.9999.
@@ -1382,13 +1382,13 @@ Package fontspec Info:
 (fontspec)             Bold/OT:script=math;language=dflt;mapping=tex-text;"
 
 LaTeX Font Info:    Encoding `OMX' has changed to `TU' for symbol font
-(Font)              `largesymbols' in the math version `normal' on input line 431.
+(Font)              `largesymbols' in the math version `normal' on input line 433.
 LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `normal'
-(Font)                  OMX/cmex/m/n --> TU/FiraMathRegular(3)/m/n on input line 431.
+(Font)                  OMX/cmex/m/n --> TU/FiraMathRegular(3)/m/n on input line 433.
 LaTeX Font Info:    Encoding `OMX' has changed to `TU' for symbol font
-(Font)              `largesymbols' in the math version `bold' on input line 431.
+(Font)              `largesymbols' in the math version `bold' on input line 433.
 LaTeX Font Info:    Overwriting symbol font `largesymbols' in version `bold'
-(Font)                  OMX/cmex/m/n --> TU/FiraMathRegular(3)/b/n on input line 431.
+(Font)                  OMX/cmex/m/n --> TU/FiraMathRegular(3)/b/n on input line 433.
 
 Package fontspec Info: 
 (fontspec)             Font family 'FiraMathRegular(4)' created for font 'Fira
@@ -1411,13 +1411,13 @@ Package fontspec Info:
 
 \sym__um_fam1=\mathgroup4
 LaTeX Font Info:    Overwriting symbol font `__um_fam1' in version `normal'
-(Font)                  TU/FiraMathRegular(4)/m/n --> TU/FiraMathRegular(4)/m/n on input line 431.
+(Font)                  TU/FiraMathRegular(4)/m/n --> TU/FiraMathRegular(4)/m/n on input line 433.
 LaTeX Font Info:    Overwriting symbol font `__um_fam1' in version `bold'
-(Font)                  TU/FiraMathRegular(4)/m/n --> TU/FiraMathRegular(4)/b/n on input line 431.
+(Font)                  TU/FiraMathRegular(4)/m/n --> TU/FiraMathRegular(4)/b/n on input line 433.
 \logopart=\box91
-File: ../graphics/logopart.eps Graphic file (type eps)
-<../graphics/logopart.eps>
-Package hyperref Info: Option `colorlinks' set `true' on input line 664.
+File: ../graphics/logopart.pdf Graphic file (type pdf)
+<use ../graphics/logopart.pdf>
+Package hyperref Info: Option `colorlinks' set `true' on input line 668.
 ) (/usr/local/texlive/2025/texmf-dist/tex/latex/minted/minted.sty
 Package: minted 2025/03/06 v3.6.0 Yet another Pygments shim for LaTeX
  (/usr/local/texlive/2025/texmf-dist/tex/generic/catchfile/catchfile.sty
@@ -1640,11 +1640,11 @@ Package hyperref Info: Option `pageanchor' set `false' on input line 80.
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: twoside 
 * h-part:(L,W,R)=(42.67912pt, 512.14963pt, 42.67912pt)
-* v-part:(T,H,B)=(56.9055pt, 730.03294pt, 58.1084pt)
+* v-part:(T,H,B)=(56.9055pt, 730.03308pt, 58.10826pt)
 * \paperwidth=597.50787pt
 * \paperheight=845.04684pt
 * \textwidth=512.14963pt
-* \textheight=730.03294pt
+* \textheight=730.03308pt
 * \oddsidemargin=-29.59087pt
 * \evensidemargin=-29.59087pt
 * \topmargin=-49.23828pt
@@ -1793,7 +1793,12 @@ Overfull \hbox (6.6473pt too wide) in paragraph at lines 10--11
 
 ]
 
-[2]) (./standvanzaken.tex
+[2]
+Overfull \hbox (1.53319pt too wide) in paragraph at lines 69--70
+[]\TU/Montserrat(1)/m/n/10.95 In Hoofdstuk [][]7[][] worden de testresultaten besproken. Daarbij wordt een onderscheid
+ []
+
+) (./standvanzaken.tex
 
 [3]
 Hoofdstuk 2.
@@ -1850,22 +1855,12 @@ Overfull \hbox (17.80608pt too wide) in paragraph at lines 140--141
 
 [8]
 Hoofdstuk 3.
-
-Overfull \hbox (5.74162pt too wide) in paragraph at lines 14--15
-\TU/Montserrat(1)/m/n/10.95 maatregelen die in de literatuurstudie zijn geïdentificeerd. De schaalbaarheid wordt
- []
-
 ) (./huidigesituatie.tex
 
 [9
 
 ]
 Hoofdstuk 4.
-
-Overfull \hbox (63.7647pt too wide) in paragraph at lines 16--17
-\TU/Montserrat(1)/m/n/10.95 ners op een Docker-host. De deelnemer krijgt vervolgens een URL of een host/poortcombinatie
- []
-
 
 Overfull \hbox (6.64366pt too wide) in paragraph at lines 22--23
 \TU/Montserrat(1)/m/n/10.95 Docker-images beheren, poortmapping instellen, DNS- of reverse-proxyconfiguratie
@@ -1923,6 +1918,11 @@ Overfull \hbox (25.83969pt too wide) in paragraph at lines 45--46
 \TU/Montserrat(1)/m/n/10.95 De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem ([]CTFd
  []
 
+
+Overfull \hbox (2.22568pt too wide) in paragraph at lines 45--46
+\TU/Montserrat(1)/m/n/10.95 kerservaring in CTFd gecentraliseerd, terwijl de challenge-runtime via Docker wordt
+ []
+
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `FiraMathRegular' (encoding: TU).
 (microtype)             For optimal results, create family-specific settings.
@@ -1945,119 +1945,119 @@ Overfull \hbox (3.59958pt too wide) in paragraph at lines 51--52
  []
 
 
-Overfull \hbox (4.57481pt too wide) in paragraph at lines 53--54
-[]\TU/Montserrat(2)/b/n/10.95 Reverse proxy\TU/Montserrat(1)/m/n/10.95 : fungeert als toegangspunt en routeert verkeer naar dynamisch
- []
-
-
 
 [13]
-Overfull \hbox (9.57294pt too wide) in paragraph at lines 66--66
+Overfull \hbox (9.57294pt too wide) in paragraph at lines 65--65
 |[][]\TU/Montserrat(0)/b/n/14.4 Granulariteitsbeslissing: container per gebruiker of per
  []
 
 
+Overfull \hbox (15.14157pt too wide) in paragraph at lines 86--87
+\TU/Montserrat(1)/m/n/10.95 onderzoek naar de veiligste communicatievorm tussen plugin en remote Docker-
+ []
+
+
+
+[14]
 Overfull \hbox (3.5516pt too wide) in paragraph at lines 87--88
 \TU/Montserrat(1)/m/n/10.95 dere Docker-hosts. Voor taakverdeling over meerdere hosts kan Docker Swarm
  []
 
 
+Overfull \hbox (6.7502pt too wide) in paragraph at lines 88--89
+\TU/Montserrat(1)/m/n/10.95 nuttig zijn om dynamisch naar nieuw aangemaakte instanties te routeren ([]Trae-
+ []
 
-[14]) (./poc.tex
+) (./poc.tex
 
 [15]
 Hoofdstuk 6.
-) (./validatie.tex
+
+Overfull \hbox (0.84598pt too wide) in paragraph at lines 22--23
+[]\TU/Montserrat(2)/b/n/10.95 Runtime-opslag\TU/Montserrat(1)/m/n/10.95 : een lichte SQLite-opslag voor actieve instanties, logs en met-
+ []
+
+
 
 [16
 
 ]
-Hoofdstuk 7.
-) (./conclusie.tex
-
-[17
-
-]
-Hoofdstuk 8.
-)
-
-[18
-
-]
-B\ij lage A.
-(../voorstel/voorstel-inhoud.tex
-Overfull \hbox (5.1333pt too wide) in paragraph at lines 6--7
-\TU/Montserrat(1)/m/n/10.95 Dit onderzoeksvoorstel richt zich op het dynamisch beheer van Docker-omgevingen
+Overfull \hbox (30.52266pt too wide) in paragraph at lines 35--36
+[]\TU/Montserrat(1)/m/n/10.95 Welke basisbeveiligingsmaatregelen zijn praktisch toepasbaar zonder de challenge-
  []
 
 
-Overfull \hbox (12.56468pt too wide) in paragraph at lines 9--10
-\TU/Montserrat(1)/m/n/10.95 omgevingbeheer te doen op on-prem infrastructuur tijdens Capture The Flag events?
+Overfull \hbox (0.97061pt too wide) in paragraph at lines 39--40
+[]\TU/Montserrat(1)/m/n/10.95 De standalone PoC bood een challenge-registry, een eenvoudige webinterface, API-
  []
 
 
 
-[19
-
-]
-Overfull \hbox (23.05838pt too wide) in paragraph at lines 23--24
-[]\TU/Montserrat(1)/m/n/10.95 Welke fundamentele en direct toepasbare beveiligingsmaatregelen (’low-hanging
+[17]
+Overfull \hbox (16.16869pt too wide) in paragraph at lines 72--73
+\TU/Montserrat(1)/m/n/10.95 Wanneer een deelnemer een containerized challenge opent, kan die via het challenge-
  []
 
 
-Overfull \hbox (3.16592pt too wide) in paragraph at lines 24--25
-[]\TU/Montserrat(1)/m/n/10.95 Welke specifieke beveiligingsrisico’s brengt het dynamisch aanmaken van con-
+
+[18]
+Overfull \hbox (11.00493pt too wide) in paragraph at lines 89--90
+\TU/Montserrat(1)/m/n/10.95 Voor organisatoren voorziet de plugin een aparte beheerpagina binnen CTFd. Daarop
  []
 
 
+Overfull \hbox (18.8113pt too wide) in paragraph at lines 114--115
+[]\TU/Montserrat(1)/m/n/10.95 Die combinatie beperkt het risico op privilege-escalatie, laterale beweging en resource-
+ []
+
+
+
+[19]
+Overfull \hbox (11.00151pt too wide) in paragraph at lines 142--143
+[]\TU/Montserrat(1)/m/n/10.95 CTFd en plugin op een eerste VM plaatsen en runtime-containers op een tweede
+ []
+
+) (./validatie.tex
 
 [20]
-Overfull \hbox (22.08385pt too wide) in paragraph at lines 45--46
-\TU/Montserrat(1)/m/n/10.95 Er is al documentatie beschikbaar over het deployen van challenges binnen CTFd ([]CTFd,
- []
+Hoofdstuk 7.
 
-
-Overfull \hbox (7.8002pt too wide) in paragraph at lines 59--60
-\TU/Montserrat(1)/m/n/10.95 omgeving wordt opgezet die communiceert met een Docker-daemon. Hierbij wordt
- []
-
-
-Overfull \hbox (1.57451pt too wide) in paragraph at lines 67--69
-\TU/Montserrat(1)/m/n/10.95 Het verwachte resultaat is een gedocumenteerde en werkende implementatie voor
+Overfull \hbox (18.03142pt too wide) in paragraph at lines 33--34
+\TU/Montserrat(1)/m/n/10.95 De standalone PoC werd gebruikt om de meest fundamentele runtime-mechanismen
  []
 
 
 
-[21]
-Overfull \hbox (11.78868pt too wide) in paragraph at lines 73--74
-[]\TU/Montserrat(1)/m/n/10.95 Technische documentatie van de ontwikkelde architectuur, zodat derden hierop
+[21
+
+]
+Overfull \hbox (8.77744pt too wide) in paragraph at lines 59--60
+\TU/Montserrat(1)/m/n/10.95 niet via naamresolutie ontdekken, wat de gekozen netwerkaanpak ondersteunt. 
  []
 
-)
+
 
 [22]
-B\ij lage B.
+
+[23])
+Overfull \hbox (0.41164pt too wide) in paragraph at lines 127--139
+\TU/Montserrat(1)/m/n/10.95 Schaalbaarheid over meerdere VM’s, veilige remote Docker-communicatie en meer
+ []
 
 
-[23
-
-]
-B\ij lage C.
-
-
-[24
-
-]
-B\ij lage D.
+Overfull \hbox (25.5796pt too wide) in paragraph at lines 127--139
+\TU/Montserrat(1)/m/n/10.95 VM-opstelling waarbij CTFd en plugin op een eerste VM draaien en challenge-containers
+ []
 
 
-[25
 
-]
-B\ij lage E.
+[24] (./conclusie.tex
 
-Overfull \hbox (29.07289pt too wide) in paragraph at lines 191--193
-\TU/Montserrat(1)/m/n/10.95 read-only bestandssysteem, seccomp-profielen, no-new-privileges en resource-limieten.
+[25]
+Hoofdstuk 8.
+
+Overfull \hbox (6.83052pt too wide) in paragraph at lines 20--21
+\TU/Montserrat(1)/m/n/10.95 gebruikt Docker runtime-opties voor CPU, geheugen en PID-limieten en maakt
  []
 
 
@@ -2065,51 +2065,169 @@ Overfull \hbox (29.07289pt too wide) in paragraph at lines 191--193
 [26
 
 ]
-Overfull \hbox (2.61842pt too wide) in paragraph at lines 206--208
-\TU/Montserrat(1)/m/n/10.95 langrijkste reden is dat Traefik automatisch routes configureert op basis van Docker-
- []
-
-
-Overfull \hbox (19.04124pt too wide) in paragraph at lines 206--208
-\TU/Montserrat(1)/m/n/10.95 labels, wat ideaal is voor dynamisch beheerde containers zonder manuele configuratie-
- []
-
-
-Overfull \hbox (15.3922pt too wide) in paragraph at lines 209--211
-\TU/Montserrat(1)/m/n/10.95 externe service. CTFd ondersteunt plugins via het \TU/FiraCode(0)/m/n/10.95 CTFd/plugins/\TU/Montserrat(1)/m/n/10.95 -mechanisme ([]CTFd
- []
-
-
-Overfull \hbox (2.4286pt too wide) in paragraph at lines 212--214
-\TU/Montserrat(1)/m/n/10.95 bare beveiligingsinstellingen) en een eigen implementatie biedt meer controle over
+Overfull \hbox (33.86974pt too wide) in paragraph at lines 40--41
+[]\TU/Montserrat(1)/m/n/10.95 hardening van de Docker-host en het netwerksegment waarin challenge-containers
  []
 
 
 
 [27]
-Overfull \hbox (4.76299pt too wide) in paragraph at lines 220--220
+Overfull \hbox (1.41031pt too wide) in paragraph at lines 61--62
+[]\TU/Montserrat(1)/m/n/10.95 Andere interessante uitbreidingen zijn een reverse-proxy-gebaseerd toegangspunt,
+ []
+
+)
+
+[28]
+B\ij lage A.
+(../voorstel/voorstel-inhoud.tex
+Overfull \hbox (5.1333pt too wide) in paragraph at lines 6--7
+\TU/Montserrat(1)/m/n/10.95 Dit onderzoeksvoorstel richt zich op het dynamisch beheer van Docker-omgevingen
+ []
+
+
+Overfull \hbox (12.56468pt too wide) in paragraph at lines 11--12
+\TU/Montserrat(1)/m/n/10.95 omgevingbeheer te doen op on-prem infrastructuur tijdens Capture The Flag events?
+ []
+
+
+
+[29
+
+]
+Overfull \hbox (23.05838pt too wide) in paragraph at lines 25--26
+[]\TU/Montserrat(1)/m/n/10.95 Welke fundamentele en direct toepasbare beveiligingsmaatregelen (’low-hanging
+ []
+
+
+Overfull \hbox (3.16592pt too wide) in paragraph at lines 26--27
+[]\TU/Montserrat(1)/m/n/10.95 Welke specifieke beveiligingsrisico’s brengt het dynamisch aanmaken van con-
+ []
+
+
+
+[30]
+Overfull \hbox (22.08385pt too wide) in paragraph at lines 47--48
+\TU/Montserrat(1)/m/n/10.95 Er is al documentatie beschikbaar over het deployen van challenges binnen CTFd ([]CTFd,
+ []
+
+
+Overfull \hbox (7.8002pt too wide) in paragraph at lines 61--62
+\TU/Montserrat(1)/m/n/10.95 omgeving wordt opgezet die communiceert met een Docker-daemon. Hierbij wordt
+ []
+
+
+
+[31]
+Overfull \hbox (1.57451pt too wide) in paragraph at lines 69--71
+\TU/Montserrat(1)/m/n/10.95 Het verwachte resultaat is een gedocumenteerde en werkende implementatie voor
+ []
+
+
+Overfull \hbox (11.78868pt too wide) in paragraph at lines 75--76
+[]\TU/Montserrat(1)/m/n/10.95 Technische documentatie van de ontwikkelde architectuur, zodat derden hierop
+ []
+
+)
+
+[32]
+B\ij lage B.
+
+Overfull \hbox (10.17755pt too wide) in paragraph at lines 175--176
+[]\TU/Montserrat(1)/m/n/10.95 Voor lokale tests zijn Python 3.12 en de dependencies uit \TU/FiraCode(0)/m/n/10.95 app/requirements-dev.txt
+ []
+
+
+
+[33
+
+]
+Overfull \hbox (9.6693pt too wide) in paragraph at lines 201--202
+[]\TU/Montserrat(1)/m/n/10.95 Voor de standalone PoC bestaan daarnaast helper-scripts zoals \TU/FiraCode(0)/m/n/10.95 cleanup_runtime.sh
+ []
+
+
+
+[34]
+B\ij lage C.
+
+
+[35
+
+]
+Overfull \hbox (4.07843pt too wide) in paragraph at lines 237--238
+\TU/Montserrat(1)/m/n/10.95 Bij het starten van een challenge-container worden standaard de volgende runtime-
+ []
+
+
+Overfull \hbox (9.40886pt too wide) in paragraph at lines 250--251
+\TU/Montserrat(1)/m/n/10.95 als afgewerkte configuratiebestanden, omdat die onderdelen nog niet volledig geim-
+ []
+
+
+
+[36]
+B\ij lage D.
+
+Overfull \hbox (29.28899pt too wide) in paragraph at lines 278--278
+[]\TU/FiraCode(0)/m/n/10.95 app/.venv/bin/locust -f tests/locustfile.py --host=http://127.0.0.1:8000 \[] 
+ []
+
+
+
+[37
+
+]
+Overfull \hbox (51.21014pt too wide) in paragraph at lines 292--293
+[]\TU/Montserrat(1)/m/n/10.95 Resultaat: CTFd werd geinitialiseerd, een Docker-archief werd geupload, een \TU/FiraCode(0)/m/n/10.95 containerized
+ []
+
+
+
+[38]
+B\ij lage E.
+
+Overfull \hbox (29.07289pt too wide) in paragraph at lines 309--311
+\TU/Montserrat(1)/m/n/10.95 read-only bestandssysteem, seccomp-profielen, no-new-privileges en resource-limieten.
+ []
+
+
+
+[39
+
+]
+Overfull \hbox (2.4286pt too wide) in paragraph at lines 330--332
+\TU/Montserrat(1)/m/n/10.95 bare beveiligingsinstellingen) en een eigen implementatie biedt meer controle over
+ []
+
+
+
+[40]
+
+[41]
+Overfull \hbox (4.76299pt too wide) in paragraph at lines 350--350
 \TU/Montserrat(1)/m/n/10.95 gen november 28, 2025, van [][]$[][][][][] [] [] [] [][][] [] [][][][][][] [] [][][] [] [][][][] [] [][][][][][] [][] [][][][][][][][][][] [][]
  []
 
 
-Overfull \hbox (16.88676pt too wide) in paragraph at lines 220--220
+Overfull \hbox (16.88676pt too wide) in paragraph at lines 350--350
 \TU/Montserrat(2)/m/it/10.95 Turn You Into a Cyber Pro\TU/Montserrat(1)/m/n/10.95 . Verkregen december 11, 2025, van [][]$[][][][][] [] [] [] [][][][][][][][][][][][] []
  []
 
 
-Overfull \hbox (20.58705pt too wide) in paragraph at lines 220--220
+Overfull \hbox (20.58705pt too wide) in paragraph at lines 350--350
 [][][] [] [][][][][][][][][][][][][] [] [][][][][][][] [][] [][][] [][] [][][][] [][] [][][] [][] [][][][][][][][][] [][] [][][] [][] [][][][][][][] [][] [][][][][][][][][][][][] [][]
  []
 
 
 
-[28
+[42
 
 
 ]
 
-[29]
-runsystem(latexminted cleantemp  --timestamp 20260222104305 4379515D007F3BC40C2F41FACA92D39B)...executed.
+[43]
+runsystem(latexminted cleantemp  --timestamp 20260314102539 4379515D007F3BC40C2F41FACA92D39B)...executed.
 
  (./DevlooManuBP.aux)
  ***********
@@ -2117,18 +2235,18 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `DevlooManuBP.out' has not changed.
-(rerunfilecheck)             Checksum: 68D3D86328B31677C9556BF15D75D331;16646.
+(rerunfilecheck)             Checksum: 9C88449D4F915B1B1C14BC9CA2170545;17053.
 Package logreq Info: Writing requests to 'DevlooManuBP.run.xml'.
 \openout1 = `DevlooManuBP.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 49663 strings out of 473832
- 1023495 string characters out of 5729481
- 2184266 words of memory out of 5000000
- 71947 multiletter control sequences out of 15000+600000
+ 49628 strings out of 473832
+ 1022900 string characters out of 5729481
+ 2184242 words of memory out of 5000000
+ 71912 multiletter control sequences out of 15000+600000
  561849 words of font info for 102 fonts, out of 8000000 for 9000
  1349 hyphenation exceptions out of 8191
  110i,12n,131p,1238b,5923s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on DevlooManuBP.pdf (39 pages).
+Output written on DevlooManuBP.pdf (53 pages).

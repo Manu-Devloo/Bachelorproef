@@ -147,7 +147,6 @@
 
 Het onderwerp van deze bachelorproef is gebaseerd op een onderzoeksvoorstel dat vooraf werd beoordeeld door de promotor. Dat voorstel is opgenomen in deze bijlage.
 
-%% TODO: 
 \section*{Samenvatting}
 
 Dit onderzoeksvoorstel behandelt het dynamisch beheer van Docker-containers voor Capture The Flag (CTF)-events op on-premise infrastructuur. De probleemstelling richt zich op het aanmaken en beëindigen van containers op basis van gebruikersacties. De hoofdonderzoeksvraag onderzoekt hoe dit proces kan worden geautomatiseerd met behulp van CTFd en Docker. Daarbij wordt gewerkt binnen de randvoorwaarden van een volledig self-hosted omgeving, zonder terugkerende licentiekosten en met een voorkeur voor open-source componenten. Via een literatuurstudie en een proof-of-concept worden de beveiligingsaspecten, resource-limieten en communicatie tussen CTFd en Docker onderzocht. Het doel is een schaalbare oplossing te ontwerpen die misbruik helpt voorkomen en de performantie bewaakt.
@@ -160,22 +159,141 @@ Dit onderzoeksvoorstel behandelt het dynamisch beheer van Docker-containers voor
 \chapter{Installatie- en beheerinstructies}
 \label{app:installatie}
 
-% TODO: Beschrijf stap voor stap hoe de PoC geïnstalleerd en beheerd wordt.
-% Zorg voor voldoende detail zodat een derde partij de PoC kan reproduceren.
+Deze bijlage beschrijft hoe beide PoC's gereproduceerd kunnen worden. De standalone PoC is opgenomen als voorstudie; de plugin-PoC is het hoofdresultaat van de bachelorproef.
+
+\section*{Standalone PoC}
+
+De standalone PoC kan gebruikt worden om de kernmechanismen los van CTFd te reproduceren.
+
+\begin{enumerate}
+  \item Zorg dat Docker Desktop of Docker Engine actief is en dat Docker Compose v2 beschikbaar is.
+  \item Navigeer naar de map \texttt{POC/}.
+  \item Start de end-to-end smoke test via \texttt{./scripts/smoke\_test.sh}.
+  \item Open nadien het dashboard op \texttt{http://127.0.0.1:8000}.
+\end{enumerate}
+
+Voor lokale tests zijn Python 3.12 en de dependencies uit \texttt{app/requirements-dev.txt} nodig. De tests kunnen uitgevoerd worden met \texttt{app/.venv/bin/pytest -q tests}.
+
+\section*{CTFd-plugin PoC}
+
+De plugin-PoC is de primaire reproductieroute voor deze bachelorproef.
+
+\begin{enumerate}
+  \item Zorg dat Docker actief is en dat Docker Compose v2 beschikbaar is.
+  \item Navigeer naar de map \texttt{POC-CTFd/}.
+  \item Start de volledige smoke test via \texttt{./scripts/smoke\_test.sh}.
+  \item Open CTFd op \texttt{http://127.0.0.1:8001}.
+\end{enumerate}
+
+De smoke test initialiseert CTFd, uploadt een Docker-archief, maakt een \texttt{containerized} challenge aan, start een runtime-instantie voor een speler, controleert bereikbaarheid en valideert cleanup na het oplossen van de challenge.
+
+\section*{Beheer}
+
+Voor de plugin-PoC gebeurt beheer grotendeels vanuit CTFd zelf. De plugin voegt een administratieve runtime-pagina toe waarop actieve instanties zichtbaar zijn. Daar kan een beheerder:
+
+\begin{itemize}
+  \item individuele instanties geforceerd stoppen;
+  \item alle actieve instanties van een challenge tegelijk stopzetten;
+  \item de timeout-reaper manueel uitvoeren;
+  \item per challenge het resourceprofiel raadplegen.
+\end{itemize}
+
+Voor de standalone PoC bestaan daarnaast helper-scripts zoals \texttt{cleanup\_runtime.sh} om alle beheerde runtime-artifacten op te ruimen.
 
 \chapter{Configuratiebestanden}
 \label{app:configuratie}
 
-% TODO: Voeg de volledige configuratiebestanden toe:
-% - docker-compose.yml voor de CTFd-instantie
-% - Relevante plugin-codefragmenten
-% - Traefik/Nginx-configuratie
+Deze bijlage vat de belangrijkste configuratie-elementen samen die voor de PoC relevant zijn.
+
+\section*{Plugin-configuratie}
+
+De plugin voegt per challenge de volgende configuratievelden toe:
+
+\begin{itemize}
+  \item image;
+  \item containerpoort;
+  \item CPU-limiet;
+  \item geheugenlimiet;
+  \item timeout in seconden;
+  \item maximum aantal gelijktijdige instanties.
+\end{itemize}
+
+Daarnaast ondersteunt de plugin optioneel een geupload Docker-archief dat lokaal wordt opgeslagen en nadien in de Docker-daemon geimporteerd kan worden.
+
+\section*{Runtime-configuratie via environment variables}
+
+De plugin gebruikt onder meer environment variables voor:
+
+\begin{itemize}
+  \item backendselectie;
+  \item pad naar de runtime-database;
+  \item publiek host- en schemesegment voor runtime-URL's;
+  \item locatie van image-archieven;
+  \item interval van de timeout-reaper.
+\end{itemize}
+
+\section*{Container hardening}
+
+Bij het starten van een challenge-container worden standaard de volgende runtime-opties toegepast:
+
+\begin{itemize}
+  \item read-only root filesystem;
+  \item \texttt{cap\_drop=['ALL']};
+  \item \texttt{security\_opt=['no-new-privileges:true']};
+  \item \texttt{tmpfs} voor \texttt{/tmp};
+  \item CPU-, geheugen- en PID-limieten;
+  \item een afzonderlijk bridge-netwerk per instantie.
+\end{itemize}
+
+\section*{Niet-opgenomen configuratie}
+
+Reverse-proxy-configuratie en multi-VM-distributie zijn bewust niet opgenomen als afgewerkte configuratiebestanden, omdat die onderdelen nog niet volledig geimplementeerd en gevalideerd zijn binnen deze bachelorproef.
 
 \chapter{Testresultaten in detail}
 \label{app:testresultaten}
 
-% TODO: Voeg gedetailleerde testresultaten toe die niet in de hoofdtekst
-% passen: volledige load test output, beveiligingstestlogs, etc.
+Deze bijlage bundelt de belangrijkste commando's en samengevatte resultaten die in de validatiehoofdstukken gebruikt werden.
+
+\section*{Standalone PoC}
+
+\textbf{Pytest}
+\begin{verbatim}
+cd POC
+app/.venv/bin/pytest -q tests
+\end{verbatim}
+
+Resultaat: \texttt{4 passed in 0.60s}
+
+\textbf{Smoke test}
+\begin{verbatim}
+cd POC
+./scripts/smoke_test.sh
+\end{verbatim}
+
+Resultaat: de demo-image en orchestrator werden opgebouwd, twee instanties werden gestart, de HTTP-endpoints waren bereikbaar en beide instanties werden nadien correct gestopt.
+
+\textbf{Load snapshot}
+\begin{verbatim}
+cd POC
+app/.venv/bin/locust -f tests/locustfile.py --host=http://127.0.0.1:8000 \
+  --headless -u 10 -r 5 -t 10s
+\end{verbatim}
+
+Samenvatting: 128 requests, 84 failures, telkens door \texttt{409 CONFLICT} na het bereiken van \texttt{max\_instances}.
+
+\section*{Plugin-PoC}
+
+\textbf{End-to-end smoke test}
+\begin{verbatim}
+cd POC-CTFd
+./scripts/smoke_test.sh
+\end{verbatim}
+
+Resultaat: CTFd werd geinitialiseerd, een Docker-archief werd geupload, een \texttt{containerized} challenge werd aangemaakt, een speler startte een runtime, een tweede start hergebruikte dezelfde instantie en na solve werd de runtime automatisch opgeruimd met stopreden \texttt{challenge-solved}.
+
+\section*{Interpretatie}
+
+De gedetailleerde outputs tonen vooral aan dat de gekozen lifecycle-regels effectief worden afgedwongen. Ze vormen geen bewijs voor een afgewerkte multi-VM-productiearchitectuur. Resultaten rond split deployment, reverse proxy en remote Docker-hosting moeten nog afzonderlijk verzameld worden zodra die uitbreiding is uitgewerkt.
 
 \chapter{Onderzoekslog}
 \label{app:onderzoekslog}
@@ -203,14 +321,26 @@ Bij de architectuuranalyse werd de keuze tussen een instantie per gebruiker en e
 \textbf{Beslissing: Docker SDK voor Python vs.\ directe API-calls}\\
 Voor de integratie tussen de CTFd-plugin en de Docker-daemon werden twee opties afgewogen: de officiële Docker SDK voor Python~\autocite{DockerSDKPython} en directe HTTP-aanroepen naar de Docker Engine API~\autocite{DockerEngineAPI}. De SDK biedt een hogere abstractie, minder foutgevoeligheid en is de aanbevolen aanpak voor Python-applicaties. Directe API-calls zouden meer controle geven maar ook meer boilerplate en foutafhandeling vergen. Gekozen werd voor de SDK, tenzij er specifieke beperkingen opduiken tijdens de implementatie.
 
-\textbf{Beslissing: keuze van reverse proxy}\\
-Als toegangspunt voor dynamisch aangemaakte containers werd Traefik~\autocite{Traefik} verkozen boven Nginx en HAProxy~\autocite{HAProxy}. De belangrijkste reden is dat Traefik automatisch routes configureert op basis van Docker-labels, wat ideaal is voor dynamisch beheerde containers zonder manuele configuratie-aanpassingen. Nginx en HAProxy vereisen een herstart of dynamische herconfiguratie bij elke nieuwe container, wat de automatisering bemoeilijkt.
+\textbf{Beslissing: reverse proxy niet in de eerste implementatie}\\
+Een reverse proxy met dynamische routing, bijvoorbeeld via Traefik~\autocite{Traefik}, bleef architecturaal interessant, maar werd niet in de eerste implementatiefase opgenomen. De reden daarvoor was pragmatisch: eerst moest aangetoond worden dat container lifecycle management, cleanup en basisbeveiliging betrouwbaar werkten. Reverse-proxy-routing werd daarom verschoven naar een latere uitbreidingsfase.
 
-\textbf{Beslissing: plugin-architectuur binnen CTFd}\\
-Als implementatiestrategie werd gekozen voor een CTFd-plugin in plaats van een externe service. CTFd ondersteunt plugins via het \texttt{CTFd/plugins/}-mechanisme~\autocite{CTFdGitHub}, waarmee nieuwe challenge-types geregistreerd en extra routes toegevoegd kunnen worden. Een interne plugin koppelt gebruikersacties direct aan containeracties zonder extra netwerkverkeer of externe authenticatie.
+\textbf{Beslissing: eerst een verkennende standalone stap, daarna plugin-integratie}\\
+Hoewel de einddoelstelling altijd plugin-gebaseerd bleef, werd tijdens de analyse beslist eerst een beperkte standalone PoC te bouwen. Die keuze liet toe om de kern van container lifecycle management los van CTFd te valideren en technische risico's vroeg te reduceren. Zodra die basis stabiel genoeg bleek, werd de focus verschoven naar de eigenlijke CTFd-plugin.
 
 \textbf{Beslissing: bestaande plugin CTFd-Whale als referentie, niet als basis}\\
 De bestaande CTFd-Whale plugin~\autocite{CTFdWhale} werd bestudeerd als referentie voor de architectuuranalyse. Er werd besloten geen fork of uitbreiding te maken, maar een eigen implementatie te schrijven. CTFd-Whale voldoet niet volledig aan de randvoorwaarden van dit onderzoek (volledig self-hosted, open-source, controleerbare beveiligingsinstellingen) en een eigen implementatie biedt meer controle over de beveiligings- en resourceconfiguratie.
+
+%%----------------------------------------------------------------------
+\section*{Fase 3 -- Uitwerking en herori\"entatie}
+
+\textbf{Beslissing: standalone PoC behouden als voorstudie, niet als eindarchitectuur}\\
+Na de eerste experimenten bleek dat de standalone PoC waardevol was voor het valideren van timeouts, netwerkisolatie, logging en basisresourcebeleid. Tegelijk werd duidelijk dat deze opzet niet het beste eindresultaat vormde voor de centrale onderzoeksvraag, omdat de gebruikersinteractie dan buiten CTFd bleef. De standalone PoC werd daarom behouden als onderzoeksstap en niet als aanbevolen oplossing.
+
+\textbf{Beslissing: plugin aanbevelen als finale oplossingsrichting}\\
+Na de realisatie van de plugin-PoC werd beslist om de plugin als aanbevolen oplossingsrichting naar voren te schuiven. De plugin koppelt gebruikersacties rechtstreeks aan challenge-runtimes, houdt de beheerinterface binnen CTFd en sluit daardoor het best aan bij de context van CTF-events op eigen infrastructuur.
+
+\textbf{Beslissing: split deployment over twee VM's opnemen als TODO}\\
+Tijdens de uitwerking kwam een bijkomende architectuurvraag naar voren: kan CTFd met plugin op een eerste VM draaien terwijl de challenge-containers op een tweede VM worden gestart. Omdat die opzet bijkomende validatie vereist rond remote Docker-communicatie, latency en toegangscontrole, werd beslist dit expliciet als toekomstig werk op te nemen in plaats van het onvolledig als resultaat te presenteren.
 
 %%---------- Backmatter, referentielijst ---------------------------------------
 

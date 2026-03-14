@@ -42,25 +42,24 @@ Naast de functionele vereisten gelden de volgende niet-functionele vereisten:
 \section{Architectuurvisie}%
 \label{sec:tobe-architectuur}
 
-De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem~\autocite{CTFdGitHub}. De plugin fungeert als orkestratielaag die gebruikersacties (start/stop van een challenge-instantie) vertaalt naar containeracties op een Docker-host.
+De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem~\autocite{CTFdGitHub}. De plugin fungeert als orkestratielaag die gebruikersacties in het platform vertaalt naar containeracties op een Docker-host. Daarmee blijft de gebruikerservaring in CTFd gecentraliseerd, terwijl de challenge-runtime via Docker wordt beheerd.
 
 \subsection{Componenten en verantwoordelijkheden}
 
 \begin{itemize}
   \item \textbf{CTFd}: voorziet authenticatie, challenge-definities en de gebruikersinteractie.
-  \item \textbf{CTFd-plugin}: beheert de containerlevenscyclus, houdt de toewijzing bij (gebruiker/team $\rightarrow$ container) en past beleidsregels toe (timeouts, quota, resource-limieten, isolatie).
-  \item \textbf{Docker-host(s)}: draaien de challenge-containers en worden aangestuurd via de Docker Engine API~\autocite{DockerEngineAPI}. De communicatie kan gebeuren via de Docker SDK voor Python~\autocite{DockerSDKPython} of via directe API-aanroepen.
-  \item \textbf{Reverse proxy}: fungeert als toegangspunt en routeert verkeer naar dynamisch aangemaakte containers (bijv.\ via Traefik~\autocite{Traefik} of alternatieven zoals Nginx/HAProxy~\autocite{HAProxy}).
+  \item \textbf{CTFd-plugin}: beheert de containerlevenscyclus, houdt de toewijzing bij (gebruiker/team $\rightarrow$ container) en past beleidsregels toe (timeouts, quota, resource-limieten en isolatie).
+  \item \textbf{Docker-host}: draait de challenge-containers en wordt aangestuurd via de Docker Engine API~\autocite{DockerEngineAPI}. In de PoC gebeurt dit via de Docker SDK voor Python~\autocite{DockerSDKPython}.
+  \item \textbf{Toegangspunt voor deelnemers}: in de huidige PoC gebeurt toegang via gepubliceerde hostpoorten. Een reverse proxy of split deployment over meerdere VM's blijft een uitbreidingsrichting, maar is geen afgerond onderdeel van de huidige implementatie.
 \end{itemize}
 
 \subsection{Datastromen op hoofdlijnen}
 
 \begin{itemize}
-  \item \textbf{Start}: een deelnemer start een challenge $\rightarrow$ de plugin valideert beleidsregels (quota/timeout) $\rightarrow$ maakt een container aan met limieten en isolatie $\rightarrow$ publiceert een toegangspunt $\rightarrow$ de deelnemer krijgt een URL of verbindingsinformatie.
+  \item \textbf{Start}: een deelnemer start een challenge $\rightarrow$ de plugin valideert beleidsregels (quota en timeout) $\rightarrow$ maakt een container aan met limieten en isolatie $\rightarrow$ publiceert een toegangspunt $\rightarrow$ de deelnemer krijgt een URL of verbindingsinformatie.
   \item \textbf{Stop en opruimen}: bij expliciet stopzetten of bij het verlopen van de timeout worden container en gerelateerde resources (netwerk, metadata) verwijderd om resourcelekken te vermijden.
+  \item \textbf{Afsluiten bij solve}: wanneer een challenge correct opgelost wordt, stopt de plugin de actieve runtime van die gebruiker of dat team automatisch zodat de infrastructuur niet onnodig blijft draaien.
 \end{itemize}
-
-% TODO: Voeg een componentendiagram toe dat de componenten en hun interacties visualiseert.
 
 %%----------------------------------------------------------------------
 \section{Granulariteitsbeslissing: container per gebruiker of per team}%
@@ -84,6 +83,17 @@ De infrastructuur moet bestand zijn tegen piekbelasting, bijvoorbeeld wanneer ve
 \begin{itemize}
   \item \textbf{Piekbestendig opstartpad}: het systeem moet een piek aan containercreatie kunnen verwerken zonder dat het platform onbeschikbaar wordt.
   \item \textbf{Begrenzing en evenwichtige verdeling}: limieten op actieve instanties en afdwingbare quota vermijden dat één challenge of deelnemer disproportioneel resources consumeert.
-  \item \textbf{Horizontale uitbreiding}: de architectuur moet uitbreidbaar zijn naar meerdere Docker-hosts. Voor taakverdeling over meerdere hosts kan Docker Swarm een mogelijke optie zijn~\autocite{DockerSwarm}, maar de PoC focust in eerste instantie op een beheerbare opzet die zonder Kubernetes functioneert.
-  \item \textbf{Dynamische routing}: de reverse proxy moet dynamisch kunnen routeren naar nieuw aangemaakte instanties, zodat deelnemers steeds een correct toegangspunt ontvangen~\autocite{Traefik}.
+  \item \textbf{Deployment-variant met twee VM's}: een relevante vervolgstap is een opstelling waarbij CTFd en de plugin op een eerste VM draaien, terwijl de challenge-containers op een tweede VM worden gestart. Die variant vereist bijkomend onderzoek naar de veiligste communicatievorm tussen plugin en remote Docker-host.
+  \item \textbf{Horizontale uitbreiding}: de architectuur moet uitbreidbaar zijn naar meerdere Docker-hosts. Voor taakverdeling over meerdere hosts kan Docker Swarm een mogelijke optie zijn~\autocite{DockerSwarm}, maar dit valt buiten de huidige PoC.
+  \item \textbf{Dynamische routing}: voor een latere productie-opzet kan een reverse proxy nuttig zijn om dynamisch naar nieuw aangemaakte instanties te routeren~\autocite{Traefik}. Ook dit behoort tot toekomstig werk.
+\end{itemize}
+
+Concreet zijn er voor de split deployment nog drie open vragen. Ten eerste moet onderzocht worden of de plugin rechtstreeks met een remote Docker API kan communiceren of dat een dunnere tussenlaag wenselijk is. Ten tweede moet gevalideerd worden hoe de opstartlatency en cleanupbetrouwbaarheid zich gedragen wanneer CTFd en Docker niet op dezelfde host draaien. Ten derde moet de beveiliging van die koppeling verder uitgewerkt worden, bijvoorbeeld via versleutelde communicatie, strikte netwerksegmentatie en passende toegangscontrole.
+
+\textbf{TODO's voor vervolgwerk}
+\begin{itemize}
+  \item een opstelling uitwerken met CTFd en plugin op VM A en Docker runtime op VM B;
+  \item vergelijken of remote Docker API, socket forwarding of een dunne tussenlaag het meest geschikt is;
+  \item meten wat de impact is op latency, cleanupgedrag en foutafhandeling;
+  \item de beveiliging van de verbinding tussen beide VM's expliciet valideren.
 \end{itemize}
