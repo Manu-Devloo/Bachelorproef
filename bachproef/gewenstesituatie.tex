@@ -68,10 +68,21 @@ De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem
 
 De keuze tussen een instantie per gebruiker of per team beïnvloedt zowel isolatie als resourceverbruik:
 
-\begin{itemize}
-  \item \textbf{Per gebruiker}: maximale isolatie en minder risico op interferentie, maar het aantal containers stijgt snel bij grotere events.
-  \item \textbf{Per team}: minder instanties en lagere infrastructuurkost, maar teamleden delen één omgeving en kunnen elkaars voortgang beïnvloeden.
-\end{itemize}
+\begin{table}[htbp]
+  \centering
+  \caption[Vergelijking tussen container per gebruiker en per team]{Vergelijking tussen een containerinstantie per gebruiker en per team.}
+  \label{tab:granulariteit}
+  \begin{tabularx}{\textwidth}{@{}lXX@{}}
+    \toprule
+    \textbf{Criteria} & \textbf{Per gebruiker} & \textbf{Per team} \\
+    \midrule
+    Isolatie & Maximale scheiding tussen deelnemers; weinig risico op onderlinge interferentie. & Lagere scheiding omdat teamleden dezelfde omgeving delen. \\
+    Resourceverbruik & Meer containers en hogere piekbelasting bij grotere events. & Minder instanties en dus lagere infrastructuurdruk. \\
+    Operationele eenvoud & Meer lifecycle-events om te beheren, maar eenduidige toewijzing per deelnemer. & Minder instanties om te beheren, maar extra logica nodig om teamtoegang correct af te handelen. \\
+    Geschikte context & Individuele events of challenges waarbij elke deelnemer een eigen sandbox nodig heeft. & Teamgebaseerde events waar samenwerking binnen dezelfde runtime gewenst is. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 Binnen de PoC wordt uitgegaan van een flexibele aanpak: wanneer het event in teammodus verloopt, wordt een instantie per team voorzien; bij individuele deelname wordt een instantie per gebruiker voorzien. Hierdoor blijft de isolatie passend bij het wedstrijdmodel, terwijl onnodige containerexplosie wordt vermeden.
 

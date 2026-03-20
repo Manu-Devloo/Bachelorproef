@@ -75,6 +75,17 @@ flowchart LR
 - Solving the challenge stops the active instance for that player.
 - Expired instances are reaped automatically in the background.
 
+## Challenge settings summary
+
+| Setting | Purpose | Effect on runtime behavior |
+| --- | --- | --- |
+| `image` or uploaded archive | Selects the challenge container image | Determines which workload is started for each participant |
+| `container_port` | Declares the service port inside the container | Used to publish a reachable host port back to the player |
+| `cpu_limit` | Caps CPU consumption per instance | Prevents one challenge from monopolizing host CPU |
+| `memory_limit_mb` | Caps memory usage per instance | Limits blast radius of runaway processes |
+| `timeout_seconds` | Sets the maximum lifetime of an instance | Drives automatic cleanup by the reaper |
+| `max_instances` | Caps concurrent active runtimes per challenge | Enforces back-pressure under peak demand |
+
 ## Admin controls
 
 - The challenge create/edit screens expose per-challenge CPU, memory, timeout, port, image, and concurrency settings.

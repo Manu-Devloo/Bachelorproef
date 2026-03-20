@@ -24,6 +24,32 @@ De opzet bevat vier kernonderdelen:
 
 Binnen deze bachelorproef draait dit geheel op een enkele host om de integratie eerst beheersbaar te houden. Een split deployment, waarbij CTFd en Docker op aparte VM's draaien, wordt beschouwd als een logische vervolgstap maar werd nog niet afgewerkt.
 
+\begin{figure}[htbp]
+  \centering
+  \resizebox{\textwidth}{!}{%
+  \begin{tikzpicture}[
+    node distance=1.2cm and 1.0cm,
+    box/.style={draw, rounded corners, align=center, minimum width=3.0cm, minimum height=1.05cm, fill=black!3},
+    arrow/.style={->, thick}
+  ]
+    \node[box] (player) {Deelnemer of\\ organisator};
+    \node[box, right=of player] (ctfd) {CTFd\\ challenge-flow en beheer};
+    \node[box, right=of ctfd] (docker) {Docker-daemon\\ containers en netwerken};
+    \node[box, below=of ctfd] (plugin) {Containerized plugin\\ policy- en lifecyclelogica};
+    \node[box, left=of plugin] (storage) {Runtime-opslag\\ SQLite en image-archieven};
+    \node[box, right=of plugin] (runtime) {Challenge-instantie\\ per gebruiker of team};
+
+    \draw[arrow] (player) -- node[above, font=\small] {start, stop, solve} (ctfd);
+    \draw[arrow] (ctfd) -- node[right, font=\small] {plugin-hooks en views} (plugin);
+    \draw[arrow] (plugin) -- node[above, font=\small] {Docker SDK} (docker);
+    \draw[arrow] (plugin) -- node[above, font=\small] {metadata} (storage);
+    \draw[arrow] (docker) -- node[right, font=\small] {run / rm} (runtime);
+  \end{tikzpicture}
+  }
+  \caption[Architectuur van de plugin-PoC]{Architectuur van de plugin-PoC op een enkele host. CTFd blijft het centrale platform, terwijl de plugin de lifecycle van challenge-containers en de bijhorende metadata beheert.}
+  \label{fig:poc-architectuur}
+\end{figure}
+
 %%----------------------------------------------------------------------
 \section{Verkennende standalone PoC}%
 \label{sec:poc-standalone}
@@ -47,6 +73,23 @@ De standalone PoC bood een challenge-registry, een eenvoudige webinterface, API-
 \end{itemize}
 
 De standalone PoC was dus vooral een technische voorstudie die toeliet om de risicovolste runtime-aspecten vroeg te toetsen. Zodra die basis werkte, werd de focus verschoven naar de CTFd-plugin, omdat die nauwer aansluit bij het doel van dit onderzoek: de containerlevenscyclus rechtstreeks koppelen aan acties in het CTF-platform.
+
+\begin{table}[htbp]
+  \centering
+  \caption[Vergelijking van beide PoC's]{Vergelijking tussen de verkennende standalone PoC en de uiteindelijke CTFd-plugin PoC.}
+  \label{tab:poc-vergelijking}
+  \begin{tabularx}{\textwidth}{@{}lXX@{}}
+    \toprule
+    \textbf{Aspect} & \textbf{Standalone PoC} & \textbf{CTFd-plugin PoC} \\
+    \midrule
+    Hoofddoel & Snelle validatie van lifecycle-mechanismen en beveiligingsmaatregelen. & Integratie van die mechanismen in de echte challenge-flow van CTFd. \\
+    Interface & Eigen Flask-dashboard en REST-API. & Challenge-type en beheerpagina binnen CTFd. \\
+    Bewijswaarde & Toont dat Docker-orkestratie technisch werkt in isolatie. & Toont dat gebruikersacties in CTFd rechtstreeks runtimegedrag kunnen sturen. \\
+    Belangrijkste output & Inzichten over idempotent starten, timeout cleanup en isolatie. & Werkende plugin met uploadflow, solve-cleanup en administratieve controle. \\
+    Rol in deze bachelorproef & Verkennende tussenstap om ontwerpkeuzes te onderbouwen. & Hoofdresultaat dat de onderzoeksvraag het dichtst benadert. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
 %%----------------------------------------------------------------------
 \section{Implementatie van de CTFd-plugin}%

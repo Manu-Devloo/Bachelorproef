@@ -23,6 +23,17 @@ It is designed for your bachelorproef scope: dynamic lifecycle management, basel
 - Unit/API tests and a smoke test script.
 - Research and experiment notes in Markdown.
 
+## Core components at a glance
+
+| Component | Responsibility | Why it matters in this PoC |
+| --- | --- | --- |
+| `web.py` dashboard + API | Exposes the operator UI and lifecycle endpoints | Keeps challenge registration, start, stop, and status inspection in one entrypoint |
+| `service.py` | Applies lifecycle rules, idempotency, quotas, and timeout logic | Central place where the PoC proves policy enforcement works |
+| `backend.py` | Talks to Docker through the Python SDK | Validates that challenge runtime management can stay in Python instead of shelling out |
+| `storage.py` | Persists challenges, instances, and event history in SQLite | Makes cleanup, auditing, and UI state reproducible across restarts |
+| `reaper.py` | Expires timed-out instances in the background | Demonstrates that stale containers can be removed automatically |
+| `challenges/demo-http/` | Demo workload used by the smoke test | Provides a repeatable target for end-to-end validation |
+
 ## Quick start
 
 Prerequisites:
