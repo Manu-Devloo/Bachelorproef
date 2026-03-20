@@ -102,10 +102,7 @@ De infrastructuur moet bestand zijn tegen piekbelasting, bijvoorbeeld wanneer ve
 
 Concreet zijn er voor de split deployment nog drie open vragen. Ten eerste moet onderzocht worden of de plugin rechtstreeks met een remote Docker API kan communiceren of dat een dunnere tussenlaag wenselijk is. Ten tweede moet gevalideerd worden hoe de opstartlatency en cleanupbetrouwbaarheid zich gedragen wanneer CTFd en Docker niet op dezelfde host draaien. Ten derde moet de beveiliging van die koppeling verder uitgewerkt worden, bijvoorbeeld via versleutelde communicatie, strikte netwerksegmentatie en passende toegangscontrole.
 
-\textbf{TODO's voor vervolgwerk}
-\begin{itemize}
-  \item een opstelling uitwerken met CTFd en plugin op VM A en Docker runtime op VM B;
-  \item vergelijken of remote Docker API, socket forwarding of een dunne tussenlaag het meest geschikt is;
-  \item meten wat de impact is op latency, cleanupgedrag en foutafhandeling;
-  \item de beveiliging van de verbinding tussen beide VM's expliciet valideren.
-\end{itemize}
+% TODO: een opstelling uitwerken met CTFd en plugin op VM A en Docker runtime op VM B
+% TODO: vergelijken of remote Docker API, socket forwarding of een dunne tussenlaag het meest geschikt is
+% TODO: meten wat de impact is op latency, cleanupgedrag en foutafhandeling
+% TODO: de beveiliging van de verbinding tussen beide VM's expliciet valideren

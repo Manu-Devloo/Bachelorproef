@@ -58,6 +58,8 @@ De belangrijkste volgende stap is het onderzoeken van een deployment waarbij CTF
   \item hoe reageert het systeem wanneer de Docker-host tijdelijk onbereikbaar is.
 \end{itemize}
 
-Andere interessante uitbreidingen zijn een reverse-proxy-gebaseerd toegangspunt, uitgebreidere loadtesting en verdere production hardening. Binnen de scope van deze bachelorproef is de voornaamste conclusie echter dat een CTFd-plugin de meest passende oplossingsrichting vormt, terwijl de twee-VM-opstelling en verdere schaaluitbreiding expliciet toekomstig werk blijven.
+Andere interessante uitbreidingen zijn een reverse-proxy-gebaseerd toegangspunt, uitgebreidere loadtesting en verdere production hardening.
 
-\textbf{TODO voor vervolgwerk}: de eerstvolgende praktische stap is een echte proefopstelling bouwen waarin CTFd en plugin op een eerste VM draaien en de challenge-containers op een tweede VM worden gestart. Pas na die validatie kan beoordeeld worden of een remote Docker-koppeling volstaat of dat een extra tussenlaag alsnog verantwoord is.
+% TODO: end-to-end testen met CTFd en plugin op een andere VM dan de Docker runtime
+% TODO: gedrag meten bij netwerkvertraging of tijdelijke onbeschikbaarheid van de Docker-host
+% TODO: bevestigen of de plugin zonder extra tussenlaag veilig genoeg kan communiceren met een remote Docker-endpoint
