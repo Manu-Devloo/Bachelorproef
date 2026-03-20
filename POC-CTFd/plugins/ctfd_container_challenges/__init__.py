@@ -148,13 +148,11 @@ def get_runtime_service() -> RuntimeService:
     return RUNTIME_MANAGER.ensure_started()
 
 
-def build_account_context() -> AccountContext:
-    user = get_current_user()
+def build_account_context_for(user: Any, team: Any | None = None) -> AccountContext:
     if user is None:
         raise ValidationError("Authenticated user is required")
 
     if is_teams_mode():
-        team = get_current_team()
         if team is None:
             raise ValidationError("A team is required in teams mode")
         return AccountContext(
@@ -172,6 +170,10 @@ def build_account_context() -> AccountContext:
         user_id=user.id,
         team_id=None,
     )
+
+
+def build_account_context() -> AccountContext:
+    return build_account_context_for(get_current_user(), get_current_team())
 
 
 def archive_storage_dir() -> str:
@@ -365,10 +367,31 @@ class ContainerizedChallenge(BaseChallenge):
         super().delete(challenge)
 
     @classmethod
+    def attempt(cls, challenge, request):
+        response = super().attempt(challenge, request)
+
+        if request.args.get("preview"):
+            return response
+
+        status = response[0] if isinstance(response, tuple) else response.status
+        if status == "correct" or status is True:
+            try:
+                account = build_account_context()
+                get_runtime_service().stop_active_instance(
+                    challenge_id=challenge.id,
+                    account_id=account.account_id,
+                    reason="challenge-solved",
+                )
+            except Exception:
+                LOGGER.exception("failed to stop runtime instance after correct attempt")
+
+        return response
+
+    @classmethod
     def solve(cls, user, team, challenge, request):
         super().solve(user, team, challenge, request)
         try:
-            account = build_account_context()
+            account = build_account_context_for(user, team)
             get_runtime_service().stop_active_instance(
                 challenge_id=challenge.id,
                 account_id=account.account_id,
