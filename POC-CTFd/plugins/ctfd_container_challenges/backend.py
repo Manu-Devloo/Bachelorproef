@@ -5,11 +5,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 import logging
 import random
+from typing import Iterable
 from typing import Protocol
 from uuid import uuid4
 
 import docker
 from docker.errors import APIError, DockerException, ImageNotFound, NotFound
+from docker.tls import TLSConfig
 
 LOGGER = logging.getLogger(__name__)
 
@@ -22,6 +24,18 @@ class BackendError(RuntimeError):
 class StartedContainer:
     container_id: str
     host_port: int
+
+
+@dataclass(frozen=True)
+class PublishedPortRange:
+    start: int
+    end: int
+
+    def ordered_candidates(self) -> Iterable[int]:
+        size = (self.end - self.start) + 1
+        offset = random.randint(0, size - 1)
+        for index in range(size):
+            yield self.start + ((offset + index) % size)
 
 
 class ContainerBackend(Protocol):
@@ -39,6 +53,7 @@ class ContainerBackend(Protocol):
         memory_limit_mb: int,
         archive_path: str | None,
         labels: dict[str, str],
+        published_port_range: PublishedPortRange | None,
     ) -> StartedContainer:
         ...
 
@@ -50,8 +65,23 @@ class ContainerBackend(Protocol):
 
 
 class DockerBackend:
-    def __init__(self) -> None:
-        self.client = docker.from_env()
+    def __init__(
+        self,
+        *,
+        base_url: str | None = None,
+        tls_config: TLSConfig | bool | None = None,
+        timeout_seconds: int = 60,
+    ) -> None:
+        client_kwargs = {"timeout": max(int(timeout_seconds), 5)}
+        if base_url:
+            client_kwargs["base_url"] = base_url
+            if tls_config is not None:
+                client_kwargs["tls"] = tls_config
+            self.client = docker.DockerClient(**client_kwargs)
+            self._target = base_url
+        else:
+            self.client = docker.from_env(**client_kwargs)
+            self._target = "environment"
 
     def import_image_archive(self, *, archive_path: str, image_tag: str) -> str:
         try:
@@ -85,6 +115,7 @@ class DockerBackend:
         memory_limit_mb: int,
         archive_path: str | None,
         labels: dict[str, str],
+        published_port_range: PublishedPortRange | None,
     ) -> StartedContainer:
         network = None
         container = None
@@ -103,31 +134,48 @@ class DockerBackend:
                 check_duplicate=True,
                 labels=labels,
             )
-            container = self.client.containers.run(
-                image=image,
-                name=instance_name,
-                detach=True,
-                network=network_name,
-                ports={f"{container_port}/tcp": None},
-                mem_limit=f"{memory_limit_mb}m",
-                nano_cpus=max(int(cpu_limit * 1_000_000_000), 100_000_000),
-                read_only=True,
-                pids_limit=128,
-                cap_drop=["ALL"],
-                security_opt=["no-new-privileges:true"],
-                tmpfs={"/tmp": "rw,noexec,nosuid,size=64m"},
-                labels=labels,
-            )
-            container.reload()
+            for requested_port in self._iter_host_ports(published_port_range):
+                try:
+                    container = self.client.containers.run(
+                        image=image,
+                        name=instance_name,
+                        detach=True,
+                        network=network_name,
+                        ports={
+                            f"{container_port}/tcp": (
+                                "0.0.0.0",
+                                requested_port,
+                            )
+                            if requested_port is not None
+                            else None
+                        },
+                        mem_limit=f"{memory_limit_mb}m",
+                        nano_cpus=max(int(cpu_limit * 1_000_000_000), 100_000_000),
+                        read_only=True,
+                        pids_limit=128,
+                        cap_drop=["ALL"],
+                        security_opt=["no-new-privileges:true"],
+                        tmpfs={"/tmp": "rw,noexec,nosuid,size=64m"},
+                        labels=labels,
+                    )
+                except APIError as exc:
+                    if requested_port is not None and self._is_port_conflict(exc):
+                        continue
+                    raise
 
-            port_binding = container.attrs["NetworkSettings"]["Ports"].get(
-                f"{container_port}/tcp"
-            )
-            if not port_binding:
-                raise BackendError("Container started without a published host port")
+                container.reload()
+                port_binding = container.attrs["NetworkSettings"]["Ports"].get(
+                    f"{container_port}/tcp"
+                )
+                if not port_binding:
+                    raise BackendError("Container started without a published host port")
 
-            host_port = int(port_binding[0]["HostPort"])
-            return StartedContainer(container_id=container.id, host_port=host_port)
+                host_port = int(port_binding[0]["HostPort"])
+                return StartedContainer(container_id=container.id, host_port=host_port)
+
+            raise BackendError(
+                "No free host port available in the configured published port range"
+            )
         except (APIError, DockerException, KeyError, ValueError) as exc:
             if container is not None:
                 try:
@@ -161,9 +209,33 @@ class DockerBackend:
     def health(self) -> dict[str, str]:
         try:
             self.client.ping()
-            return {"backend": "docker", "status": "ok"}
+            return {"backend": "docker", "status": "ok", "target": self._target}
         except DockerException as exc:
-            return {"backend": "docker", "status": f"error: {exc}"}
+            return {
+                "backend": "docker",
+                "status": f"error: {exc}",
+                "target": self._target,
+            }
+
+    @staticmethod
+    def _iter_host_ports(
+        published_port_range: PublishedPortRange | None,
+    ) -> Iterable[int | None]:
+        if published_port_range is None:
+            yield None
+            return
+        yield from published_port_range.ordered_candidates()
+
+    @staticmethod
+    def _is_port_conflict(exc: APIError) -> bool:
+        message = str(exc).lower()
+        conflict_markers = (
+            "port is already allocated",
+            "address already in use",
+            "bind for 0.0.0.0:",
+            "failed programming external connectivity",
+        )
+        return any(marker in message for marker in conflict_markers)
 
 
 class InMemoryBackend:
@@ -183,9 +255,13 @@ class InMemoryBackend:
         memory_limit_mb: int,
         archive_path: str | None,
         labels: dict[str, str],
+        published_port_range: PublishedPortRange | None,
     ) -> StartedContainer:
         container_id = f"mock-{uuid4().hex[:12]}"
-        host_port = random.randint(30000, 45000)
+        if published_port_range is not None:
+            host_port = next(published_port_range.ordered_candidates())
+        else:
+            host_port = random.randint(30000, 45000)
         self._containers[container_id] = {
             "instance_name": instance_name,
             "image": image,

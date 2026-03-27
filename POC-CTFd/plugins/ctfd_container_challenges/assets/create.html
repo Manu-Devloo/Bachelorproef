@@ -28,7 +28,12 @@
       Optional `.tar`, `.tar.gz`, or `.tgz` archive from `docker save`. The plugin imports it into the local Docker daemon and assigns a local image tag.
     </small>
   </label>
-  <input type="file" class="form-control-file" name="image_archive" accept=".tar,.tar.gz,.tgz">
+  <input
+    type="file"
+    class="form-control-file"
+    name="image_archive"
+    accept=".tar,.tar.gz,.tgz,.gz,application/x-tar,application/gzip,application/x-gzip"
+  >
   <input type="hidden" name="uploaded_image_token" value="">
   <small class="form-text text-muted" data-upload-status>No archive uploaded yet.</small>
 </div>

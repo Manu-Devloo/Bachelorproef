@@ -5,10 +5,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import timedelta
 import json
+import ipaddress
 from typing import Any
 from uuid import uuid4
 
-from .backend import BackendError, ContainerBackend
+from .backend import BackendError, ContainerBackend, PublishedPortRange
 from .storage import SQLiteStore
 from .time_utils import as_utc_iso, utc_now
 
@@ -52,11 +53,13 @@ class RuntimeService:
         backend: ContainerBackend,
         public_host: str,
         public_scheme: str = "http",
+        published_port_range: PublishedPortRange | None = None,
     ) -> None:
         self.store = store
         self.backend = backend
         self.public_host = public_host
         self.public_scheme = public_scheme
+        self.published_port_range = published_port_range
 
     def start_instance(self, challenge: Any, account: AccountContext) -> StartInstanceResult:
         challenge_id = int(challenge.id)
@@ -94,6 +97,7 @@ class RuntimeService:
                     memory_limit_mb=int(challenge.memory_limit_mb),
                     archive_path=getattr(challenge, "_archive_path", None),
                     labels=labels,
+                    published_port_range=self.published_port_range,
                 )
             except BackendError as exc:
                 raise BackendUnavailableError(f"Failed to start challenge container: {exc}") from exc
@@ -212,6 +216,18 @@ class RuntimeService:
                 "logs": stats.log_count,
             },
             "backend": self.backend.health(),
+            "public_endpoint": {
+                "scheme": self.public_scheme,
+                "host": self.public_host,
+                "published_port_range": (
+                    {
+                        "start": self.published_port_range.start,
+                        "end": self.published_port_range.end,
+                    }
+                    if self.published_port_range is not None
+                    else None
+                ),
+            },
         }
 
     def record_log(
@@ -257,9 +273,8 @@ class RuntimeService:
             raise NotFoundError("instance not found")
         enriched = dict(instance)
         if enriched.get("status") == "running":
-            enriched["access_url"] = (
-                f"{self.public_scheme}://{self.public_host}:{enriched['host_port']}"
-            )
+            host = self._format_public_host(self.public_host)
+            enriched["access_url"] = f"{self.public_scheme}://{host}:{enriched['host_port']}"
         else:
             enriched["access_url"] = None
         return enriched
@@ -269,3 +284,18 @@ class RuntimeService:
         safe_label = "".join(ch for ch in account_label.lower() if ch.isalnum()) or "acct"
         base = f"ctfdc-c{challenge_id}-{safe_label}-{instance_id[:8]}"
         return base[:63]
+
+    @staticmethod
+    def _format_public_host(public_host: str) -> str:
+        host = str(public_host or "").strip()
+        if not host:
+            raise ValidationError("CTFD_CONTAINER_PUBLIC_HOST cannot be empty")
+        if host.startswith("[") and host.endswith("]"):
+            return host
+        try:
+            parsed = ipaddress.ip_address(host)
+        except ValueError:
+            return host
+        if parsed.version == 6:
+            return f"[{host}]"
+        return host

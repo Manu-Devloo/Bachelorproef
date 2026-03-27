@@ -15,6 +15,10 @@
   <small class="form-text text-muted">
     Current uploaded archive: <code>{{ challenge.image_archive_name }}</code>
   </small>
+  {% elif challenge.image and challenge.image.startswith("ctfd-upload/") %}
+  <small class="form-text text-muted">
+    Current challenge image uses an imported uploaded archive tag: <code>{{ challenge.image }}</code>
+  </small>
   {% endif %}
 </div>
 
@@ -25,11 +29,18 @@
       Optional `.tar`, `.tar.gz`, or `.tgz` archive from `docker save`. Uploading a new archive replaces the image field with a local imported tag.
     </small>
   </label>
-  <input type="file" class="form-control-file" name="image_archive" accept=".tar,.tar.gz,.tgz">
+  <input
+    type="file"
+    class="form-control-file"
+    name="image_archive"
+    accept=".tar,.tar.gz,.tgz,.gz,application/x-tar,application/gzip,application/x-gzip"
+  >
   <input type="hidden" name="uploaded_image_token" value="">
   <small class="form-text text-muted" data-upload-status>
     {% if challenge.image_source == "archive" and challenge.image_archive_name %}
     Using uploaded archive {{ challenge.image_archive_name }}.
+    {% elif challenge.image and challenge.image.startswith("ctfd-upload/") %}
+    Using an imported uploaded archive image tag: {{ challenge.image }}.
     {% else %}
     No archive uploaded for this challenge.
     {% endif %}

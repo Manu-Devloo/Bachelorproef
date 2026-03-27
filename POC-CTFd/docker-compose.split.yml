@@ -1,0 +1,57 @@
+services:
+  ctfd:
+    depends_on:
+      docker-runtime:
+        condition: service_healthy
+    environment:
+      CTFD_CONTAINER_DOCKER_HOST: tcp://docker-runtime:2375
+      CTFD_CONTAINER_PUBLIC_HOST: docker-runtime
+      CTFD_CONTAINER_PUBLISHED_PORT_MIN: "20000"
+      CTFD_CONTAINER_PUBLISHED_PORT_MAX: "20099"
+
+  docker-runtime:
+    image: docker:29-dind
+    privileged: true
+    environment:
+      DOCKER_TLS_CERTDIR: ""
+    command:
+      - dockerd
+      - --host=tcp://0.0.0.0:2375
+      - --host=unix:///var/run/docker.sock
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - docker info >/dev/null 2>&1
+      interval: 3s
+      timeout: 3s
+      retries: 40
+    volumes:
+      - docker_runtime_data:/var/lib/docker
+
+  smoke:
+    profiles:
+      - test
+    build:
+      context: .
+    depends_on:
+      ctfd:
+        condition: service_started
+      docker-runtime:
+        condition: service_healthy
+    working_dir: /work
+    entrypoint:
+      - python
+      - /work/scripts/smoke_test.py
+    environment:
+      BASE_URL: http://ctfd:8000
+      IMAGE_ARCHIVE_PATH: /artifacts/poc-demo-http.tar
+      SMOKE_TEST_DOCKER_HOST: tcp://docker-runtime:2375
+      SMOKE_TEST_EXPECT_ACCESS_HOST: docker-runtime
+      SMOKE_TEST_EXPECT_ACCESS_PORT_MIN: "20000"
+      SMOKE_TEST_EXPECT_ACCESS_PORT_MAX: "20099"
+    volumes:
+      - ./scripts:/work/scripts:ro
+      - ./.artifacts:/artifacts:ro
+
+volumes:
+  docker_runtime_data:

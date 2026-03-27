@@ -8,6 +8,7 @@ from threading import Lock
 from typing import Any
 from uuid import uuid4
 
+from docker.tls import TLSConfig
 from flask import Blueprint, Response, flash, jsonify, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
@@ -23,7 +24,7 @@ from CTFd.utils.config import is_teams_mode
 from CTFd.utils.decorators import admins_only, authed_only, during_ctf_time_only, require_verified_emails
 from CTFd.utils.user import get_current_team, get_current_user
 
-from .backend import BackendError, DockerBackend, InMemoryBackend
+from .backend import BackendError, DockerBackend, InMemoryBackend, PublishedPortRange
 from .reaper import ReaperThread
 from .service import (
     AccountContext,
@@ -42,6 +43,25 @@ LOGGER = logging.getLogger(__name__)
 PLUGIN_NAME = "ctfd_container_challenges"
 ASSET_BASE = "/plugins/ctfd_container_challenges/assets/"
 ALLOWED_ARCHIVE_EXTENSIONS = (".tar", ".tar.gz", ".tgz")
+
+
+def _env_flag(value: str | None) -> bool:
+    return str(value or "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _env_optional(value: str | None) -> str | None:
+    clean = str(value or "").strip()
+    return clean or None
+
+
+def _env_int(value: str | None, default: int, *, minimum: int | None = None) -> int:
+    try:
+        parsed = int(str(value or "").strip() or str(default))
+    except ValueError:
+        parsed = default
+    if minimum is not None:
+        return max(parsed, minimum)
+    return parsed
 
 
 def asset_url(filename: str) -> str:
@@ -75,9 +95,32 @@ class RuntimeConfig:
     public_host: str
     public_scheme: str
     reaper_interval_seconds: float
+    docker_host: str | None
+    docker_tls_verify: bool
+    docker_cert_path: str | None
+    docker_timeout_seconds: int
+    published_port_range: PublishedPortRange | None
 
     @classmethod
     def from_env(cls) -> "RuntimeConfig":
+        published_port_min = _env_optional(os.getenv("CTFD_CONTAINER_PUBLISHED_PORT_MIN"))
+        published_port_max = _env_optional(os.getenv("CTFD_CONTAINER_PUBLISHED_PORT_MAX"))
+        published_port_range = None
+        if published_port_min is not None or published_port_max is not None:
+            try:
+                start = int(published_port_min or "0")
+                end = int(published_port_max or "0")
+            except ValueError as exc:
+                raise ValueError(
+                    "CTFD_CONTAINER_PUBLISHED_PORT_MIN and "
+                    "CTFD_CONTAINER_PUBLISHED_PORT_MAX must be integers"
+                ) from exc
+            if start < 1 or end < start or end > 65535:
+                raise ValueError(
+                    "Configured published port range must satisfy 1 <= min <= max <= 65535"
+                )
+            published_port_range = PublishedPortRange(start=start, end=end)
+
         return cls(
             backend=os.getenv("CTFD_CONTAINER_BACKEND", "docker").strip().lower(),
             store_path=os.getenv(
@@ -90,6 +133,23 @@ class RuntimeConfig:
                 float(os.getenv("CTFD_CONTAINER_REAPER_INTERVAL", "5") or "5"),
                 1.0,
             ),
+            docker_host=_env_optional(
+                os.getenv("CTFD_CONTAINER_DOCKER_HOST") or os.getenv("DOCKER_HOST")
+            ),
+            docker_tls_verify=_env_flag(
+                os.getenv("CTFD_CONTAINER_DOCKER_TLS_VERIFY")
+                if os.getenv("CTFD_CONTAINER_DOCKER_TLS_VERIFY") is not None
+                else os.getenv("DOCKER_TLS_VERIFY")
+            ),
+            docker_cert_path=_env_optional(
+                os.getenv("CTFD_CONTAINER_DOCKER_CERT_PATH") or os.getenv("DOCKER_CERT_PATH")
+            ),
+            docker_timeout_seconds=_env_int(
+                os.getenv("CTFD_CONTAINER_DOCKER_TIMEOUT"),
+                60,
+                minimum=5,
+            ),
+            published_port_range=published_port_range,
         )
 
     @property
@@ -113,12 +173,21 @@ class RuntimeManager:
             cfg = RuntimeConfig.from_env()
             os.makedirs(os.path.dirname(cfg.store_path), exist_ok=True)
             store = SQLiteStore(cfg.store_path)
-            backend = InMemoryBackend() if cfg.use_mock_backend else DockerBackend()
+            backend = (
+                InMemoryBackend()
+                if cfg.use_mock_backend
+                else DockerBackend(
+                    base_url=cfg.docker_host,
+                    tls_config=_build_docker_tls_config(cfg),
+                    timeout_seconds=cfg.docker_timeout_seconds,
+                )
+            )
             service = RuntimeService(
                 store=store,
                 backend=backend,
                 public_host=cfg.public_host,
                 public_scheme=cfg.public_scheme,
+                published_port_range=cfg.published_port_range,
             )
             reaper = ReaperThread(service=service, interval_seconds=cfg.reaper_interval_seconds)
             reaper.start()
@@ -142,6 +211,30 @@ class RuntimeManager:
 
 
 RUNTIME_MANAGER = RuntimeManager()
+
+
+def _build_docker_tls_config(cfg: RuntimeConfig) -> TLSConfig | bool | None:
+    if not cfg.docker_host:
+        return None
+
+    cert_path = cfg.docker_cert_path
+    tls_enabled = cfg.docker_tls_verify or cert_path is not None
+    if not tls_enabled:
+        return None
+
+    if cert_path is None:
+        return cfg.docker_tls_verify
+
+    ca_cert = os.path.join(cert_path, "ca.pem")
+    client_cert = os.path.join(cert_path, "cert.pem")
+    client_key = os.path.join(cert_path, "key.pem")
+
+    tls_kwargs: dict[str, Any] = {"verify": cfg.docker_tls_verify}
+    if os.path.exists(ca_cert):
+        tls_kwargs["ca_cert"] = ca_cert
+    if os.path.exists(client_cert) and os.path.exists(client_key):
+        tls_kwargs["client_cert"] = (client_cert, client_key)
+    return TLSConfig(**tls_kwargs)
 
 
 def get_runtime_service() -> RuntimeService:
@@ -207,6 +300,13 @@ def _resolve_image_asset(asset_token: str) -> dict[str, Any]:
     return asset
 
 
+def _resolve_image_asset_by_image_tag(image_tag: str) -> dict[str, Any] | None:
+    tag = str(image_tag or "").strip()
+    if not tag.startswith("ctfd-upload/"):
+        return None
+    return get_runtime_service().store.get_image_asset_by_image_tag(tag)
+
+
 def _get_bound_image_asset(challenge_id: int) -> dict[str, Any] | None:
     return get_runtime_service().store.get_image_asset_for_challenge(challenge_id)
 
@@ -222,6 +322,30 @@ def _bind_image_asset(challenge_id: int, asset_token: str) -> dict[str, Any]:
     )
     if not bound:
         raise ValidationError(f"Failed to bind uploaded image token '{asset_token}'")
+    return bound
+
+
+def _bind_image_asset_for_challenge(
+    challenge_id: int,
+    *,
+    asset_token: str | None,
+    image_tag: str,
+) -> dict[str, Any] | None:
+    if asset_token:
+        return _bind_image_asset(challenge_id, asset_token)
+
+    asset = _resolve_image_asset_by_image_tag(image_tag)
+    if not asset:
+        return None
+    if not os.path.exists(asset["archive_path"]):
+        raise ValidationError(f"Uploaded image archive is missing for image '{image_tag}'")
+    bound = get_runtime_service().store.bind_image_asset(
+        asset_token=asset["asset_token"],
+        challenge_id=challenge_id,
+        updated_at=as_utc_iso(utc_now()),
+    )
+    if not bound:
+        raise ValidationError(f"Failed to bind uploaded image for challenge '{challenge_id}'")
     return bound
 
 
@@ -293,7 +417,7 @@ class ContainerizedChallenge(BaseChallenge):
     }
     scripts = {
         "create": asset_url("create.js"),
-        "update": asset_url("update.js"),
+        "update": f"{ASSET_BASE}update.js",
         "view": asset_url("view.js"),
     }
     route = ASSET_BASE
@@ -315,8 +439,11 @@ class ContainerizedChallenge(BaseChallenge):
         challenge = cls.challenge_model(**sanitized)
         db.session.add(challenge)
         db.session.commit()
-        if uploaded_image_token:
-            _bind_image_asset(challenge.id, uploaded_image_token)
+        _bind_image_asset_for_challenge(
+            challenge.id,
+            asset_token=uploaded_image_token,
+            image_tag=challenge.image,
+        )
         return challenge
 
     @classmethod
@@ -349,8 +476,11 @@ class ContainerizedChallenge(BaseChallenge):
         for attr, value in sanitized.items():
             setattr(challenge, attr, value)
         db.session.commit()
-        if uploaded_image_token:
-            _bind_image_asset(challenge.id, uploaded_image_token)
+        _bind_image_asset_for_challenge(
+            challenge.id,
+            asset_token=uploaded_image_token,
+            image_tag=challenge.image,
+        )
         return challenge
 
     @classmethod

@@ -277,6 +277,19 @@ class SQLiteStore:
             ).fetchone()
         return dict(row) if row else None
 
+    def get_image_asset_by_image_tag(self, image_tag: str) -> dict[str, Any] | None:
+        with self._lock:
+            row = self._conn.execute(
+                """
+                SELECT * FROM image_assets
+                WHERE image_tag = ?
+                ORDER BY updated_at DESC
+                LIMIT 1
+                """,
+                (image_tag,),
+            ).fetchone()
+        return dict(row) if row else None
+
     def get_image_asset_for_challenge(self, challenge_id: int) -> dict[str, Any] | None:
         with self._lock:
             row = self._conn.execute(
