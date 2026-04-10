@@ -11,18 +11,18 @@ Dit hoofdstuk beschrijft de praktische uitwerking van het onderzoek. De nadruk l
 \section{Architectuuroverzicht}%
 \label{sec:poc-architectuur}
 
-De uiteindelijke PoC bestaat uit een CTFd-instantie waarin een eigen plugin een nieuw challenge-type toevoegt. Die plugin spreekt de Docker-daemon aan via de Docker SDK voor Python~\autocite{DockerSDKPython} en beheert de volledige levenscyclus van per-gebruiker of per-team challenge-instanties. Runtime-metadata, zoals actieve instanties en image-archieven, worden lokaal bijgehouden zodat de plugin ook cleanup en administratieve acties kan uitvoeren.
+De uiteindelijke PoC bestaat uit een CTFd-instantie waarin een eigen plugin een nieuw challenge-type toevoegt. Die plugin spreekt de Docker-daemon aan via de Docker SDK voor Python~\autocite{DockerSDKPython} en beheert de volledige levenscyclus van per-gebruiker of per-team challenge-instanties. Dezelfde plugin kan zowel een lokale Docker-daemon via de Unix-socket aanspreken als een remote Docker API op een andere host. Runtime-metadata, zoals actieve instanties en image-archieven, worden lokaal bijgehouden zodat de plugin ook cleanup en administratieve acties kan uitvoeren.
 
 De opzet bevat vier kernonderdelen:
 
 \begin{itemize}
   \item \textbf{CTFd}: het wedstrijdplatform met authenticatie, challenges en scoreverwerking.
   \item \textbf{CTFd-plugin}: de eigenlijke orkestratielaag die start-, stop- en cleanupacties uitvoert.
-  \item \textbf{Docker-daemon}: de runtime waarin challenge-containers en hun netwerken worden aangemaakt.
+  \item \textbf{Docker-daemon}: de runtime waarin challenge-containers en hun netwerken worden aangemaakt; in split-host modus draait die op een afzonderlijke host.
   \item \textbf{Runtime-opslag}: een lichte SQLite-opslag voor actieve instanties, logs en metadata van geuploade image-archieven.
 \end{itemize}
 
-Binnen deze bachelorproef draait dit geheel op een enkele host om de integratie eerst beheersbaar te houden. Een split deployment, waarbij CTFd en Docker op aparte VM's draaien, wordt beschouwd als een logische vervolgstap maar werd nog niet afgewerkt.
+Tijdens de implementatie werd eerst vertrokken van een single-host opstelling om de integratie beheersbaar te houden. Nadien is dezelfde architectuur uitgebreid naar een split-host model waarin het Docker-control endpoint en de spelergerichte runtime-host afzonderlijk configureerbaar zijn. Binnen de validatie van deze bachelorproef werd die tweede modus zowel lokaal gesimuleerd als op twee afzonderlijke VM's getest.
 
 \begin{figure}[htbp]
   \centering
@@ -46,7 +46,7 @@ Binnen deze bachelorproef draait dit geheel op een enkele host om de integratie 
     \draw[arrow] (docker) -- node[right, font=\small] {run / rm} (runtime);
   \end{tikzpicture}
   }
-  \caption[Architectuur van de plugin-PoC]{Architectuur van de plugin-PoC op een enkele host. CTFd blijft het centrale platform, terwijl de plugin de lifecycle van challenge-containers en de bijhorende metadata beheert.}
+  \caption[Architectuur van de plugin-PoC]{Architectuur van de plugin-PoC. CTFd blijft het centrale platform, terwijl de plugin de lifecycle van challenge-containers en de bijhorende metadata beheert. De Docker-daemon kan lokaal of op een afzonderlijke runtime-host draaien.}
   \label{fig:poc-architectuur}
 \end{figure}
 
@@ -100,26 +100,26 @@ De standalone PoC was dus vooral een technische voorstudie die toeliet om de ris
 De plugin voegt een nieuw challenge-type \texttt{containerized} toe aan CTFd. Een organisator kan zo per challenge runtime-parameters configureren zonder externe scripts of manuele \texttt{docker run}-commando's. De belangrijkste parameters zijn:
 
 \begin{itemize}
-  \item Docker-image;
-  \item containerpoort;
+  \item Docker-image of geupload image-archief;
+  \item een of meerdere containerpoorten;
   \item CPU-limiet;
   \item geheugenlimiet;
   \item timeout;
   \item maximum aantal gelijktijdige instanties.
 \end{itemize}
 
-Naast een klassieke image-referentie ondersteunt de plugin ook het uploaden van een \texttt{.tar}, \texttt{.tar.gz} of \texttt{.tgz}-archief uit \texttt{docker save}. Dat archief wordt lokaal opgeslagen, in de Docker-daemon geimporteerd en aan de challenge gekoppeld. Daardoor kan een organisator ook zonder externe registry een image beschikbaar maken voor de PoC.
+Naast een klassieke image-referentie ondersteunt de plugin ook het uploaden van een \texttt{.tar}, \texttt{.tar.gz} of \texttt{.tgz}-archief uit \texttt{docker save}. Dat archief wordt lokaal opgeslagen, in de Docker-daemon geimporteerd en aan de challenge gekoppeld. Daardoor kan een organisator ook zonder externe registry een image beschikbaar maken voor de PoC. Wanneer de lokaal geimporteerde image later ontbreekt, kan de plugin het gekoppelde archief automatisch opnieuw importeren bij een volgende runtime-start. Die eigenschap bleek bijzonder nuttig in de smoke tests, omdat het daarmee mogelijk werd om de volledige upload- en herimportflow reproduceerbaar te valideren.
 
 \subsection{Start- en stopflow voor deelnemers}
 
-Wanneer een deelnemer een containerized challenge opent, kan die via het challenge-scherm een eigen runtime-instantie starten. De plugin vertaalt die actie naar een Docker-start met de juiste challenge-configuratie. Daarbij gelden twee belangrijke beleidsregels:
+Wanneer een deelnemer een containerized challenge opent, kan die via het challenge-scherm een eigen runtime-instantie starten. De plugin vertaalt die actie naar een Docker-start met de juiste challenge-configuratie. In individuele modus gebeurt dit per gebruiker; in teammodus per team. Daarbij gelden twee belangrijke beleidsregels:
 
 \begin{itemize}
   \item voor dezelfde gebruiker of hetzelfde team wordt een bestaande actieve instantie hergebruikt in plaats van een nieuwe te starten;
   \item zodra het ingestelde maximum aantal instanties is bereikt, weigert de plugin bijkomende starts.
 \end{itemize}
 
-Na een succesvolle start krijgt de deelnemer een URL terug met de gepubliceerde hostpoort. De plugin bewaart tegelijk metadata zoals eigenaar, starttijd, vervaltijd, container-ID en netwerknaam. Wanneer de deelnemer expliciet stopt, wordt de container verwijderd en wordt ook het bijhorende Docker-netwerk opgeruimd.
+Na een succesvolle start krijgt de deelnemer een of meerdere toegangspunten terug met de gepubliceerde hostpoort(en). Die URL's worden opgebouwd op basis van een publiek configureerbare runtime-host, zodat de plugin ook correct blijft werken wanneer CTFd en Docker niet op dezelfde machine draaien. De plugin bewaart tegelijk metadata zoals eigenaar, starttijd, vervaltijd, container-ID, netwerknaam en poortbindingen. Wanneer de deelnemer expliciet stopt, wordt de container verwijderd en wordt ook het bijhorende Docker-netwerk opgeruimd.
 
 \subsection{Timeout cleanup en cleanup bij solve}
 
@@ -154,32 +154,29 @@ De plugin past bij elke containerstart een aantal direct toepasbare basismaatreg
   \item een afzonderlijk bridge-netwerk per runtime-instantie.
 \end{itemize}
 
-Die combinatie beperkt het risico op privilege-escalatie, laterale beweging en resource-uitputting. De keuze voor per-instantie netwerken zorgt ervoor dat deelnemers niet zomaar andere challenge-instanties kunnen ontdekken of aanspreken. Belangrijk is wel dat deze PoC een basisbeveiliging demonstreert en geen volledig production-ready hardeningprofiel oplevert. Zo is ondersteuning voor aangepaste seccomp-profielen nog geen afgewerkt onderdeel van de implementatie.
+Die combinatie beperkt het risico op privilege-escalatie, laterale beweging en resource-uitputting. De keuze voor per-instantie netwerken zorgt ervoor dat deelnemers niet zomaar andere challenge-instanties kunnen ontdekken of aanspreken. Voor split-host deployments ondersteunt de plugin daarnaast een expliciet configureerbaar gepubliceerd poortbereik, zodat firewallregels op de runtime-host begrensd kunnen blijven. Belangrijk is wel dat deze PoC een basisbeveiliging demonstreert en geen volledig production-ready hardeningprofiel oplevert. Zo is ondersteuning voor aangepaste seccomp-profielen nog geen afgewerkt onderdeel van de implementatie en werd remote Docker-communicatie in de validatie enkel op wegwerpomgevingen zonder TLS getest.
 
 %%----------------------------------------------------------------------
 \section{Deployment- en schaalbaarheidsoverwegingen}%
 \label{sec:poc-schaalbaarheid}
 
-De huidige plugin-PoC is bewust opgezet op een enkele host. Dat maakte het mogelijk om eerst de interactie tussen CTFd, de plugin en Docker correct te valideren zonder bijkomende netwerkcomplexiteit. Binnen die scope toont de PoC aan dat een plugin-gebaseerde aanpak haalbaar is voor:
+De huidige plugin-PoC ondersteunt twee deploymentmodi. In same-host modus draait CTFd samen met de plugin op dezelfde host als de Docker-daemon en wordt de lokale Unix-socket gebruikt. In split-host modus blijft CTFd het control plane, maar wordt de Docker-daemon op een andere host aangesproken via een afzonderlijk control endpoint. De spelergerichte runtime-host kan daarbij verschillen van het Docker API endpoint. Binnen die scope toont de PoC aan dat een plugin-gebaseerde aanpak haalbaar is voor:
 
 \begin{itemize}
   \item dynamisch starten en stoppen van challenge-containers;
   \item afdwingen van limieten per challenge;
   \item automatisch cleanupgedrag bij timeout en solve;
-  \item administratieve controle vanuit CTFd.
+  \item administratieve controle vanuit CTFd;
+  \item scheiding tussen control plane en runtime-host in een split deployment.
 \end{itemize}
 
-Voor verdere schaalvergroting is een volgende stap echter bijzonder relevant: een opstelling waarbij CTFd en de plugin op een eerste VM draaien, terwijl de challenge-containers op een tweede VM worden gestart. Dat scenario is technisch aantrekkelijk omdat de wedstrijdomgeving en de runtime-host dan beter gescheiden kunnen worden. Het werd in deze bachelorproef nog niet afgewerkt en blijft dus toekomstig werk.
+De split-host ondersteuning werd in deze bachelorproef ook effectief gevalideerd. Eerst gebeurde dat lokaal via een Compose-opstelling met een aparte \texttt{docker:dind}-service en een smoke-runner binnen hetzelfde netwerk. Daarna volgde een reële validatie op twee aparte Lima-VM's: één VM voor CTFd en de plugin, en één VM voor de challenge-containers. Daarbij werden de gepubliceerde challenge-poorten begrensd tot een vast bereik, zodat de runtime-host eenvoudiger afgeschermd kon worden.
 
-Daarbij moeten minstens vier vragen verder onderzocht worden:
+Voor verdere schaalvergroting blijven wel nog een aantal vragen over:
 
 \begin{itemize}
-  \item kan de plugin veilig en betrouwbaar communiceren met een remote Docker-host;
-  \item is daarvoor een rechtstreekse remote Docker API voldoende, of is een dunnere tussenlaag wenselijk;
-  \item wat is de impact van die split deployment op opstartlatency en cleanupbetrouwbaarheid;
-  \item hoe moet toegangscontrole op de koppeling tussen CTFd-host en Docker-host ingericht worden.
+  \item hoe remote Docker-communicatie in productie TLS-beveiligd en operationeel beheersbaar wordt ingericht;
+  \item hoe het systeem reageert wanneer de runtime-host tijdelijk onbereikbaar wordt tijdens start, stop of cleanup;
+  \item hoe dynamische routing best wordt gecombineerd met een reverse proxy in plaats van louter hostpoortmapping;
+  \item hoe meerdere runtime-hosts evenwichtig kunnen worden aangestuurd vanuit dezelfde plugin.
 \end{itemize}
-
-% TODO: CTFd en plugin op een eerste VM plaatsen en runtime-containers op een tweede VM starten
-% TODO: valideren of cleanup ook betrouwbaar blijft wanneer de Docker-host tijdelijk onbereikbaar is
-% TODO: onderzoeken of een extra orchestratorlaag nuttig blijft in een remote deployment zonder de plugin als hoofdinterface te verlaten

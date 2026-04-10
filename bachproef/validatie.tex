@@ -13,18 +13,19 @@ Dit hoofdstuk bespreekt hoe de oplossing werd gevalideerd. De validatie verloopt
 
 \subsection{Doelstellingen}
 
-Het testplan had vier concrete doelen:
+Het testplan had vijf concrete doelen:
 
 \begin{itemize}
   \item aantonen dat challenge-containers correct gestart, hergebruikt en gestopt worden;
   \item verifi\"eren dat timeout cleanup en solve-triggered cleanup werken;
   \item nagaan of de gekozen basisbeveiligingsmaatregelen effectief op containers worden toegepast;
-  \item observeren hoe de oplossing zich gedraagt onder gelijktijdige startverzoeken.
+  \item observeren hoe de oplossing zich gedraagt onder gelijktijdige startverzoeken;
+  \item bevestigen dat de plugin ook kan werken wanneer CTFd en de Docker-runtime op aparte hosts draaien.
 \end{itemize}
 
 \subsection{Afbakening}
 
-Niet alle oorspronkelijk overwogen validaties zijn in deze fase volledig uitgevoerd. Vooral multi-VM schaalverdeling, reverse-proxy-gebaseerde routing en uitgebreide testing van remote Docker-communicatie vallen buiten de effectief afgeronde validatie. Deze punten worden daarom niet als bewezen resultaat voorgesteld, maar als toekomstig werk.
+Niet alle oorspronkelijk overwogen validaties zijn in deze fase volledig uitgevoerd. Vooral reverse-proxy-gebaseerde routing, TLS-beveiligde remote Docker-communicatie, uitgebreide foutinjectie en schaalverdeling over meerdere runtime-hosts vallen buiten de effectief afgeronde validatie. Deze punten worden daarom niet als bewezen resultaat voorgesteld, maar als toekomstig werk.
 
 %%----------------------------------------------------------------------
 \section{Pre-validatie via de standalone PoC}%
@@ -70,22 +71,53 @@ Een beperkte loadtest met Locust~\autocite{Locust} werd gebruikt om capaciteitsg
 
 \subsection{Functionele end-to-end validatie}
 
-De plugin-PoC werd gevalideerd met een volledige smoke test in een draaiende CTFd-omgeving. Die test doorloopt de belangrijkste gebruikers- en beheerstappen:
+De plugin-PoC werd eerst gevalideerd met een volledige smoke test in een draaiende CTFd-omgeving in same-host modus. Die test doorloopt de belangrijkste gebruikers- en beheerstappen:
 
 \begin{itemize}
   \item initialiseren van CTFd;
   \item uploaden van een Docker-archief via de plugin;
   \item aanmaken van een \texttt{containerized} challenge met runtime-parameters;
-  \item registreren van een speler;
-  \item starten van een persoonlijke runtime-instantie;
-  \item controleren of de challenge-service effectief bereikbaar is;
+  \item verwijderen van de lokaal geimporteerde image om herimport uit het geuploade archief te forceren;
+  \item registreren van drie spelers;
+  \item starten van meerdere runtime-instanties;
+  \item controleren of de challenge-service effectief bereikbaar is voor de speler;
   \item opnieuw starten van dezelfde challenge om te bevestigen dat de bestaande instantie hergebruikt wordt;
+  \item verifi\"eren dat \texttt{max\_instances} wordt afgedwongen;
+  \item bevestigen dat een vrijgekomen slot opnieuw gebruikt kan worden na cleanup;
+  \item manueel stopzetten van een runtime;
   \item indienen van de correcte flag;
   \item controleren of de runtime na solve automatisch werd opgeruimd;
+  \item controleren of timeout cleanup werkt voor een aparte testchallenge;
   \item verifi\"eren via het admin-overzicht dat de stopreden als \texttt{challenge-solved} geregistreerd werd.
 \end{itemize}
 
 Deze smoke test is relevant omdat ze laat zien dat de plugin niet enkel losse Docker-acties kan uitvoeren, maar ook correct samenwerkt met de challenge-flow van CTFd.
+
+\subsection{Split-host validatie}
+
+Dezelfde eind-tot-eindflow werd daarna uitgevoerd in een split-host opstelling. Eerst gebeurde dat in een lokale simulatie met twee logische hosts binnen Docker Compose: CTFd draaide samen met de plugin in één service, terwijl een afzonderlijke \texttt{docker:dind}-service de remote Docker-host voorstelde. Omdat de gepubliceerde challenge-services in die simulatie enkel zinvol bereikbaar waren vanuit het Compose-netwerk, werd een afzonderlijke smoke-runner container gebruikt om de spelerflow uit te voeren.
+
+Deze validatie toonde aan dat de plugin twee adressen correct van elkaar kan scheiden:
+
+\begin{itemize}
+  \item het Docker-control endpoint dat door de plugin gebruikt wordt om containers te starten en te stoppen;
+  \item de publieke runtime-host die in de access-URL's voor spelers wordt opgenomen.
+\end{itemize}
+
+Daarnaast werd bevestigd dat een configureerbaar gepubliceerd poortbereik nuttig en werkbaar is in split-host modus. De plugin kiest in dat geval een vrije poort binnen het opgegeven bereik in plaats van willekeurig een hostpoort te gebruiken.
+
+\subsection{Re\"ele validatie op twee VM's}
+
+Op 24 maart 2026 werd de split-host architectuur ook gevalideerd op twee afzonderlijke Lima-VM's. In die opstelling draaiden CTFd en de plugin op een eerste VM, terwijl een tweede VM uitsluitend de challenge-containers uitvoerde. Beide VM's waren verbonden via een gedeeld \texttt{user-v2}-netwerk. De smoke test werd vanuit de CTFd-VM uitgevoerd, omdat de macOS-host in deze Lima-configuratie het interne subnet niet rechtstreeks kon bereiken.
+
+De re\"ele VM-validatie bevestigde de belangrijkste technische aannames:
+
+\begin{itemize}
+  \item de plugin kan challenge-containers over een remote Docker API op een andere VM starten, stoppen en opruimen;
+  \item de gegenereerde access-URL's wezen correct naar de runtime-VM;
+  \item de gepubliceerde hostpoorten bleven binnen het ingestelde bereik \texttt{20000--20099};
+  \item na afloop bleven geen plugin-beheerde challenge-containers of netwerken achter op de runtime-VM.
+\end{itemize}
 
 \subsection{Wat de pluginvalidatie laat zien}
 
@@ -93,33 +125,33 @@ Op basis van de plugin smoke test kunnen binnen de scope van deze bachelorproef 
 
 \begin{itemize}
   \item de plugin kan een eigen challenge-type toevoegen aan CTFd;
-  \item een organisator kan een image-archief uploaden en aan een challenge koppelen;
+  \item een organisator kan een image-archief uploaden, aan een challenge koppelen en later opnieuw laten importeren;
   \item een deelnemer kan vanuit CTFd een eigen runtime-instantie starten;
   \item een tweede startverzoek voor dezelfde gebruiker hergebruikt de bestaande instantie;
+  \item capaciteitslimieten en slothergebruik worden correct afgedwongen;
   \item een correcte solve triggert automatische cleanup van de actieve runtime;
-  \item de admin-interface houdt de runtimegeschiedenis bij en toont de finale status.
+  \item timeout cleanup werkt ook binnen de pluginflow;
+  \item de admin-interface houdt de runtimegeschiedenis bij en toont de finale status;
+  \item dezelfde plugincode werkt zowel tegen een lokale Docker-daemon als tegen een remote Docker-host op een andere VM.
 \end{itemize}
 
 \subsection{Wat bewust niet als bewezen claim wordt opgenomen}
 
-De plugin-PoC toont in deze fase nog niet aan dat de oplossing al klaar is voor een meerhost-architectuur of productie-inzet. In het bijzonder werden de volgende punten niet volledig gevalideerd en worden ze daarom niet als gerealiseerd resultaat voorgesteld:
+De plugin-PoC toont in deze fase nog niet aan dat de oplossing al klaar is voor productie-inzet. In het bijzonder werden de volgende punten niet volledig gevalideerd en worden ze daarom niet als gerealiseerd resultaat voorgesteld:
 
 \begin{itemize}
-  \item remote deployment waarbij CTFd en Docker op aparte VM's draaien;
+  \item TLS-beveiligde remote Docker-communicatie voor persistente of gedeelde omgevingen;
   \item reverse-proxy-routing naar dynamisch aangemaakte instanties;
   \item ondersteuning voor aangepaste seccomp-profielen;
-  \item uitgebreide foutinjectie, bijvoorbeeld een tijdelijk onbereikbare Docker-host.
+  \item uitgebreide foutinjectie, bijvoorbeeld een tijdelijk onbereikbare Docker-host;
+  \item taakverdeling over meerdere runtime-hosts of een volwaardige meerhost-architectuur.
 \end{itemize}
-
-% TODO: end-to-end testen met CTFd en plugin op een andere VM dan de Docker runtime
-% TODO: gedrag meten bij netwerkvertraging of tijdelijke onbeschikbaarheid van de Docker-host
-% TODO: bevestigen of de plugin zonder extra tussenlaag veilig genoeg kan communiceren met een remote Docker-endpoint
 \label{sec:validatie-todo}
 
 %%----------------------------------------------------------------------
 \section{Interpretatie van de resultaten}%
 \label{sec:validatie-conclusie}
 
-De combinatie van standalone pre-validatie en plugin-validatie biedt voldoende basis om drie observaties te formuleren. Ten eerste is de kern van het probleem technisch oplosbaar: challenge-containers kunnen dynamisch gestart, hergebruikt en opgeruimd worden op basis van acties in CTFd. Ten tweede kunnen direct toepasbare beveiligingsmaatregelen zoals read-only filesystems, capability dropping, no-new-privileges en resource-limieten effectief in de runtime worden opgenomen. Ten derde laat de plugin smoke test zien dat deze runtime-logica bruikbaar kan worden ingepast in het CTFd-platform zelf.
+De combinatie van standalone pre-validatie en plugin-validatie biedt voldoende basis om vier observaties te formuleren. Ten eerste is de kern van het probleem technisch oplosbaar: challenge-containers kunnen dynamisch gestart, hergebruikt en opgeruimd worden op basis van acties in CTFd. Ten tweede kunnen direct toepasbare beveiligingsmaatregelen zoals read-only filesystems, capability dropping, no-new-privileges en resource-limieten effectief in de runtime worden opgenomen. Ten derde laat de plugin smoke test zien dat deze runtime-logica bruikbaar kan worden ingepast in het CTFd-platform zelf. Ten vierde toont de split-host validatie aan dat dezelfde pluginarchitectuur ook werkt wanneer CTFd en de Docker-runtime op aparte hosts of VM's draaien.
 
-De validatie maakt tegelijk duidelijk waar de grenzen van de huidige PoC liggen. Schaalbaarheid over meerdere VM's, veilige remote Docker-communicatie en meer geavanceerde production hardening zijn nog niet volledig onderzocht. De twee-VM-opstelling waarbij CTFd en plugin op een eerste VM draaien en challenge-containers op een tweede VM worden gestart, vormt daarom de belangrijkste volgende validatiestap.
+De validatie maakt tegelijk duidelijk waar de grenzen van de huidige PoC liggen. Productierijpe remote Docker-communicatie, meer geavanceerde hardening, reverse-proxy-integratie en schaalbaarheid over meerdere runtime-hosts zijn nog niet volledig onderzocht. De belangrijkste volgende stap is daarom niet langer het aantonen van split deployment op zich, maar het hardenen en uitbreiden van die opstelling voor realistische productieomgevingen.

@@ -5,12 +5,6 @@
 
 \documentclass[dutch,dit,thesis]{hogentreport}
 
-% TODO:
-% - If necessary, replace the option `dit`' with your own department!
-%   Valid entries are dbo, dbt, dgz, dit, dlo, dog, dsa, soa
-% - If you write your thesis in English (remark: only possible after getting
-%   explicit approval!), remove the option "dutch," or replace with "english".
-
 %% Pictures to include in the text can be put in the graphics/ folder
 \graphicspath{{../graphics/}}
 
@@ -182,11 +176,14 @@ De plugin-PoC is de primaire reproductieroute voor deze bachelorproef.
 \begin{enumerate}
   \item Zorg dat Docker actief is en dat Docker Compose v2 beschikbaar is.
   \item Navigeer naar de map \texttt{POC-CTFd/}.
-  \item Start de volledige smoke test via \texttt{./scripts/smoke\_test.sh}.
+  \item Start de same-host validatie via \texttt{./scripts/smoke\_test.sh}.
+  \item Start de split-host validatie via \texttt{./scripts/smoke\_test\_split.sh} wanneer de control plane en runtime-host logisch gescheiden moeten worden.
   \item Open CTFd op \texttt{http://127.0.0.1:8001}.
 \end{enumerate}
 
-De smoke test initialiseert CTFd, uploadt een Docker-archief, maakt een \texttt{containerized} challenge aan, start een runtime-instantie voor een speler, controleert bereikbaarheid en valideert cleanup na het oplossen van de challenge.
+De same-host smoke test initialiseert CTFd, uploadt een Docker-archief, maakt een \texttt{containerized} challenge aan, start runtime-instanties voor meerdere spelers, controleert bereikbaarheid en valideert cleanup na solve, manuele stop en timeout. De split-host smoke test doorloopt dezelfde functionele flow, maar laat CTFd communiceren met een afzonderlijke Docker-runtime.
+
+Een reële twee-VM reproductie is bijkomend gedocumenteerd in \path{POC-CTFd/docs/03_real-vm-validation.md}. Daarin wordt een Lima-opstelling beschreven met CTFd en plugin op een eerste VM en de challenge-containers op een tweede VM.
 
 \section*{Beheer}
 
@@ -211,26 +208,30 @@ Deze bijlage vat de belangrijkste configuratie-elementen samen die voor de PoC r
 De plugin voegt per challenge de volgende configuratievelden toe:
 
 \begin{itemize}
-  \item image;
-  \item containerpoort;
+  \item image of geupload Docker-archief;
+  \item een of meerdere containerpoorten;
   \item CPU-limiet;
   \item geheugenlimiet;
   \item timeout in seconden;
   \item maximum aantal gelijktijdige instanties.
 \end{itemize}
 
-Daarnaast ondersteunt de plugin optioneel een geupload Docker-archief dat lokaal wordt opgeslagen en nadien in de Docker-daemon geimporteerd kan worden.
+Daarnaast ondersteunt de plugin optioneel een geupload Docker-archief dat lokaal wordt opgeslagen en nadien in de Docker-daemon geimporteerd of opnieuw geimporteerd kan worden.
 
 \section*{Runtime-configuratie via environment variables}
 
 De plugin gebruikt onder meer environment variables voor:
 
 \begin{itemize}
-  \item backendselectie;
-  \item pad naar de runtime-database;
-  \item publiek host- en schemesegment voor runtime-URL's;
-  \item locatie van image-archieven;
-  \item interval van de timeout-reaper.
+  \item \texttt{CTFD\_CONTAINER\_DOCKER\_HOST} voor het Docker-control endpoint;
+  \item \texttt{CTFD\_CONTAINER\_DOCKER\_TLS\_VERIFY} voor TLS-verificatie richting Docker;
+  \item \texttt{CTFD\_CONTAINER\_DOCKER\_CERT\_PATH} voor clientcertificaten richting Docker;
+  \item \texttt{CTFD\_CONTAINER\_PUBLIC\_HOST} voor spelergerichte runtime-URL's;
+  \item \texttt{CTFD\_CONTAINER\_PUBLIC\_SCHEME} voor het URL-schema van die runtime-URL's;
+  \item \texttt{CTFD\_CONTAINER\_PUBLISHED\_PORT\_MIN} en \texttt{CTFD\_CONTAINER\_PUBLISHED\_PORT\_MAX} voor een optioneel begrensd poortbereik;
+  \item \texttt{CTFD\_CONTAINER\_DB\_PATH} voor de runtime-database;
+  \item \texttt{CTFD\_CONTAINER\_IMAGE\_ARCHIVE\_DIR} voor opslag van geuploade image-archieven;
+  \item \texttt{CTFD\_CONTAINER\_REAPER\_INTERVAL} voor het interval van de timeout-reaper.
 \end{itemize}
 
 \section*{Container hardening}
@@ -248,7 +249,7 @@ Bij het starten van een challenge-container worden standaard de volgende runtime
 
 \section*{Niet-opgenomen configuratie}
 
-Reverse-proxy-configuratie en multi-VM-distributie zijn bewust niet opgenomen als afgewerkte configuratiebestanden, omdat die onderdelen nog niet volledig geimplementeerd en gevalideerd zijn binnen deze bachelorproef.
+Reverse-proxy-configuratie en taakverdeling over meerdere runtime-hosts zijn bewust niet opgenomen als afgewerkte configuratiebestanden. De split-host opstelling met één aparte runtime-host werd wel gevalideerd, maar productierijpe TLS-configuratie en meerhost-orkestratie blijven toekomstig werk.
 
 \chapter{Testresultaten in detail}
 \label{app:testresultaten}
@@ -292,11 +293,26 @@ cd POC-CTFd
 ./scripts/smoke_test.sh
 \end{verbatim}
 
-Resultaat: CTFd werd geinitialiseerd, een Docker-archief werd geupload, een \texttt{containerized} challenge werd aangemaakt, een speler startte een runtime, een tweede start hergebruikte dezelfde instantie en na solve werd de runtime automatisch opgeruimd met stopreden \texttt{challenge-solved}.
+Resultaat: CTFd werd geinitialiseerd, een Docker-archief werd geupload, een \texttt{containerized} challenge werd aangemaakt, de lokaal geimporteerde image werd verwijderd om herimport te forceren, meerdere spelers startten runtimes, \texttt{max\_instances} werd afgedwongen, een tweede start hergebruikte dezelfde instantie, manuele stop en timeout cleanup werden bevestigd en na solve werd de runtime automatisch opgeruimd met stopreden \texttt{challenge-solved}.
+
+\textbf{Split-host smoke test}
+\begin{verbatim}
+cd POC-CTFd
+./scripts/smoke_test_split.sh
+\end{verbatim}
+
+Resultaat: dezelfde challenge-flow werkte ook wanneer CTFd met de plugin via een remote Docker endpoint communiceerde. De gegenereerde runtime-URL's verwezen naar de afzonderlijke runtime-host en de gepubliceerde poorten bleven binnen het ingestelde bereik.
+
+\textbf{Re\"ele twee-VM validatie}
+\begin{verbatim}
+Zie POC-CTFd/docs/03_real-vm-validation.md
+\end{verbatim}
+
+Resultaat: op 24 maart 2026 werd bevestigd dat CTFd op een eerste Lima-VM challenge-containers kon starten, stoppen en opruimen op een tweede Lima-VM. Na afloop bleven geen plugin-beheerde containers of netwerken achter op de runtime-VM.
 
 \section*{Interpretatie}
 
-De gedetailleerde outputs tonen vooral aan dat de gekozen lifecycle-regels effectief worden afgedwongen. Ze vormen geen bewijs voor een afgewerkte multi-VM-productiearchitectuur. Resultaten rond split deployment, reverse proxy en remote Docker-hosting moeten nog afzonderlijk verzameld worden zodra die uitbreiding is uitgewerkt.
+De gedetailleerde outputs tonen vooral aan dat de gekozen lifecycle-regels effectief worden afgedwongen. Ze tonen ook aan dat split deployment technisch haalbaar is met dezelfde pluginarchitectuur. Ze vormen wel nog geen bewijs voor een volledig afgewerkte productiearchitectuur met TLS-beveiligde remote Docker-communicatie, reverse proxy en taakverdeling over meerdere runtime-hosts.
 
 \chapter{Onderzoekslog}
 \label{app:onderzoekslog}
@@ -342,8 +358,13 @@ Na de eerste experimenten bleek dat de standalone PoC bruikbaar was voor het val
 \textbf{Beslissing: plugin behouden als voorkeursrichting}\\
 Na de realisatie van de plugin-PoC werd beslist om de plugin als voorkeursrichting naar voren te schuiven. De plugin koppelt gebruikersacties rechtstreeks aan challenge-runtimes, houdt de beheerinterface binnen CTFd en sluit daardoor goed aan bij de context van CTF-events op eigen infrastructuur.
 
-\textbf{Beslissing: split deployment over twee VM's opnemen als TODO}\\
-Tijdens de uitwerking kwam een bijkomende architectuurvraag naar voren: kan CTFd met plugin op een eerste VM draaien terwijl de challenge-containers op een tweede VM worden gestart. Omdat die opzet bijkomende validatie vereist rond remote Docker-communicatie, latency en toegangscontrole, werd beslist dit expliciet als toekomstig werk op te nemen in plaats van het onvolledig als resultaat te presenteren.
+\section*{Fase 4 -- Validatie en afronding}
+
+\textbf{Beslissing: split deployment als aparte validatiestap uitvoeren}\\
+Tijdens de eerste uitwerking werd split deployment nog niet meteen als resultaat gepresenteerd. Er werd beslist om dit niet speculatief in de PoC-hoofdstukken op te nemen, maar pas na een afzonderlijke validatie. In een latere iteratie werd daarvoor zowel een lokale split-host simulatie als een re\"ele twee-VM test op Lima uitgevoerd. Op die manier kon de haalbaarheid van de architectuur alsnog onderbouwd worden met concrete meet- en testresultaten.
+
+\textbf{Beslissing: remote Docker-communicatie aantonen, maar niet als production-ready voorstellen}\\
+De extra validatie toonde aan dat de plugin een remote Docker-host kan aansturen en correcte spelergerichte runtime-URL's kan genereren. Tegelijk werd beslist dit niet als volledig productieklare oplossing te presenteren, omdat de gebruikte testopstellingen nog geen TLS-beveiligde remote API, uitgebreide foutinjectie of taakverdeling over meerdere runtime-hosts omvatten.
 
 %%---------- Backmatter, referentielijst ---------------------------------------
 

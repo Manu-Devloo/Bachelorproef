@@ -1,0 +1,4 @@
+node_modules/
+artifacts/video-work/
+__pycache__/
+*.pyc

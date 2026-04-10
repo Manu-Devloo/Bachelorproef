@@ -42,6 +42,7 @@ class SQLiteStore:
                     container_id TEXT NOT NULL,
                     network_name TEXT NOT NULL,
                     host_port INTEGER NOT NULL,
+                    port_bindings_json TEXT,
                     status TEXT NOT NULL,
                     started_at TEXT NOT NULL,
                     expires_at TEXT NOT NULL,
@@ -79,7 +80,17 @@ class SQLiteStore:
                     ON image_assets(challenge_id);
                 """
             )
+            self._ensure_column("instances", "port_bindings_json", "TEXT")
             self._conn.commit()
+
+    def _ensure_column(self, table_name: str, column_name: str, column_definition: str) -> None:
+        columns = self._conn.execute(f"PRAGMA table_info({table_name})").fetchall()
+        existing = {str(column["name"]) for column in columns}
+        if column_name in existing:
+            return
+        self._conn.execute(
+            f"ALTER TABLE {table_name} ADD COLUMN {column_name} {column_definition}"
+        )
 
     def close(self) -> None:
         with self._lock:
@@ -92,8 +103,8 @@ class SQLiteStore:
                 INSERT INTO instances (
                     instance_id, challenge_id, account_id, account_type,
                     user_id, team_id, container_id, network_name, host_port,
-                    status, started_at, expires_at, stopped_at, stop_reason
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    port_bindings_json, status, started_at, expires_at, stopped_at, stop_reason
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     instance["instance_id"],
@@ -105,6 +116,7 @@ class SQLiteStore:
                     instance["container_id"],
                     instance["network_name"],
                     instance["host_port"],
+                    instance.get("port_bindings_json"),
                     instance["status"],
                     instance["started_at"],
                     instance["expires_at"],

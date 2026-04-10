@@ -51,7 +51,7 @@ De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem
   \item \textbf{CTFd}: voorziet authenticatie, challenge-definities en de gebruikersinteractie.
   \item \textbf{CTFd-plugin}: beheert de containerlevenscyclus, houdt de toewijzing bij (gebruiker/team $\rightarrow$ container) en past beleidsregels toe (timeouts, quota, resource-limieten en isolatie).
   \item \textbf{Docker-host}: draait de challenge-containers en wordt aangestuurd via de Docker Engine API~\autocite{DockerEngineAPI}. In de PoC gebeurt dit via de Docker SDK voor Python~\autocite{DockerSDKPython}.
-  \item \textbf{Toegangspunt voor deelnemers}: in de huidige PoC gebeurt toegang via gepubliceerde hostpoorten. Een reverse proxy of split deployment over meerdere VM's blijft een uitbreidingsrichting, maar is geen afgerond onderdeel van de huidige implementatie.
+  \item \textbf{Toegangspunt voor deelnemers}: in de huidige PoC gebeurt toegang via gepubliceerde hostpoorten. Een reverse proxy blijft een relevante uitbreidingsrichting, maar de architectuur moet ook zonder die tussenlaag bruikbare runtime-URL's kunnen genereren voor same-host en split-host deployments.
 \end{itemize}
 
 \subsection{Datastromen op hoofdlijnen}
@@ -95,14 +95,12 @@ De infrastructuur moet bestand zijn tegen piekbelasting, bijvoorbeeld wanneer ve
 \begin{itemize}
   \item \textbf{Piekbestendig opstartpad}: het systeem moet een piek aan containercreatie kunnen verwerken zonder dat het platform onbeschikbaar wordt.
   \item \textbf{Begrenzing en evenwichtige verdeling}: limieten op actieve instanties en afdwingbare quota vermijden dat één challenge of deelnemer disproportioneel resources consumeert.
-  \item \textbf{Deployment-variant met twee VM's}: een relevante vervolgstap is een opstelling waarbij CTFd en de plugin op een eerste VM draaien, terwijl de challenge-containers op een tweede VM worden gestart. Die variant vereist bijkomend onderzoek naar de veiligste communicatievorm tussen plugin en remote Docker-host.
+  \item \textbf{Deployment-variant met twee VM's}: de oplossing moet kunnen werken met een control plane op een eerste VM (CTFd + plugin) en een afzonderlijke runtime-host op een tweede VM (Docker + challenge-containers). Zo blijven wedstrijdplatform en challenge-executie logisch gescheiden.
+  \item \textbf{Gescheiden control- en datapad}: de plugin moet enerzijds een Docker-control endpoint kunnen aanspreken en anderzijds correcte spelergerichte runtime-URL's kunnen genereren. In een split deployment zijn die twee adressen niet noodzakelijk gelijk.
+  \item \textbf{Begrensde publicatie van poorten}: wanneer challenge-services via hostpoorten beschikbaar worden gemaakt, moet een configureerbaar poortbereik mogelijk zijn zodat firewallregels, audit en troubleshooting beheersbaar blijven.
+  \item \textbf{Beveiligde remote aansturing}: communicatie met een remote Docker-host moet in een productiecontext beschermd worden, bij voorkeur via TLS en strikte netwerksegmentatie.
   \item \textbf{Horizontale uitbreiding}: de architectuur moet uitbreidbaar zijn naar meerdere Docker-hosts. Voor taakverdeling over meerdere hosts kan Docker Swarm een mogelijke optie zijn~\autocite{DockerSwarm}, maar dit valt buiten de huidige PoC.
   \item \textbf{Dynamische routing}: voor een latere productie-opzet kan een reverse proxy nuttig zijn om dynamisch naar nieuw aangemaakte instanties te routeren~\autocite{Traefik}. Ook dit behoort tot toekomstig werk.
 \end{itemize}
 
-Concreet zijn er voor de split deployment nog drie open vragen. Ten eerste moet onderzocht worden of de plugin rechtstreeks met een remote Docker API kan communiceren of dat een dunnere tussenlaag wenselijk is. Ten tweede moet gevalideerd worden hoe de opstartlatency en cleanupbetrouwbaarheid zich gedragen wanneer CTFd en Docker niet op dezelfde host draaien. Ten derde moet de beveiliging van die koppeling verder uitgewerkt worden, bijvoorbeeld via versleutelde communicatie, strikte netwerksegmentatie en passende toegangscontrole.
-
-% TODO: een opstelling uitwerken met CTFd en plugin op VM A en Docker runtime op VM B
-% TODO: vergelijken of remote Docker API, socket forwarding of een dunne tussenlaag het meest geschikt is
-% TODO: meten wat de impact is op latency, cleanupgedrag en foutafhandeling
-% TODO: de beveiliging van de verbinding tussen beide VM's expliciet valideren
+Concreet betekent dit dat de gewenste architectuur niet mag vertrekken van een hard gekoppelde lokale Docker-socket. Ze moet expliciet rekening houden met twee deploymentmodi: een eenvoudige same-host opstelling voor kleine events en een split-host opstelling voor betere scheiding tussen platform en runtime. Verdere onderzoeksvragen verschuiven daarmee van ``kan dit technisch werken?'' naar ``hoe wordt deze koppeling productierijp gemaakt op vlak van beveiliging, fouttolerantie en verdeling over meerdere runtime-hosts?''.

@@ -66,7 +66,20 @@ function initializeRuntimePanel() {
     }
 
     setStatus("Instance running.", "success");
-    accessNode.innerHTML = `<a href="${instance.access_url}" target="_blank" rel="noopener noreferrer">${instance.access_url}</a>`;
+    if (Array.isArray(instance.port_bindings) && instance.port_bindings.length > 0) {
+      accessNode.innerHTML = instance.port_bindings
+        .map((binding) => {
+          const label = binding.container_port
+            ? `Container ${binding.container_port}`
+            : "Access";
+          return `<div><small class="text-muted">${label}</small><br><a href="${binding.access_url}" target="_blank" rel="noopener noreferrer">${binding.access_url}</a></div>`;
+        })
+        .join("");
+    } else if (instance.access_url) {
+      accessNode.innerHTML = `<a href="${instance.access_url}" target="_blank" rel="noopener noreferrer">${instance.access_url}</a>`;
+    } else {
+      accessNode.innerHTML = "";
+    }
     expiryNode.textContent = `Expires at ${instance.expires_at}`;
     stopButton.dataset.running = "true";
     stopButton.disabled = false;

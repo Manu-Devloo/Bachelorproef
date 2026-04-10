@@ -1,0 +1,17 @@
+{
+  "name": "poc-ctfd",
+  "version": "1.0.0",
+  "private": true,
+  "description": "This second PoC packages the container lifecycle flow as a real CTFd plugin instead of a standalone orchestrator dashboard. It adds a custom `containerized` challenge type to CTFd, launches per-user containers through a local or remote Docker API, and cleans them up on solve or timeout.",
+  "scripts": {
+    "video:capture": "node ./scripts/video_capture.cjs",
+    "video:generate": "python3 ./scripts/generate_demo_video.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "playwright": "^1.59.1"
+  }
+}

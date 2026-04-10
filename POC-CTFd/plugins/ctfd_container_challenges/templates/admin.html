@@ -37,7 +37,7 @@
           <tr>
             <th>Challenge</th>
             <th>Image</th>
-            <th>Port</th>
+            <th>Ports</th>
             <th>CPU</th>
             <th>Memory</th>
             <th>Timeout</th>
@@ -59,7 +59,7 @@
               <br><small class="text-muted">archive: {{ challenge.image_archive_name }}</small>
               {% endif %}
             </td>
-            <td>{{ challenge.container_port }}</td>
+            <td>{{ challenge.container_ports_display }}</td>
             <td>{{ challenge.cpu_limit }}</td>
             <td>{{ challenge.memory_limit_mb }} MB</td>
             <td>{{ challenge.timeout_seconds }}s</td>
@@ -118,13 +118,19 @@
             <td>{{ item.status }}</td>
             <td>
               {% if item.access_url %}
-              <a href="{{ item.access_url }}" target="_blank" rel="noopener noreferrer">{{ item.access_url }}</a>
+                {% if item.access_urls %}
+                  {% for url in item.access_urls %}
+                  <div><a href="{{ url }}" target="_blank" rel="noopener noreferrer">{{ url }}</a></div>
+                  {% endfor %}
+                {% else %}
+                <a href="{{ item.access_url }}" target="_blank" rel="noopener noreferrer">{{ item.access_url }}</a>
+                {% endif %}
               {% endif %}
             </td>
             <td>
               {% if item.image %}
               <code>{{ item.image }}</code><br>
-              <small class="text-muted">{{ item.cpu_limit }} CPU · {{ item.memory_limit_mb }} MB · {{ item.timeout_seconds }}s · max {{ item.max_instances }}</small>
+              <small class="text-muted">{{ item.container_ports_display }} · {{ item.cpu_limit }} CPU · {{ item.memory_limit_mb }} MB · {{ item.timeout_seconds }}s · max {{ item.max_instances }}</small>
               {% endif %}
             </td>
             <td>{{ item.started_at }}</td>

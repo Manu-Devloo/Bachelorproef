@@ -88,11 +88,16 @@ class RuntimeService:
             }
 
             try:
+                container_ports = list(
+                    getattr(challenge, "configured_container_ports", None)
+                    or self._parse_container_ports(getattr(challenge, "container_ports", None))
+                    or [int(challenge.container_port)]
+                )
                 started = self.backend.start(
                     instance_name=instance_name,
                     image=str(challenge.image),
                     network_name=network_name,
-                    container_port=int(challenge.container_port),
+                    container_ports=container_ports,
                     cpu_limit=float(challenge.cpu_limit),
                     memory_limit_mb=int(challenge.memory_limit_mb),
                     archive_path=getattr(challenge, "_archive_path", None),
@@ -114,7 +119,10 @@ class RuntimeService:
                     "team_id": account.team_id,
                     "container_id": started.container_id,
                     "network_name": network_name,
-                    "host_port": started.host_port,
+                    "host_port": started.port_bindings[0].host_port,
+                    "port_bindings_json": json.dumps(
+                        [binding.__dict__ for binding in started.port_bindings]
+                    ),
                     "status": "running",
                     "started_at": as_utc_iso(started_at),
                     "expires_at": as_utc_iso(expires_at),
@@ -128,7 +136,7 @@ class RuntimeService:
                     "challenge_id": challenge_id,
                     "account_id": account.account_id,
                     "instance_id": instance_id,
-                    "host_port": started.host_port,
+                    "port_bindings": [binding.__dict__ for binding in started.port_bindings],
                 },
             )
             return StartInstanceResult(instance=self._enrich_instance(created), created=True)
@@ -272,12 +280,76 @@ class RuntimeService:
         if not instance:
             raise NotFoundError("instance not found")
         enriched = dict(instance)
+        bindings = self._parse_port_bindings(enriched.pop("port_bindings_json", None))
+        if not bindings and enriched.get("host_port") is not None:
+            bindings = [
+                {
+                    "container_port": None,
+                    "host_port": int(enriched["host_port"]),
+                }
+            ]
+        enriched["port_bindings"] = bindings
         if enriched.get("status") == "running":
             host = self._format_public_host(self.public_host)
-            enriched["access_url"] = f"{self.public_scheme}://{host}:{enriched['host_port']}"
+            access_urls: list[str] = []
+            for binding in bindings:
+                access_url = f"{self.public_scheme}://{host}:{binding['host_port']}"
+                binding["access_url"] = access_url
+                access_urls.append(access_url)
+            if not access_urls and enriched.get("host_port") is not None:
+                access_urls.append(f"{self.public_scheme}://{host}:{enriched['host_port']}")
+            enriched["access_urls"] = access_urls
+            enriched["access_url"] = access_urls[0] if access_urls else None
         else:
             enriched["access_url"] = None
+            enriched["access_urls"] = []
         return enriched
+
+    @staticmethod
+    def _parse_container_ports(raw_ports: Any) -> list[int]:
+        if raw_ports is None:
+            return []
+        tokens = [token.strip() for token in str(raw_ports).split(",") if token.strip()]
+        ports: list[int] = []
+        for token in tokens:
+            try:
+                ports.append(int(token))
+            except ValueError:
+                return []
+        return ports
+
+    @staticmethod
+    def _parse_port_bindings(raw_bindings: Any) -> list[dict[str, int | None | str]]:
+        if not raw_bindings:
+            return []
+        try:
+            decoded = json.loads(raw_bindings)
+        except (TypeError, json.JSONDecodeError):
+            return []
+        if not isinstance(decoded, list):
+            return []
+
+        bindings: list[dict[str, int | None | str]] = []
+        for item in decoded:
+            if not isinstance(item, dict) or "host_port" not in item:
+                continue
+            try:
+                host_port = int(item["host_port"])
+            except (TypeError, ValueError):
+                continue
+            container_port = item.get("container_port")
+            if container_port is not None:
+                try:
+                    container_port = int(container_port)
+                except (TypeError, ValueError):
+                    container_port = None
+            bindings.append(
+                {
+                    "container_port": container_port,
+                    "host_port": host_port,
+                }
+            )
+        return bindings
 
     @staticmethod
     def _build_container_name(challenge_id: int, account_label: str, instance_id: str) -> str:

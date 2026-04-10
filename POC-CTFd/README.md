@@ -8,7 +8,7 @@ It adds a custom `containerized` challenge type to CTFd, launches per-user conta
 - Custom CTFd challenge type: `containerized`
 - Docker-backed runtime API inside the plugin
 - Explicit split between Docker control endpoint and player-facing runtime host
-- Per-challenge controls for image, exposed port, CPU, memory, timeout, and concurrency
+- Per-challenge controls for image, exposed ports, CPU, memory, timeout, and concurrency
 - Optional Docker archive upload for challenge images (`docker save` tarballs imported into the local Docker daemon)
 - Optional published port range for fixed firewall exposure on a remote Docker host
 - Idempotent start behavior for the same user/account
@@ -47,6 +47,36 @@ The smoke test uses the existing demo image from [`../POC/challenges/demo-http`]
 The split smoke test simulates `CTFd VM -> remote Docker VM` with `docker:dind` and runs the player workflow from a dedicated smoke-runner container on the same network.
 A real two-VM Lima validation was also completed; see `docs/03_real-vm-validation.md`.
 
+## Autonomous demo video
+
+You can generate the silent demo video end-to-end with one command:
+
+```bash
+cd POC-CTFd
+python3 ./scripts/generate_demo_video.py
+```
+
+What the generator does:
+
+- installs `ffmpeg` through Homebrew if it is missing;
+- ensures the local Playwright dependency and Chromium browser are available;
+- rebuilds the demo image and archive used by the upload flow;
+- boots a clean same-host CTFd stack;
+- seeds admin, player, challenge, and flag data;
+- records browser clips for the admin and player flows;
+- assembles the clips into `artifacts/poc-ctfd-demo.mp4`.
+
+The final export is slowed down slightly by default for readability.
+If you only want to rebuild the MP4 from the existing recorded clips, use:
+
+```bash
+cd POC-CTFd
+python3 ./scripts/generate_demo_video.py --assemble-only
+```
+
+Working files are stored in `artifacts/video-work/` and are ignored by Git.
+The final MP4 is silent and focuses on the browser-visible flow, while the closing proof card covers the split-host deployment support that is also documented in `docs/01_split-host-deployment.md` and `docs/03_real-vm-validation.md`.
+
 ## Architecture
 
 ```mermaid
@@ -64,7 +94,7 @@ flowchart LR
     RuntimeService -->|"re-import archive if image is missing"| ArchiveStore
     RuntimeService -->|"start / stop containers"| Docker
 
-    Docker -->|"publish host port"| Challenge["Per-user or per-team challenge container"]
+    Docker -->|"publish host port(s)"| Challenge["Per-user or per-team challenge container"]
     Challenge -->|"temporary access URL"| Player
 
     Reaper["Background reaper / admin reaper button"] -->|"expire timed-out instances"| RuntimeService
@@ -93,7 +123,7 @@ flowchart LR
 | Setting | Purpose | Effect on runtime behavior |
 | --- | --- | --- |
 | `image` or uploaded archive | Selects the challenge container image | Determines which workload is started for each participant |
-| `container_port` | Declares the service port inside the container | Used to publish a reachable host port back to the player |
+| `container_ports` | Declares one or more TCP service ports inside the container | Used to publish reachable host ports back to the player |
 | `CTFD_CONTAINER_DOCKER_HOST` | Selects the Docker control endpoint | Lets CTFd manage a local or remote Docker daemon |
 | `CTFD_CONTAINER_PUBLIC_HOST` | Selects the player-facing runtime host | Determines which host is used in generated access URLs |
 | `CTFD_CONTAINER_PUBLISHED_PORT_MIN` / `CTFD_CONTAINER_PUBLISHED_PORT_MAX` | Restrict the published port pool | Useful for remote-host firewall policy and predictable exposure |
@@ -104,7 +134,8 @@ flowchart LR
 
 ## Admin controls
 
-- The challenge create/edit screens expose per-challenge CPU, memory, timeout, port, image, and concurrency settings.
+- The challenge create/edit screens expose per-challenge CPU, memory, timeout, ports, image, and concurrency settings.
+- Multiple challenge ports can be entered as a comma- or space-separated list. Existing single-port challenges continue to work and are migrated to the new format automatically on plugin load.
 - Admins can either reference a normal Docker image name or upload a `.tar`, `.tar.gz`, or `.tgz` archive produced by `docker save`.
 - Uploaded archives are stored in the plugin runtime volume and re-imported automatically if the local Docker image is later removed.
 - The admin runtime page shows a configuration table for all `containerized` challenges so the effective resource profile is visible without opening each challenge editor.

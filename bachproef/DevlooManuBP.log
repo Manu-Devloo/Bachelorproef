@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.22)  20 MAR 2026 14:35
+This is XeTeX, Version 3.141592653-2.6-0.999997 (TeX Live 2025) (preloaded format=xelatex 2026.2.22)  10 APR 2026 13:30
 entering extended mode
  \write18 enabled.
  file:line:error style messages enabled.
@@ -1514,26 +1514,26 @@ Package csquotes Info: Redefining alias 'default' -> 'dutch'.
  (./DevlooManuBP.aux)
 \openout1 = `DevlooManuBP.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 75.
-LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 69.
+LaTeX Font Info:    ... okay on input line 69.
 Package biblatex Info: Trying to load language 'dutch' -> 'dutch-apa'...
 Package biblatex Info: ... file 'dutch-apa.lbx' found.
  (/usr/local/texlive/2025/texmf-dist/tex/latex/biblatex-apa/dutch-apa.lbx
@@ -1557,8 +1557,8 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'DevlooManuBP.bbl' found.
  (./DevlooManuBP.bbl)
-Package biblatex Info: Reference section=0 on input line 75.
-Package biblatex Info: Reference segment=0 on input line 75.
+Package biblatex Info: Reference section=0 on input line 69.
+Package biblatex Info: Reference segment=0 on input line 69.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
@@ -1599,7 +1599,7 @@ Package caption Info: End \AtBeginDocument code.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 75.
+Package hyperref Info: Link coloring ON on input line 69.
 (./DevlooManuBP.out) (./DevlooManuBP.out)
 \@outlinefile=\write6
 \openout6 = `DevlooManuBP.out'.
@@ -1616,13 +1616,13 @@ Package pdflscape Info: Auto-detected driver: dvipdfm (xetex) on input line 98.
 Package microtype Info: Patching varwidth to enable character protrusion.
 \MT@vwid@leftmargin=\dimen350
 \MT@vwid@rightmargin=\dimen351
-LaTeX Info: Redefining \microtypecontext on input line 75.
-Package microtype Info: Applying patch `item' on input line 75.
-Package microtype Info: Applying patch `toc' on input line 75.
-Package microtype Info: Applying patch `eqnum' on input line 75.
-Package microtype Info: Applying patch `footnote' on input line 75.
-Package microtype Info: Applying patch `verbatim' on input line 75.
-LaTeX Info: Redefining \microtypesetup on input line 75.
+LaTeX Info: Redefining \microtypecontext on input line 69.
+Package microtype Info: Applying patch `item' on input line 69.
+Package microtype Info: Applying patch `toc' on input line 69.
+Package microtype Info: Applying patch `eqnum' on input line 69.
+Package microtype Info: Applying patch `footnote' on input line 69.
+Package microtype Info: Applying patch `verbatim' on input line 69.
+LaTeX Info: Redefining \microtypesetup on input line 69.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: No adjustment of tracking.
@@ -1632,7 +1632,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `Montserrat' (encoding: TU).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-Package hyperref Info: Option `pageanchor' set `false' on input line 81.
+Package hyperref Info: Option `pageanchor' set `false' on input line 75.
 *geometry* verbose mode - [ newgeometry ] result:
 * driver: xetex
 * paper: a4paper
@@ -1666,24 +1666,24 @@ Package hyperref Info: Option `pageanchor' set `false' on input line 81.
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 92--92
+Underfull \hbox (badness 10000) in paragraph at lines 86--86
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 92--92
+Underfull \hbox (badness 10000) in paragraph at lines 86--86
 
  []
 
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
-Invalid UTF-8 byte or sequence at line 92 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
+Invalid UTF-8 byte or sequence at line 86 replaced by U+FFFD.
 File: ../graphics/hogent_logo.eps Graphic file (type eps)
 <../graphics/hogent_logo.eps>
 
@@ -1696,40 +1696,41 @@ File: ../graphics/hogent_logo.eps Graphic file (type eps)
 ]
 
 [2]
-Package hyperref Info: Option `pageanchor' set `true' on input line 93.
+Package hyperref Info: Option `pageanchor' set `true' on input line 87.
  (./voorwoord.tex) (./samenvatting.tex
 
 [3
 
 
 
-])
-Underfull \hbox (badness 1910) in paragraph at lines 54--97
-\TU/Montserrat(1)/m/n/10.95 ligingstests en load tests omvat. Het eindresultaat bestaat uit de proof-of-
+]
+Underfull \hbox (badness 1371) in paragraph at lines 20--21
+\TU/Montserrat(1)/m/n/10.95 CTFd-challenges dynamisch kunnen worden beheerd, aangemaakt en beëin-
  []
 
-
-Underfull \hbox (badness 1122) in paragraph at lines 54--97
-\TU/Montserrat(1)/m/n/10.95 concept, documentatie en aanbevelingen voor het opzetten en beheren van
- []
-
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `FiraCode' (encoding: TU).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
 
 
 [4
 
-] (./DevlooManuBP.toc
+])
 
-[5
+[5] (./DevlooManuBP.toc
+
+[6
 
 ]
 
-[6])
+[7])
 \tf@toc=\write7
 \openout7 = `DevlooManuBP.toc'.
 
 
 
-[7] (./DevlooManuBP.lof
+[8] (./DevlooManuBP.lof
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `FiraMathRegular' (encoding: TU).
 (microtype)             For optimal results, create family-specific settings.
@@ -1752,7 +1753,7 @@ LaTeX Font Info:    Font shape `TU/FiraMathRegular(3)/m/n' will be
 
 
 
-[8
+[9
 
 ] (./DevlooManuBP.lot)
 \tf@lot=\write9
@@ -1760,7 +1761,7 @@ LaTeX Font Info:    Font shape `TU/FiraMathRegular(3)/m/n' will be
 
 
 
-[9
+[10
 
 ] (./DevlooManuBP.lol)
 \tf@lol=\write10
@@ -1768,7 +1769,7 @@ LaTeX Font Info:    Font shape `TU/FiraMathRegular(3)/m/n' will be
 
 
 
-[10
+[11
 
 
 ] (./inleiding.tex
@@ -1793,10 +1794,6 @@ Underfull \hbox (badness 2626) in paragraph at lines 42--43
 \TU/Montserrat(1)/m/n/10.95 CTFd is een open-source CTF-platform, gebouwd in Python met het Flask-
  []
 
-Package microtype Info: Loading generic protrusion settings for font family
-(microtype)             `FiraCode' (encoding: TU).
-(microtype)             For optimal results, create family-specific settings.
-(microtype)             See the microtype manual for details.
 
 
 [5]
@@ -1817,6 +1814,8 @@ Hoofdstuk 3.
 [9
 
 ]
+
+[10]
 Hoofdstuk 4.
 
 Underfull \hbox (badness 2744) in paragraph at lines 22--23
@@ -1830,7 +1829,7 @@ Underfull \hbox (badness 1418) in paragraph at lines 22--23
 
 
 
-[10
+[11
 
 ]
 Underfull \hbox (badness 1122) in paragraph at lines 30--31
@@ -1839,9 +1838,9 @@ Underfull \hbox (badness 1122) in paragraph at lines 30--31
 
 ) (./gewenstesituatie.tex
 
-[11]
-
 [12]
+
+[13]
 Hoofdstuk 5.
 
 Underfull \hbox (badness 3482) in paragraph at lines 26--27
@@ -1850,7 +1849,7 @@ Underfull \hbox (badness 3482) in paragraph at lines 26--27
 
 
 
-[13
+[14
 
 ]
 Underfull \hbox (badness 2318) in paragraph at lines 46--47
@@ -1864,7 +1863,7 @@ Underfull \hbox (badness 1418) in paragraph at lines 52--53
 
 
 
-[14]
+[15]
 Underfull \hbox (badness 3460) in paragraph at lines 84--84
 \TU/Montserrat(1)/m/n/10.95 deelnemers; weinig risico
  []
@@ -1906,18 +1905,20 @@ Underfull \hbox (badness 10000) in paragraph at lines 84--84
 
 
 
-[15]
-Underfull \hbox (badness 1515) in paragraph at lines 100--101
+[16]
+Underfull \hbox (badness 1515) in paragraph at lines 103--104
 \TU/Montserrat(1)/m/n/10.95 nuttig zijn om dynamisch naar nieuw aangemaakte instanties te route-
  []
 
 ) (./poc.tex
 
-[16]
+[17]
+
+[18]
 Hoofdstuk 6.
 
 
-[17
+[19
 
 ]
 Underfull \hbox (badness 1635) in paragraph at lines 61--62
@@ -1925,6 +1926,8 @@ Underfull \hbox (badness 1635) in paragraph at lines 61--62
  []
 
 
+
+[20]
 Underfull \hbox (badness 10000) in paragraph at lines 91--91
 []|\TU/Montserrat(1)/m/n/10.95 Snelle validatie van
  []
@@ -2001,57 +2004,69 @@ Underfull \hbox (badness 4805) in paragraph at lines 91--91
 
 
 
-[18]
-
-[19]
+[21]
 Underfull \hbox (badness 1087) in paragraph at lines 115--116
 \TU/Montserrat(1)/m/n/10.95 Wanneer een deelnemer een containerized challenge opent, kan die via het
  []
 
 
 
-[20]
-
-[21]) (./validatie.tex
-
 [22]
+
+[23]
+Underfull \hbox (badness 1755) in paragraph at lines 173--174
+[]\TU/Montserrat(1)/m/n/10.95 De split-host ondersteuning werd in deze bachelorproef ook effectief gevali-
+ []
+
+) (./validatie.tex
+
+[24]
 Hoofdstuk 7.
 
+Underfull \hbox (badness 1515) in paragraph at lines 28--29
+\TU/Montserrat(1)/m/n/10.95 Niet alle oorspronkelijk overwogen validaties zijn in deze fase volledig uitge-
+ []
 
-[23
+
+
+[25
 
 ]
-Underfull \hbox (badness 1502) in paragraph at lines 59--60
+Underfull \hbox (badness 1502) in paragraph at lines 60--61
 \TU/Montserrat(1)/m/n/10.95 kaar niet via naamresolutie ontdekken, wat de gekozen netwerkaanpak
  []
 
 
 
-[24]
+[26]
 
-[25])
-Underfull \hbox (badness 1231) in paragraph at lines 125--140
-\TU/Montserrat(1)/m/n/10.95 Schaalbaarheid over meerdere VM’s, veilige remote Docker-communicatie en
+[27]
+
+[28]
+
+[29])
+Underfull \hbox (badness 3118) in paragraph at lines 157--134
+\TU/Montserrat(1)/m/n/10.95 Productierijpe remote Docker-communicatie, meer geavanceerde hardening,
  []
 
 (./conclusie.tex
 
-[26]
+[30]
 Hoofdstuk 8.
 
 
-[27
+[31
 
 ]
 
-[28]
-Underfull \hbox (badness 1019) in paragraph at lines 61--62
+[32])
+Underfull \hbox (badness 1019) in paragraph at lines 62--136
 []\TU/Montserrat(1)/m/n/10.95 Andere interessante uitbreidingen zijn een reverse-proxy-gebaseerd toegangs-
  []
 
-)
 
-[29]
+
+[33]
 B\ij lage A.
 (../voorstel/voorstel-inhoud.tex
 Overfull \hbox (5.1333pt too wide) in paragraph at lines 6--7
@@ -2060,7 +2075,7 @@ Overfull \hbox (5.1333pt too wide) in paragraph at lines 6--7
 
 
 
-[30
+[34
 
 ]
 Underfull \hbox (badness 1253) in paragraph at lines 25--26
@@ -2069,68 +2084,83 @@ Underfull \hbox (badness 1253) in paragraph at lines 25--26
 
 
 
-[31]
+[35]
 Underfull \hbox (badness 1259) in paragraph at lines 47--48
 \TU/Montserrat(1)/m/n/10.95 Er is al documentatie beschikbaar over het deployen van challenges binnen
  []
 
 
 
-[32])
-
-[33]
-B\ij lage B.
-
-
-[34
-
-]
-
-[35]
-B\ij lage C.
-
-
-[36
-
-]
-Underfull \hbox (badness 2205) in paragraph at lines 238--239
-\TU/Montserrat(1)/m/n/10.95 Bij het starten van een challenge-container worden standaard de volgende
- []
-
-
+[36])
 
 [37]
-B\ij lage D.
+B\ij lage B.
 
 
 [38
 
 ]
-Underfull \hbox (badness 1460) in paragraph at lines 295--296
-\TU/FiraCode(0)/m/n/10.95 containerized \TU/Montserrat(1)/m/n/10.95 challenge werd aangemaakt, een speler startte een runtime,
- []
-
-
 
 [39]
-B\ij lage E.
+B\ij lage C.
+
+Underfull \hbox (badness 1888) in paragraph at lines 230--231
+[]\TU/FiraCode(0)/m/n/10.95 CTFD_CONTAINER_PUBLIC_SCHEME \TU/Montserrat(1)/m/n/10.95 voor het URL-schema van die runtime-
+ []
+
 
 
 [40
 
 ]
+Overfull \hbox (30.38664pt too wide) in paragraph at lines 231--232
+[]\TU/FiraCode(0)/m/n/10.95 CTFD_CONTAINER_PUBLISHED_PORT_MIN \TU/Montserrat(1)/m/n/10.95 en \TU/FiraCode(0)/m/n/10.95 CTFD_CONTAINER_PUBLISHED_PORT_MAX
+ []
+
+
+Underfull \hbox (badness 1997) in paragraph at lines 233--234
+[]\TU/FiraCode(0)/m/n/10.95 CTFD_CONTAINER_IMAGE_ARCHIVE_DIR \TU/Montserrat(1)/m/n/10.95 voor opslag van geuploade image-
+ []
+
+
+Underfull \hbox (badness 2205) in paragraph at lines 239--240
+\TU/Montserrat(1)/m/n/10.95 Bij het starten van een challenge-container worden standaard de volgende
+ []
+
+
 
 [41]
+B\ij lage D.
 
-[42]
 
-[43
+[42
+
+]
+Underfull \hbox (badness 1189) in paragraph at lines 296--297
+\TU/FiraCode(0)/m/n/10.95 containerized \TU/Montserrat(1)/m/n/10.95 challenge werd aangemaakt, de lokaal geimporteerde image
+ []
+
+
+
+[43]
+B\ij lage E.
+
+
+[44
+
+]
+
+[45]
+
+[46]
+
+[47
 
 
 ]
 
-[44]
-runsystem(latexminted cleantemp  --timestamp 20260320143538 4379515D007F3BC40C2F41FACA92D39B)...executed.
+[48]
+runsystem(latexminted cleantemp  --timestamp 20260410133036 4379515D007F3BC40C2F41FACA92D39B)...executed.
 
  (./DevlooManuBP.aux)
  ***********
@@ -2138,7 +2168,7 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `DevlooManuBP.out' has not changed.
-(rerunfilecheck)             Checksum: 6CECBA4DCB39F724EFCA633BC074A3F7;17009.
+(rerunfilecheck)             Checksum: F4991CC282BA7B0D74210AD504F5343F;17391.
 Package logreq Info: Writing requests to 'DevlooManuBP.run.xml'.
 \openout1 = `DevlooManuBP.run.xml'.
 
@@ -2150,6 +2180,6 @@ Here is how much of TeX's memory you used:
  72022 multiletter control sequences out of 15000+600000
  561873 words of font info for 105 fonts, out of 8000000 for 9000
  1349 hyphenation exceptions out of 8191
- 110i,12n,131p,1238b,5923s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 110i,12n,131p,1238b,5905s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on DevlooManuBP.pdf (54 pages).
+Output written on DevlooManuBP.pdf (59 pages).

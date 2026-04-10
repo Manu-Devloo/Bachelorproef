@@ -41,8 +41,13 @@
 <div class="form-row row">
   <div class="col-md-6">
     <div class="form-group">
-      <label>Container Port</label>
-      <input type="number" class="form-control" name="container_port" value="8080" min="1" max="65535" required>
+      <label>
+        Container Ports
+        <small class="form-text text-muted">
+          Comma- or space-separated TCP ports to publish, for example `8080, 8081, 8443`.
+        </small>
+      </label>
+      <input type="text" class="form-control" name="container_ports" value="8080" required>
     </div>
   </div>
   <div class="col-md-6">

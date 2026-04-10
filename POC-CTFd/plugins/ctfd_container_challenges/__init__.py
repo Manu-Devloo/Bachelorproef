@@ -4,12 +4,14 @@ import atexit
 from dataclasses import dataclass
 import logging
 import os
+import re
 from threading import Lock
 from typing import Any
 from uuid import uuid4
 
 from docker.tls import TLSConfig
 from flask import Blueprint, Response, flash, jsonify, redirect, render_template, request, url_for
+from sqlalchemy import inspect, text
 from werkzeug.utils import secure_filename
 
 from CTFd.models import Challenges, db
@@ -43,6 +45,8 @@ LOGGER = logging.getLogger(__name__)
 PLUGIN_NAME = "ctfd_container_challenges"
 ASSET_BASE = "/plugins/ctfd_container_challenges/assets/"
 ALLOWED_ARCHIVE_EXTENSIONS = (".tar", ".tar.gz", ".tgz")
+MAX_CONTAINER_PORTS = 16
+CONTAINER_PORT_SPLIT_PATTERN = re.compile(r"[\s,;]+")
 
 
 def _env_flag(value: str | None) -> bool:
@@ -82,10 +86,19 @@ class ContainerizedChallengeModel(Challenges):
     )
     image = db.Column(db.String(255), nullable=False)
     container_port = db.Column(db.Integer, nullable=False, default=8080)
+    container_ports = db.Column(db.String(255), nullable=True)
     cpu_limit = db.Column(db.Float, nullable=False, default=0.5)
     memory_limit_mb = db.Column(db.Integer, nullable=False, default=256)
     timeout_seconds = db.Column(db.Integer, nullable=False, default=900)
     max_instances = db.Column(db.Integer, nullable=False, default=30)
+
+    @property
+    def configured_container_ports(self) -> list[int]:
+        return _get_challenge_container_ports(self)
+
+    @property
+    def configured_container_ports_display(self) -> str:
+        return _format_container_ports(self.configured_container_ports)
 
 
 @dataclass(frozen=True)
@@ -407,6 +420,74 @@ def _safe_record_log(service: RuntimeService, *, message: str, metadata: dict[st
         LOGGER.exception("failed to write runtime log")
 
 
+def _parse_container_ports(raw_value: Any, *, field_name: str = "container_ports") -> list[int]:
+    raw = str(raw_value or "").strip()
+    if not raw:
+        raise ValidationError(f"{field_name} is required")
+
+    tokens = [token for token in CONTAINER_PORT_SPLIT_PATTERN.split(raw) if token]
+    if not tokens:
+        raise ValidationError(f"{field_name} is required")
+    if len(tokens) > MAX_CONTAINER_PORTS:
+        raise ValidationError(f"{field_name} supports at most {MAX_CONTAINER_PORTS} ports")
+
+    ports: list[int] = []
+    seen: set[int] = set()
+    for token in tokens:
+        try:
+            port = int(token)
+        except ValueError as exc:
+            raise ValidationError(f"{field_name} must contain only integers") from exc
+        if port < 1 or port > 65535:
+            raise ValidationError(f"{field_name} ports must be between 1 and 65535")
+        if port in seen:
+            raise ValidationError(f"{field_name} cannot contain duplicate ports")
+        seen.add(port)
+        ports.append(port)
+    return ports
+
+
+def _format_container_ports(ports: list[int]) -> str:
+    return ", ".join(str(port) for port in ports)
+
+
+def _serialize_container_ports(ports: list[int]) -> str:
+    return ",".join(str(port) for port in ports)
+
+
+def _get_challenge_container_ports(challenge: Any) -> list[int]:
+    raw_ports = getattr(challenge, "container_ports", None)
+    if raw_ports:
+        return _parse_container_ports(raw_ports)
+    return [int(getattr(challenge, "container_port", 8080))]
+
+
+def _ensure_challenge_schema() -> None:
+    table_name = ContainerizedChallengeModel.__table__.name
+    inspector = inspect(db.engine)
+    if not inspector.has_table(table_name):
+        return
+
+    existing_columns = {column["name"] for column in inspector.get_columns(table_name)}
+    if "container_ports" in existing_columns:
+        return
+
+    quoted_table = db.engine.dialect.identifier_preparer.quote(table_name)
+    with db.engine.begin() as connection:
+        connection.execute(
+            text(f"ALTER TABLE {quoted_table} ADD COLUMN container_ports VARCHAR(255)")
+        )
+        connection.execute(
+            text(
+                f"""
+                UPDATE {quoted_table}
+                SET container_ports = CAST(container_port AS TEXT)
+                WHERE container_ports IS NULL OR TRIM(container_ports) = ''
+                """
+            )
+        )
+
+
 class ContainerizedChallenge(BaseChallenge):
     id = "containerized"
     name = "containerized"
@@ -456,6 +537,8 @@ class ContainerizedChallenge(BaseChallenge):
             {
                 "image": challenge.image,
                 "container_port": challenge.container_port,
+                "container_ports": challenge.configured_container_ports,
+                "container_ports_display": challenge.configured_container_ports_display,
                 "cpu_limit": challenge.cpu_limit,
                 "memory_limit_mb": challenge.memory_limit_mb,
                 "timeout_seconds": challenge.timeout_seconds,
@@ -569,8 +652,19 @@ class ContainerizedChallenge(BaseChallenge):
                 raise ValidationError(f"{field} must be between {lower} and {upper}")
             payload[field] = round(value, 2)
 
+        def coerce_ports() -> None:
+            if "container_ports" not in payload and "container_port" not in payload:
+                if partial:
+                    return
+                raise ValidationError("container_ports is required")
+
+            raw_ports = payload.get("container_ports", payload.get("container_port"))
+            ports = _parse_container_ports(raw_ports)
+            payload["container_port"] = ports[0]
+            payload["container_ports"] = _serialize_container_ports(ports)
+
         require_string("image")
-        coerce_int("container_port", 1, 65535)
+        coerce_ports()
         coerce_float("cpu_limit", 0.1, 8.0)
         coerce_int("memory_limit_mb", 64, 16384)
         coerce_int("timeout_seconds", 30, 86400)
@@ -611,6 +705,7 @@ def _build_admin_dashboard(service: RuntimeService) -> dict[str, Any]:
                 _get_bound_image_asset(challenge.id) or {}
             ).get("original_filename", ""),
             "container_port": challenge.container_port,
+            "container_ports_display": challenge.configured_container_ports_display,
             "cpu_limit": challenge.cpu_limit,
             "memory_limit_mb": challenge.memory_limit_mb,
             "timeout_seconds": challenge.timeout_seconds,
@@ -627,6 +722,9 @@ def _build_admin_dashboard(service: RuntimeService) -> dict[str, Any]:
         row["challenge_name"] = challenge.name if challenge else f"Challenge {item['challenge_id']}"
         row["challenge_category"] = challenge.category if challenge else ""
         row["image"] = challenge.image if challenge else ""
+        row["container_ports_display"] = (
+            challenge.configured_container_ports_display if challenge else ""
+        )
         row["cpu_limit"] = challenge.cpu_limit if challenge else None
         row["memory_limit_mb"] = challenge.memory_limit_mb if challenge else None
         row["timeout_seconds"] = challenge.timeout_seconds if challenge else None
@@ -825,6 +923,8 @@ def admin_page():
 
 def load(app):
     upgrade(plugin_name=PLUGIN_NAME)
+    with app.app_context():
+        _ensure_challenge_schema()
     CHALLENGE_CLASSES["containerized"] = ContainerizedChallenge
     register_plugin_assets_directory(app, base_path=ASSET_BASE)
     register_plugin_stylesheet(asset_url("styles.css"))
