@@ -49,7 +49,9 @@ De gerapporteerde uitkomst van deze testset was \texttt{4 passed in 0.60s}. Hoew
 
 \subsection{End-to-end smoke test}
 
-Daarnaast werd een Docker-gebaseerde smoke test uitgevoerd op de standalone PoC. Daarbij werden een demo-image en de orchestrator opgebouwd, werd een challenge geregistreerd, werden twee instanties gestart en werd gecontroleerd of beide challenge-endpoints bereikbaar waren. Nadien werden de instanties opnieuw stopgezet. Deze test bevestigde dat de kernstroom start $\rightarrow$ bereikbaar $\rightarrow$ stop correct werkt in een echte Docker-opstelling.
+Na de geautomatiseerde tests was nog een beperkte end-to-end controle nodig, omdat de lifecycle-logica pas volledig betekenis krijgt wanneer ook Docker zelf, het netwerk en de gepubliceerde challenge-endpoints betrokken zijn. Daarvoor werd een smoke test uitgevoerd op de standalone PoC. In deze context betekent een smoke test geen volledige bewijsvoering van alle randgevallen, maar een snelle controle of de belangrijkste runtime-flow in een echte Docker-opstelling niet fundamenteel stuk is.
+
+De test bouwde eerst de demo-image en de orchestrator op, registreerde daarna een challenge en startte vervolgens twee challenge-instanties. Voor beide instanties werd gecontroleerd of het gepubliceerde endpoint bereikbaar was. Nadien werden de instanties opnieuw stopgezet. Op die manier controleerde de smoke test in één samenhangende flow of de orchestrator een challenge kan voorbereiden, starten, bereikbaar maken en opruimen. De test bevestigde daarmee dat de kernstroom start $\rightarrow$ bereikbaar $\rightarrow$ stop correct werkt buiten een zuiver gemockte of geïsoleerde testomgeving.
 
 \subsection{Timeout, isolatie en resourcebeperking}
 
@@ -63,7 +65,9 @@ Drie gerichte experimenten waren bijzonder bruikbaar als pre-validatie van de pl
 
 \subsection{Load snapshot met Locust}
 
-Een beperkte loadtest met Locust~\autocite{Locust} werd gebruikt om capaciteitsgedrag te observeren. In een create-only scenario werden 128 requests uitgevoerd, waarvan 84 faalden met \texttt{409 CONFLICT} zodra de ingestelde capaciteit bereikt werd. Dit resultaat wijst niet op een al grootschalig geoptimaliseerde oplossing, maar laat wel zien dat de capaciteitslimiet effectief wordt afgedwongen in plaats van stilzwijgend overschreden te worden.
+Locust~\autocite{Locust} is een open-source loadtestingtool waarbij gebruikersgedrag in Python wordt beschreven. In deze bachelorproef werd het gebruikt om meerdere gelijktijdige gebruikers na te bootsen die API-acties uitvoeren tegen de standalone orchestrator. De gebruikte \texttt{locustfile} bevatte twee acties: het starten van een instantie en het opvragen van de actieve instanties. Locust werd in \textit{headless} modus uitgevoerd, dus zonder webinterface, met een vast aantal virtuele gebruikers, een instroomsnelheid en een korte looptijd. Daardoor was de test reproduceerbaar en geschikt als snelle momentopname.
+
+De term \textit{load snapshot} wordt bewust gebruikt in plaats van volledige performancetest. Het doel was niet om maximale schaalbaarheid of productierijpe throughput te bewijzen, maar om te observeren hoe de PoC reageert wanneer meerdere startverzoeken kort na elkaar binnenkomen. In het create-only scenario werden 128 requests uitgevoerd, waarvan 84 faalden met \texttt{409 CONFLICT} zodra de ingestelde capaciteit bereikt werd. Die conflicten worden hier niet als technische fout geinterpreteerd, maar als verwacht gedrag: de API weigert extra instanties wanneer \texttt{max\_instances} bereikt is. Dit resultaat wijst dus niet op een al grootschalig geoptimaliseerde oplossing, maar laat wel zien dat de capaciteitslimiet effectief wordt afgedwongen in plaats van stilzwijgend overschreden te worden.
 
 %%----------------------------------------------------------------------
 \section{Validatie van de CTFd-plugin}%

@@ -39,15 +39,39 @@ De meest gebruikte platformen voor het organiseren van CTF-events zijn:
 \section{CTFd als platform}%
 \label{sec:ctfd}
 
-CTFd is een open-source CTF-platform, gebouwd in Python met het Flask-framework~\autocite{CTFdGitHub}. Het biedt een gebruiksvriendelijke interface voor organisatoren en deelnemers. Daarnaast is het modulair uitbreidbaar via een plugin-systeem.
+CTFd is een open-source CTF-platform, gebouwd in Python met het Flask-framework~\autocite{CTFdGitHub,CTFdOverview}. Het biedt een gebruiksvriendelijke interface voor organisatoren en deelnemers. Daarnaast is het modulair uitbreidbaar via een plugin-systeem.
 
 \subsection{Architectuur van CTFd}
 
-CTFd bestaat uit een Flask-backend, een relationele database (standaard SQLite, in productie MySQL of PostgreSQL) en een frontend op basis van Bootstrap. De applicatie draait doorgaans achter een reverse proxy zoals Nginx. Alle functionaliteit is bereikbaar via een REST API.
+CTFd bestaat uit een Flask/WSGI-backend, een SQL-database (standaard SQLite, in productie vaak MySQL of MariaDB) en een webfrontend met JavaScript en CSS~\autocite{CTFdOverview,CTFdInstallation,CTFdContributing}. De applicatie kan achter een reverse proxy zoals Nginx draaien~\autocite{CTFdConfiguration}. De API-routes zijn als afzonderlijke componenten uitgewerkt en de REST API ondersteunt de belangrijkste interacties met het platform~\autocite{CTFdAPI,CTFdContributing}.
+
+\begin{figure}[H]
+  \centering
+  \resizebox{0.95\textwidth}{!}{%
+  \begin{tikzpicture}[
+    node distance=0.95cm and 1.1cm,
+    box/.style={draw, rounded corners, align=center, minimum width=3.1cm, minimum height=0.9cm, fill=black!3},
+    arrow/.style={->, thick}
+  ]
+    \node[box] (browser) {Gebruiker\\ browser};
+    \node[box, right=of browser] (proxy) {Reverse proxy\\ Nginx};
+    \node[box, right=of proxy] (flask) {CTFd\\ Flask-app};
+    \node[box, below=of flask] (db) {Database\\ SQLite / SQL};
+    \node[box, right=of flask] (plugins) {Plugins\\ extra routes};
+
+    \draw[arrow] (browser) -- (proxy);
+    \draw[arrow] (proxy) -- (flask);
+    \draw[arrow] (flask) -- (db);
+    \draw[arrow] (flask) -- (plugins);
+  \end{tikzpicture}
+  }
+  \caption[Architectuur van CTFd]{Vereenvoudigde architectuur van CTFd. De Flask-app verwerkt de wedstrijdlogica en spreekt zowel de database als optionele plugins aan.}
+  \label{fig:ctfd-architectuur}
+\end{figure}
 
 \subsection{Het plugin-systeem}
 
-CTFd ondersteunt plugins die extra functionaliteit toevoegen aan het platform. Een plugin is een Python-pakket dat in de \texttt{CTFd/plugins/}-map geplaatst wordt. Plugins kunnen nieuwe challenge-types registreren, routes toevoegen en bestaande logica uitbreiden~\autocite{CTFdGitHub}.
+CTFd ondersteunt plugins die extra functionaliteit toevoegen aan het platform. Een plugin is een Python-pakket dat in de \texttt{CTFd/plugins/}-map geplaatst wordt. Plugins kunnen nieuwe challenge-types registreren, routes toevoegen en bestaande logica uitbreiden~\autocite{CTFdGitHub,CTFdPlugins}.
 
 \subsection{Challenge-beheer en granulariteit}
 
@@ -59,7 +83,7 @@ CTFd ondersteunt standaard statische challenges. Voor dynamische instanties, waa
 
 \subsection{Wat is Docker?}
 
-Docker is een platform voor het bouwen, distribueren en draaien van applicaties in containers~\autocite{Arxiv2024}. Een container is een geïsoleerd, lichtgewicht proces dat gebruikmaakt van Linux-kernelmechanismen (namespaces, cgroups) om te worden afgeschermd van andere processen en van de host.
+Docker is een platform voor het bouwen, distribueren en draaien van applicaties in containers~\autocite{Arxiv2024,DockerOverview}. Een container is een geïsoleerd, lichtgewicht proces dat gebruikmaakt van Linux-kernelmechanismen (namespaces, cgroups) om te worden afgeschermd van andere processen en van de host.
 
 \textbf{Containers versus virtuele machines}: waar een virtuele machine een volledig besturingssysteem emuleert, deelt een container de kernel van de host. Dit maakt containers veel sneller op te starten en minder resource-intensief, maar vergt zorgvuldigere beveiligingsconfiguratie.
 
@@ -70,6 +94,8 @@ De Docker Engine API is een RESTful HTTP-API die het mogelijk maakt om programma
 \subsection{Docker SDK voor Python}
 
 De Docker SDK voor Python is een officiële client-bibliotheek die de Docker Engine API omhult en in Python aanroept~\autocite{DockerSDKPython}. Het is de aanbevolen manier om Docker programmatisch te besturen vanuit Python-applicaties, zoals een CTFd-plugin.
+
+Een verwante vraag is of dezelfde aanpak ook met Podman zou werken. Podman biedt in bepaalde configuraties een Docker-compatibele API-socket, waardoor sommige Docker-clients beperkt bruikbaar kunnen zijn. Deze bachelorproef valideert dat echter niet expliciet: de implementatie en de tests richten zich op Docker Engine en de Docker SDK voor Python. Podman-compatibiliteit blijft daarom buiten de bewezen scope van de PoC.
 
 \subsection{Docker Compose}
 
@@ -120,7 +146,7 @@ Het CIS Docker Benchmark~\autocite{CISDocker} biedt een uitgebreide checklist va
 
 \subsection{Container escape}
 
-Een container escape is een aanval waarbij een kwaadaardige actor de isolatielaag van de container doorbreekt en toegang verkrijgt tot de host of andere containers. Bekende technieken maken gebruik van kwetsbaarheden in de Docker-daemon, misbruik van gemounte sockets (\texttt{/var/run/docker.sock}) of misconfiguraties (bijv.\ privileged mode)~\autocite{NVD}.
+Een container escape is een aanval waarbij een kwaadaardige actor de isolatielaag van de container doorbreekt en toegang verkrijgt tot de host of andere containers. Bekende technieken maken gebruik van kwetsbaarheden in de Docker-daemon, misbruik van gemounte sockets (\texttt{/var/run/docker.sock}) of misconfiguraties (bijv.\ privileged mode)~\autocite{OWASP2024}.
 
 \subsection{Resource exhaustion en DoS-risico's}
 
@@ -132,7 +158,9 @@ Zonder resource-limieten kan een deelnemer de hostserver overbelasten door een e
 
 \subsection{Waarom geen Kubernetes?}
 
-Kubernetes is het de-facto standaardplatform voor containerorkestratie op schaal~\autocite{kCTF}. Het biedt ingebouwde load balancing, automatische schaling en zelfherstel. Voor kleinschalige CTF-events wegen de voordelen echter niet op tegen de operationele complexiteit: Kubernetes vereist een substantieel cluster, diepgaande kennis en aanzienlijke overhead voor beheer.
+Kubernetes is het de-facto standaardplatform voor containerorkestratie op schaal~\autocite{kCTF,KubernetesOverview}. Het biedt ingebouwde load balancing, automatische schaling en zelfherstel. Voor kleinschalige CTF-events wegen de voordelen echter niet op tegen de operationele complexiteit: Kubernetes vereist een substantieel cluster, diepgaande kennis en aanzienlijke overhead voor beheer.
+
+Een volledige Kubernetes-gebaseerde oplossing zou bovendien een afzonderlijk onderzoeksproject kunnen vormen. Dan moeten onder meer clusterprovisioning, netwerkpolicies, ingressconfiguratie, secrets management, node-isolatie, resourcequota en operationele monitoring worden uitgewerkt. Omdat de onderzoeksvraag focust op een lichtgewicht self-hosted aanpak zonder Kubernetes als vereiste, wordt Kubernetes hier enkel als alternatief besproken en niet als implementatierichting uitgewerkt.
 
 \subsection{Alternatieven}
 

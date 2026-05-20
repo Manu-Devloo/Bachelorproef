@@ -8,42 +8,14 @@
 %% Pictures to include in the text can be put in the graphics/ folder
 \graphicspath{{../graphics/}}
 
-%% For source code highlighting, requires pygments to be installed
-%% Compile with the -shell-escape flag!
-%% \usepackage[chapter]{minted}
-%% If you compile with the make_thesis.{bat,sh} script, use the following
-%% import instead:
-\usepackage[chapter]{minted}
-\usemintedstyle{solarized-light}
-
-%% Formatting for minted environments.
-\setminted{%
-    autogobble,
-    frame=lines,
-    breaklines,
-    linenos,
-    tabsize=4
-}
-
-%% Ensure the list of listings is in the table of contents
-\renewcommand\listoflistingscaption{%
-    \IfLanguageName{dutch}{Lijst van codefragmenten}{List of listings}
-}
-\renewcommand\listingscaption{%
-    \IfLanguageName{dutch}{Codefragment}{Listing}
-}
-\renewcommand*\listoflistings{%
-    \cleardoublepage\phantomsection\addcontentsline{toc}{chapter}{\listoflistingscaption}%
-    \listof{listing}{\listoflistingscaption}%
-}
-
 % Other packages not already included can be imported here
+\usepackage{float}
 
 %%---------- Document metadata -------------------------------------------------
 \author{Manu Devloo}
 \supervisor{Dhr. T. Clauwaert}
 \cosupervisor{Dhr. L. Singier}
-\title[Dynamisch Docker-omgevingbeheer voor CTF-events]%
+\title[Geïsoleerde challenge-omgevingen per speler of team]%
     {\texorpdfstring{Dynamisch Docker-omgevingbeheer\\voor CTF-events\\op on-prem infrastructuur}{Dynamisch Docker-omgevingbeheer voor CTF-events op on-prem infrastructuur}}
 \academicyear{2025--2026}
 \examperiod{1}
@@ -102,11 +74,8 @@
 
 \listoffigures
 
-% If you included tables and/or source code listings, uncomment the appropriate
-% lines.
+% If you included tables, uncomment the appropriate lines.
 \listoftables
-
-\listoflistings
 
 % Als je een lijst van afkortingen of termen wil toevoegen, dan hoort die
 % hier thuis. Gebruik bijvoorbeeld de ``glossaries'' package.
@@ -304,11 +273,56 @@ cd POC-CTFd
 Resultaat: dezelfde challenge-flow werkte ook wanneer CTFd met de plugin via een remote Docker endpoint communiceerde. De gegenereerde runtime-URL's verwezen naar de afzonderlijke runtime-host en de gepubliceerde poorten bleven binnen het ingestelde bereik.
 
 \textbf{Re\"ele twee-VM validatie}
+
+De re\"ele validatie gebruikte twee Lima-VM's op een gedeeld \texttt{user-v2}-netwerk. De eerste VM draaide CTFd en de plugin; de tweede VM draaide de Docker Engine voor challenge-containers. De belangrijkste setupstappen waren:
+
 \begin{verbatim}
-Zie POC-CTFd/docs/03_real-vm-validation.md
+limactl network create bp-shared-net --gateway 192.168.150.1/24
+
+limactl start --name=bp-ctfd-vm \
+  --network=lima:bp-shared-net \
+  --cpus=2 --memory=4 --disk=20 \
+  --mount=/Users/manu/Documents/GitHub/Bachelorproef:w \
+  template:docker-rootful -y
+
+limactl start --name=bp-docker-vm \
+  --network=lima:bp-shared-net \
+  --cpus=2 --memory=4 --disk=20 \
+  template:docker-rootful -y
 \end{verbatim}
 
-Resultaat: op 24 maart 2026 werd bevestigd dat CTFd op een eerste Lima-VM challenge-containers kon starten, stoppen en opruimen op een tweede Lima-VM. Na afloop bleven geen plugin-beheerde containers of netwerken achter op de runtime-VM.
+Op de runtime-VM werd de Docker-daemon voor deze wegwerpvalidatie ook op TCP-poort \texttt{2375} beschikbaar gemaakt. Dat gebeurde enkel om remote Docker-aansturing te testen; voor productie blijft TLS-beveiliging vereist.
+
+\begin{verbatim}
+ExecStart=/usr/bin/dockerd \
+  --host=unix:///var/run/docker.sock \
+  --host=tcp://0.0.0.0:2375 \
+  --containerd=/run/containerd/containerd.sock
+\end{verbatim}
+
+Daarna werd de CTFd-stack op de control-VM gestart met de runtime-VM als Docker-control endpoint en als publieke challenge-host:
+
+\begin{verbatim}
+export CTFD_CONTAINER_DOCKER_HOST=tcp://192.168.150.3:2375
+export CTFD_CONTAINER_PUBLIC_HOST=192.168.150.3
+export CTFD_CONTAINER_PUBLISHED_PORT_MIN=20000
+export CTFD_CONTAINER_PUBLISHED_PORT_MAX=20099
+docker compose -f docker-compose.yml up -d --build
+\end{verbatim}
+
+De smoke test werd vanuit de CTFd-VM uitgevoerd, omdat de macOS-host het interne Lima-subnet in deze netwerkmodus niet rechtstreeks kon bereiken:
+
+\begin{verbatim}
+BASE_URL=http://127.0.0.1:8001 \
+IMAGE_ARCHIVE_PATH="$archive_path" \
+SMOKE_TEST_DOCKER_HOST=tcp://192.168.150.3:2375 \
+SMOKE_TEST_EXPECT_ACCESS_HOST=192.168.150.3 \
+SMOKE_TEST_EXPECT_ACCESS_PORT_MIN=20000 \
+SMOKE_TEST_EXPECT_ACCESS_PORT_MAX=20099 \
+python3 ./scripts/smoke_test.py
+\end{verbatim}
+
+Resultaat: op 24 maart 2026 werd bevestigd dat CTFd op een eerste Lima-VM challenge-containers kon starten, stoppen en opruimen op een tweede Lima-VM. De smoke test rapporteerde \texttt{Smoke test passed}. Na afloop bevestigden \texttt{docker ps -a} en \texttt{docker network ls} op de runtime-VM dat geen plugin-beheerde containers of netwerken waren achtergebleven. De volledige log is opgenomen in \path{POC-CTFd/docs/03_real-vm-validation.md}.
 
 \section*{Interpretatie}
 

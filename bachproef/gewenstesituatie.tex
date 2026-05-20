@@ -43,7 +43,7 @@ Naast de functionele vereisten gelden de volgende niet-functionele vereisten:
 \section{Architectuurvisie}%
 \label{sec:tobe-architectuur}
 
-De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem~\autocite{CTFdGitHub}. De plugin fungeert als orkestratielaag die gebruikersacties in het platform vertaalt naar containeracties op een Docker-host. Daarmee blijft de gebruikerservaring in CTFd gecentraliseerd, terwijl de challenge-runtime via Docker wordt beheerd.
+De oplossing wordt uitgewerkt als een uitbreiding op CTFd via het plugin-systeem~\autocite{CTFdGitHub,CTFdPlugins}. De plugin fungeert als orkestratielaag die gebruikersacties in het platform vertaalt naar containeracties op een Docker-host. Daarmee blijft de gebruikerservaring in CTFd gecentraliseerd, terwijl de challenge-runtime via Docker wordt beheerd.
 
 \subsection{Componenten en verantwoordelijkheden}
 
@@ -90,7 +90,41 @@ Binnen de PoC wordt uitgegaan van een flexibele aanpak: wanneer het event in tea
 \section{Schaalbaarheidsvereisten}%
 \label{sec:tobe-schaalbaarheid}
 
-De infrastructuur moet bestand zijn tegen piekbelasting, bijvoorbeeld wanneer veel deelnemers gelijktijdig een service-challenge starten. Dit vertaalt zich naar de volgende vereisten:
+De infrastructuur moet bestand zijn tegen piekbelasting, bijvoorbeeld wanneer veel deelnemers gelijktijdig een service-challenge starten. Figuur~\ref{fig:split-host-architectuur} toont de gewenste deploymentvariant waarin het control plane en de challenge-runtime logisch gescheiden zijn.
+
+\begin{figure}[H]
+  \centering
+  \resizebox{0.95\textwidth}{!}{%
+  \begin{tikzpicture}[
+    node distance=0.85cm and 1.4cm,
+    host/.style={draw, rounded corners, align=center, minimum width=5.2cm, minimum height=3.0cm, fill=black!2},
+    box/.style={draw, rounded corners, align=center, minimum width=3.0cm, minimum height=0.85cm, fill=white},
+    arrow/.style={->, thick}
+  ]
+    \node[host] (control) {};
+    \node[above=0.08cm of control] {\textbf{VM 1: control plane}};
+    \node[box, yshift=0.55cm] (ctfd) at (control.center) {CTFd + plugin};
+    \node[box, below=0.45cm of ctfd] (meta) {Runtime-metadata};
+
+    \node[host, right=of control] (runtimehost) {};
+    \node[above=0.08cm of runtimehost] {\textbf{VM 2: runtime-host}};
+    \node[box, yshift=0.55cm] (docker) at (runtimehost.center) {Docker Engine};
+    \node[box, below=0.45cm of docker] (container) {Challenge-containers};
+
+    \node[box, left=1.6cm of control] (player) {Deelnemer};
+
+    \draw[arrow] (player) -- node[above, font=\scriptsize, pos=0.45] {CTFd UI} (control);
+    \draw[arrow] (ctfd) -- node[above, font=\scriptsize] {Docker API} (docker);
+    \draw[arrow] (docker) -- (container);
+    \draw[arrow] (player.south east) to[out=-35,in=-150] node[below, font=\scriptsize, pos=0.55] {runtime-URL} (container.south west);
+    \draw[arrow] (ctfd) -- (meta);
+  \end{tikzpicture}
+  }
+  \caption[Split-host architectuur]{Gewenste split-host architectuur. CTFd en de plugin blijven het control plane, terwijl challenge-containers op een aparte runtime-host draaien.}
+  \label{fig:split-host-architectuur}
+\end{figure}
+
+Dit vertaalt zich naar de volgende vereisten:
 
 \begin{itemize}
   \item \textbf{Piekbestendig opstartpad}: het systeem moet een piek aan containercreatie kunnen verwerken zonder dat het platform onbeschikbaar wordt.

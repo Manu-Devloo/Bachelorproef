@@ -24,26 +24,30 @@ De opzet bevat vier kernonderdelen:
 
 Tijdens de implementatie werd eerst vertrokken van een single-host opstelling om de integratie beheersbaar te houden. Nadien is dezelfde architectuur uitgebreid naar een split-host model waarin het Docker-control endpoint en de spelergerichte runtime-host afzonderlijk configureerbaar zijn. Binnen de validatie van deze bachelorproef werd die tweede modus zowel lokaal gesimuleerd als op twee afzonderlijke VM's getest.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering
   \resizebox{\textwidth}{!}{%
   \begin{tikzpicture}[
-    node distance=1.2cm and 1.0cm,
-    box/.style={draw, rounded corners, align=center, minimum width=3.0cm, minimum height=1.05cm, fill=black!3},
-    arrow/.style={->, thick}
+    node distance=1.05cm and 1.25cm,
+    font=\small,
+    box/.style={draw, rounded corners, align=center, text width=2.75cm, minimum height=1.25cm, fill=black!3},
+    plugin/.style={draw, rounded corners, align=center, text width=3.2cm, minimum height=1.7cm, fill=black!6},
+    store/.style={draw, rounded corners, align=center, text width=3.2cm, minimum height=1.25cm, fill=white},
+    arrow/.style={->, thick},
+    note/.style={font=\scriptsize, align=center, fill=white, inner sep=1.5pt}
   ]
-    \node[box] (player) {Deelnemer of\\ organisator};
-    \node[box, right=of player] (ctfd) {CTFd\\ challenge-flow en beheer};
-    \node[box, right=of ctfd] (docker) {Docker-daemon\\ containers en netwerken};
-    \node[box, below=of ctfd] (plugin) {Containerized plugin\\ policy- en lifecyclelogica};
-    \node[box, left=of plugin] (storage) {Runtime-opslag\\ SQLite en image-archieven};
-    \node[box, right=of plugin] (runtime) {Challenge-instantie\\ per gebruiker of team};
+    \node[box] (player) {\textbf{Deelnemer of\\ organisator}\\start, stop, solve\\beheeracties};
+    \node[box, right=of player] (ctfd) {\textbf{CTFd}\\challenge-flow\\beheerpagina};
+    \node[plugin, right=of ctfd] (plugin) {\textbf{Containerized plugin}\\policy- en lifecyclelogica\\plugin-hooks\\views};
+    \node[box, right=of plugin] (docker) {\textbf{Docker-daemon}\\containers\\netwerken};
+    \node[box, below=of docker] (runtime) {\textbf{Challenge-instantie}\\per gebruiker\\of team};
+    \node[store, below=of plugin] (storage) {\textbf{Runtime-opslag}\\SQLite\\image-archieven\\logs en metadata};
 
-    \draw[arrow] (player) -- node[above, font=\small] {start, stop, solve} (ctfd);
-    \draw[arrow] (ctfd) -- node[right, font=\small] {plugin-hooks en views} (plugin);
-    \draw[arrow] (plugin) -- node[above, font=\small] {Docker SDK} (docker);
-    \draw[arrow] (plugin) -- node[above, font=\small] {metadata} (storage);
-    \draw[arrow] (docker) -- node[right, font=\small] {run / rm} (runtime);
+    \draw[arrow] (player) -- node[note, above=3pt, pos=0.6] {start / stop / solve} (ctfd);
+    \draw[arrow] (ctfd) -- node[note, above=3pt, pos=0.58] {plugin-hooks\\views} (plugin);
+    \draw[arrow] (plugin) -- node[note, above=3pt, pos=0.55] {Docker SDK} (docker);
+    \draw[arrow] (docker) -- node[note, right=3pt] {run / rm\\network create} (runtime);
+    \draw[arrow] (plugin) -- node[note, left=3pt] {metadata\\image-archieven} (storage);
   \end{tikzpicture}
   }
   \caption[Architectuur van de plugin-PoC]{Architectuur van de plugin-PoC. CTFd blijft het centrale platform, terwijl de plugin de lifecycle van challenge-containers en de bijhorende metadata beheert. De Docker-daemon kan lokaal of op een afzonderlijke runtime-host draaien.}
@@ -57,7 +61,7 @@ Tijdens de implementatie werd eerst vertrokken van een single-host opstelling om
 Voor de plugin werd uitgewerkt, werd eerst een kleine standalone orchestrator gebouwd in Flask. Het doel daarvan was niet om een alternatieve eindarchitectuur naar voren te schuiven, maar om drie vragen snel te beantwoorden:
 
 \begin{itemize}
-  \item Kan een Python-service betrouwbaar containers starten, stoppen en opruimen via de Docker SDK?
+  \item Kan een Python-service containers starten, stoppen en opruimen via de Docker SDK?
   \item Welke basisbeveiligingsmaatregelen zijn praktisch toepasbaar zonder de challenge-flow onnodig complex te maken?
   \item Hoe kunnen lifecycle-regels zoals timeouts, quota en idempotent starten eenvoudig gevalideerd worden?
 \end{itemize}
@@ -127,6 +131,38 @@ De plugin bevat een achtergrondproces dat periodiek controleert welke instanties
 
 Daarnaast grijpt de plugin ook in op het moment dat een challenge correct opgelost wordt. In dat geval wordt de actieve instantie van de betrokken gebruiker of het betrokken team automatisch stopgezet. Die koppeling is belangrijk voor CTF-contexten: een deelnemer hoeft een oplossing niet eerst manueel te stoppen en de infrastructuur blijft niet onnodig resources verbruiken nadat de flag al werd ingediend.
 
+\begin{figure}[H]
+  \centering
+  \resizebox{0.95\textwidth}{!}{%
+  \begin{tikzpicture}[
+    node distance=0.9cm and 0.95cm,
+    flowbox/.style={draw, rounded corners, align=center, minimum width=2.65cm, minimum height=0.85cm, fill=black!3},
+    arrow/.style={->, thick}
+  ]
+    \node[flowbox] (open) {Challenge\\ openen};
+    \node[flowbox, right=of open] (policy) {Quota en\\ timeout check};
+    \node[flowbox, right=of policy] (start) {Container\\ starten};
+    \node[flowbox, right=of start] (access) {Runtime-URL\\ tonen};
+
+    \node[flowbox, below=of access] (active) {Actieve\\ instantie};
+    \node[flowbox, below left=of active] (stop) {Stop of\\ solve};
+    \node[flowbox, below right=of active] (timeout) {Timeout\\ bereikt};
+    \node[flowbox, below=1.05cm of active] (cleanup) {Container en\\ netwerk opruimen};
+
+    \draw[arrow] (open) -- (policy);
+    \draw[arrow] (policy) -- (start);
+    \draw[arrow] (start) -- (access);
+    \draw[arrow] (access) -- (active);
+    \draw[arrow] (active) -- (stop);
+    \draw[arrow] (active) -- (timeout);
+    \draw[arrow] (stop) -- (cleanup);
+    \draw[arrow] (timeout) -- (cleanup);
+  \end{tikzpicture}
+  }
+  \caption[Start-, stop- en cleanupflow]{Start-, stop- en cleanupflow voor een containerized challenge. Dezelfde cleanupstap wordt gebruikt bij manueel stoppen, een correcte solve en timeout.}
+  \label{fig:runtime-flow}
+\end{figure}
+
 \subsection{Administratieve runtime-interface}
 
 Voor organisatoren voorziet de plugin een aparte beheerpagina binnen CTFd. Daarop zijn twee soorten informatie zichtbaar:
@@ -138,23 +174,27 @@ Voor organisatoren voorziet de plugin een aparte beheerpagina binnen CTFd. Daaro
 
 Vanuit die interface kunnen beheerders een individuele instantie geforceerd stoppen, alle actieve instanties van een challenge stoppen en de timeout-reaper manueel uitvoeren. Dit verhoogt de beheerbaarheid van de PoC aanzienlijk, omdat de organisator niet rechtstreeks op de Docker-host hoeft in te loggen om runtime-problemen op te lossen.
 
+\clearpage
+
 %%----------------------------------------------------------------------
 \section{Beveiliging in de plugin-PoC}%
 \label{sec:poc-beveiliging}
 
-De plugin past bij elke containerstart een aantal direct toepasbare basismaatregelen toe, in lijn met de OWASP Docker Security Cheat Sheet~\autocite{OWASP2024} en het CIS Docker Benchmark~\autocite{CISDocker}. Concreet gaat het om:
+De plugin past bij elke containerstart een aantal direct toepasbare basismaatregelen toe, in lijn met de OWASP Docker Security Cheat Sheet~\autocite{OWASP2024} en het CIS Docker Benchmark~\autocite{CISDocker}. Concreet gaat het om de volgende Docker-instellingen:
 
 \begin{itemize}
-  \item een read-only root filesystem;
-  \item \texttt{cap\_drop=['ALL']};
-  \item \texttt{security\_opt=['no-new-privileges:true']};
-  \item een PID-limiet;
-  \item CPU- en geheugenlimieten;
-  \item een tijdelijk \texttt{tmpfs}-mount voor \texttt{/tmp};
-  \item een afzonderlijk bridge-netwerk per runtime-instantie.
+  \item \textbf{Read-only root filesystem}: het hoofdbestandssysteem van de container wordt alleen-lezen gemount. De challenge kan daardoor niet zomaar systeembestanden, configuratie of applicatiebestanden in de container aanpassen. Dat beperkt de impact van een exploit die probeert persistentie of extra tooling in de container weg te schrijven.
+    \item \textbf{\texttt{cap\_drop=['ALL']}}: Linux-capabilities zijn fijnmazige rechten die processen extra kernelmogelijkheden geven, zoals netwerkconfiguratie aanpassen of systeembeheeracties uitvoeren. Door alle capabilities standaard weg te nemen, start de container met zo weinig mogelijk privileges. Alleen wanneer een challenge aantoonbaar extra rechten nodig heeft, zou een organisator daar bewust van kunnen afwijken.
+  \item \textbf{\texttt{security\_opt=['no-new-privileges:true']}}: deze instelling verhindert dat processen binnen de container via mechanismen zoals setuid-binaries extra privileges verkrijgen. Zelfs wanneer een programma binnen de container normaal gezien met verhoogde rechten zou starten, mag het proces geen nieuwe privileges krijgen bovenop wat het al had.
+  \item \textbf{PID-limiet}: het aantal processen dat binnen de container mag draaien wordt begrensd. Dit voorkomt eenvoudige fork bombs of challenges die per ongeluk zeer veel processen aanmaken en zo de Docker-host belasten.
+  \item \textbf{CPU- en geheugenlimieten}: per challenge wordt vastgelegd hoeveel CPU-tijd en RAM een container maximaal mag gebruiken. Daardoor kan één foutieve of kwaadwillige challenge-instantie niet alle resources van de host opeisen en andere deelnemers of CTFd zelf verstoren.
+  \item \textbf{Tijdelijke \texttt{tmpfs}-mount voor \texttt{/tmp}}: de map \texttt{/tmp} blijft beschrijfbaar, maar wordt in geheugen geplaatst en verdwijnt wanneer de container stopt. Zo kunnen applicaties die tijdelijke bestanden nodig hebben blijven werken, terwijl permanente writes naar het containerbestandssysteem vermeden worden.
+  \item \textbf{Bridge-netwerk per runtime-instantie}: elke challenge-instantie krijgt een eigen Docker-netwerk. Containers van verschillende gebruikers of teams delen daardoor geen standaard netwerksegment en kunnen elkaar niet zomaar via containernaam of intern IP-adres ontdekken.
 \end{itemize}
 
 Die combinatie beperkt het risico op privilege-escalatie, laterale beweging en resource-uitputting. De keuze voor per-instantie netwerken zorgt ervoor dat deelnemers niet zomaar andere challenge-instanties kunnen ontdekken of aanspreken. Voor split-host deployments ondersteunt de plugin daarnaast een expliciet configureerbaar gepubliceerd poortbereik, zodat firewallregels op de runtime-host begrensd kunnen blijven. Belangrijk is wel dat deze PoC een basisbeveiliging demonstreert en geen volledig production-ready hardeningprofiel oplevert. Zo is ondersteuning voor aangepaste seccomp-profielen nog geen afgewerkt onderdeel van de implementatie en werd remote Docker-communicatie in de validatie enkel op wegwerpomgevingen zonder TLS getest.
+
+\clearpage
 
 %%----------------------------------------------------------------------
 \section{Deployment- en schaalbaarheidsoverwegingen}%
